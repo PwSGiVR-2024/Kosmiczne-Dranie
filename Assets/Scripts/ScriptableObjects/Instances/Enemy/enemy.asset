@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabName: Enemy
   spotDistance: 100
-  health: 99999
+  health: 100
   xp: 0
   projectileDamage: 75
   projectileSpeed: 110
