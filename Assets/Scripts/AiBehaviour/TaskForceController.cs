@@ -96,7 +96,7 @@ public class TaskForceController : MonoBehaviour
                     if (debug)
                         Debug.Log("enemy spotted");
 
-                    TaskForceController enemyTaskForce = colliders[0].gameObject.GetComponent<AiController>().unitTaskForce;
+                    TaskForceController enemyTaskForce = colliders[0].gameObject.GetComponent<AiController>().UnitTaskForce;
                     //onTaskForceSpotted?.Invoke(enemyTaskForce);
                     SetTarget(enemyTaskForce);
                 }
@@ -154,13 +154,17 @@ public class TaskForceController : MonoBehaviour
 
     private IEnumerator RefreshDestination(TaskForceController target)
     {
-        Debug.Log("refresh destination started");
+        if (debug)
+            Debug.Log("refresh destination started");
+
         WaitForSeconds interval = new(0.1f);
         List<AiController> enemies = target.controllers;
 
         while (currentStatus == Status.Combat)
         {
-            Debug.Log("combat");
+            if (debug)
+                Debug.Log("combat");
+
             this.ClearDeactivatedUnits();
             target.ClearDeactivatedUnits();
 
@@ -190,7 +194,7 @@ public class TaskForceController : MonoBehaviour
 
             for (int i = 0; i < controllers.Count; i++)
             {
-                if (controllers[i].gameObject.activeSelf && controllers[i].agent)
+                if (controllers[i].gameObject.activeSelf && controllers[i].Agent)
                     controllers[i].SetCombatState(outcomeTargets[i]);
             }
 
@@ -204,7 +208,8 @@ public class TaskForceController : MonoBehaviour
             yield return interval;
         }
 
-        Debug.Log("refresh destination stopped");
+        if (debug)
+            Debug.Log("refresh destination stopped");
     }
 
     public static TaskForceController Create(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset, GameObject container)
@@ -321,7 +326,7 @@ public class TaskForceController : MonoBehaviour
 
         if (units.Count == 1)
         {
-            spotDistance = units[0].GetComponent<AiController>().unitValues.spotDistance;
+            spotDistance = units[0].GetComponent<AiController>().Values.spotDistance;
             return;
         }
 
@@ -330,7 +335,7 @@ public class TaskForceController : MonoBehaviour
             float newSpotDistance;
             foreach (var unit in units)
             {
-                newSpotDistance = unit.GetComponent<AiController>().unitValues.spotDistance;
+                newSpotDistance = unit.GetComponent<AiController>().Values.spotDistance;
                 if (newSpotDistance > spotDistance)
                     spotDistance = newSpotDistance + (float)Math.Sqrt(units.Count) * 2;
             }
@@ -347,7 +352,7 @@ public class TaskForceController : MonoBehaviour
         if (units.Count == 0)
             DestroyTaskForce();
 
-        float unitSpotDistance = unit.GetComponent<AiController>().unitValues.spotDistance;
+        float unitSpotDistance = unit.GetComponent<AiController>().Values.spotDistance;
         if (unitSpotDistance == spotDistance)
             SetNewSpotDistance();
 
@@ -394,7 +399,7 @@ public class TaskForceController : MonoBehaviour
         }
 
         if (commander != null)
-            commander.GetComponent<AiController>().agent.destination = destination;
+            commander.GetComponent<AiController>().Agent.destination = destination;
     }
 
     public void ResetOrders(Vector3 destination)
@@ -428,7 +433,9 @@ public class TaskForceController : MonoBehaviour
 
     public void ClearDeactivatedUnits()
     {
-        Debug.Log("clearing units for: " + taskForceName);
+        if (debug)
+            Debug.Log("clearing units for: " + taskForceName);
+
         ClearDeactivatedUnitsRecursive(0);
     }
 
@@ -442,7 +449,9 @@ public class TaskForceController : MonoBehaviour
         {
             if (!controllers[index].gameObject.activeSelf)
             {
-                Debug.Log(controllers[index].name);
+                if (debug)
+                    Debug.Log("Destroying: " + controllers[index].name);
+
                 Destroy(controllers[index].gameObject);
                 //controllers.RemoveAt(index);
                 controllers.RemoveAt(index);
@@ -454,7 +463,8 @@ public class TaskForceController : MonoBehaviour
         {
             if (!controllers[index].gameObject.activeSelf)
             {
-                Debug.Log(controllers[index].name);
+
+
                 Destroy(controllers[index].gameObject);
                 //controllers.RemoveAt(index);
                 controllers.RemoveAt(index);

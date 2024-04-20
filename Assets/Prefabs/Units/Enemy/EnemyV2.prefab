@@ -69,23 +69,14 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e81dfa188770fed4ba1672f97bd15c4d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  unitTaskForce: {fileID: 0}
+  disabled: 0
+  logCurrentState: 0
+  enablePoolLogging: 0
+  childModel: {fileID: 8736844335699721627}
+  unitValues: {fileID: 11400000, guid: e219bac206ce0fe4dbede10ab28efaf3, type: 2}
+  agent: {fileID: 645919149357938216}
   currentState: 0
   unitSide: 1
-  logCurrentState: 0
-  childModel: {fileID: 0}
-  unitValues: {fileID: 11400000, guid: e219bac206ce0fe4dbede10ab28efaf3, type: 2}
-  agent: {fileID: 0}
-  disabled: 0
-  enablePoolLogging: 0
-  health: 0
-  onUnitDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
-  onProjectileSpawned:
-    m_PersistentCalls:
-      m_Calls: []
-  projectileContainer: {fileID: 0}
   closestTargetPastPosition: {x: 0, y: 0, z: 0}
   closestTarget: {x: 0, y: 0, z: 0}
   projectiles: []
@@ -96,14 +87,15 @@ MonoBehaviour:
   debug: 0
   relativeVelocity: 0
   targetDistance: 0
+  onUnitDestroyed:
+    m_PersistentCalls:
+      m_Calls: []
+  onProjectileSpawned:
+    m_PersistentCalls:
+      m_Calls: []
   onUnitEngaged:
     m_PersistentCalls:
       m_Calls: []
-  colliders:
-  - {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!65 &5108977575048652193
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -165,7 +157,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 3295627946928928103}
-  m_Mesh: {fileID: -2432090755550338912, guid: a44343f1be9018e41b0e6d050ec5f9b3, type: 3}
+  m_Mesh: {fileID: -2432090755550338912, guid: e8980af8fd3f0624a9c080d2532e0c74, type: 3}
 --- !u!23 &2811310505868416604
 MeshRenderer:
   m_ObjectHideFlags: 0

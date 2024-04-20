@@ -1680,59 +1680,6 @@ MonoBehaviour:
   m_Center: {x: 0.010093331, y: 0.040204376, z: -0.04291427}
   m_Area: 1
   m_AffectedAgents: ffffffff
---- !u!1 &399122952
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 399122954}
-  - component: {fileID: 399122953}
-  m_Layer: 0
-  m_Name: TaskForceManager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &399122953
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399122952}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: df557c57393ec2e49b0f774761346045, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  spawner: {fileID: 1713200678}
-  allyMask:
-    serializedVersion: 2
-    m_Bits: 128
-  enemyMask:
-    serializedVersion: 2
-    m_Bits: 64
-  allyTaskForces: []
-  enemyTaskForces: []
---- !u!4 &399122954
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 399122952}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1670.8885, y: 785.05096, z: 662.2743}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &438082947
 GameObject:
   m_ObjectHideFlags: 0
@@ -6987,6 +6934,5 @@ SceneRoots:
   - {fileID: 1426129219}
   - {fileID: 567587455}
   - {fileID: 793203629}
-  - {fileID: 399122954}
   - {fileID: 1544278193}
   - {fileID: 438082948}

@@ -73,9 +73,9 @@ MonoBehaviour:
   currentState: 0
   unitSide: 0
   logCurrentState: 0
-  childModel: {fileID: 0}
+  childModel: {fileID: 8736844335699721627}
   unitValues: {fileID: 11400000, guid: ed1aaea98f4c0e144b4594e01ca890a8, type: 2}
-  agent: {fileID: 0}
+  agent: {fileID: 645919149357938216}
   disabled: 0
   enablePoolLogging: 0
   health: 0

@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -15,40 +16,49 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public class AiController : MonoBehaviour
 {
-    public TaskForceController unitTaskForce;
-    public enum AiState { Idle, Moving, Combat, Retreat }
-    public AiState currentState = AiState.Idle;
-    public enum Side { Ally, Enemy }
-    public Side unitSide;
-    public bool logCurrentState = false;
-    public Transform childModel;
-    public Unit unitValues;
-    public NavMeshAgent agent;
-    public bool disabled;
-    public bool enablePoolLogging;
-    public int health;
-    private float cooldownRemaining;
-    private bool onCooldown;
+    [Header("Miscellaneous:")]
+    [SerializeField] private bool disabled = false;
+    [SerializeField] private bool debug = false;
+    [SerializeField] private bool logCurrentState = false;
+    [SerializeField] private bool enablePoolLogging = false;
+
+    [Header("Components:")]
+    [SerializeField] protected Transform childModel;
+    [SerializeField] protected Unit unitValues;
+    [SerializeField] protected NavMeshAgent agent;
+
+    
+    [Header("States:")]
+    [SerializeField] protected AiState currentState = AiState.Idle;
+    [SerializeField] protected Side unitSide;
+    protected enum AiState { Idle, Moving, Combat, Retreat }
+    protected enum Side { Ally, Enemy }
+
+    public int Health { get => health; }
+    public TaskForceController UnitTaskForce { get => unitTaskForce; }
+    public Unit Values { get => unitValues; }
+    public NavMeshAgent Agent { get => agent; }
+
+    protected GameObject[] projectiles;
+    protected TaskForceController unitTaskForce;
+    protected GameObject projectileContainer;
+    protected GameObject facingObject;
+    protected ProjectilePool pool;
+    protected AiController target;
+    protected Vector3 closestTargetPastPosition;
+    protected Vector3 closestTarget;
+    protected int health;
+    protected float cooldownRemaining;
+    protected bool onCooldown;
+    protected float targetSpeed;
+    protected float ownSpeed;
+    protected float targetRelativeVelocity;
+    protected float targetDistance;
+
+    [Header("Events:")]
     public UnityEvent<GameObject> onUnitDestroyed = new();
     public UnityEvent<GameObject> onProjectileSpawned = new();
-    public GameObject projectileContainer;
-    public Vector3 closestTargetPastPosition;
-    public Vector3 closestTarget;
-    public GameObject[] projectiles;
-    public float targetSpeed;
-    public float ownSpeed;
-    public GameObject facingObject;
-    private ProjectilePool pool;
-    public AiController target;
-    public bool debug = false;
-    public float relativeVelocity;
-    public float targetDistance;
-
     public UnityEvent<TaskForceController> onUnitEngaged = new();
-
-
-    public Collider[] colliders = new Collider[1];
-    public LayerMask targetMask = new();
 
 
 
@@ -75,124 +85,15 @@ public class AiController : MonoBehaviour
         }
         
         controller.health = controller.unitValues.health;
-        controller.agent = controller.GetComponent<NavMeshAgent>();
         controller.agent.speed = controller.unitValues.unitSpeed;
         controller.agent.stoppingDistance = controller.unitValues.attackDistance;
         controller.agent.acceleration = controller.unitValues.acceleration;
 
-
-        controller.childModel = controller.GetComponentInChildren<Transform>();
-
         controller.pool = new(controller.unitValues.projectileLifeSpan, controller.unitValues.attackCooldown);
         controller.projectiles = controller.pool.GetPool();
 
-        //controller.StartCoroutine(controller.SpotForTargets());
         return controller;
     }
-
-    //public void Init(TaskForceController taskForce, AiManager manager, GameObject projectileContainer)
-    //{
-    //    this.unitTaskForce = taskForce;
-    //    this.aiManager = manager;
-    //    this.projectileContainer = projectileContainer;
-
-    //    health = unitValues.health;
-
-    //    if (gameObject.CompareTag("Ally"))
-    //        unitSide = Side.Ally;
-
-    //    else if (gameObject.CompareTag("Enemy"))
-    //        unitSide = Side.Enemy;
-
-    //    agent = GetComponent<NavMeshAgent>();
-    //    agent.speed = unitValues.unitSpeed;
-    //    agent.stoppingDistance = unitValues.attackDistance;
-    //    agent.acceleration = unitValues.acceleration;
-
-
-    //    childModel = GetComponentInChildren<Transform>();
-
-    //    pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
-    //    projectiles = pool.GetPool();
-
-    //    StartCoroutine(SpotForTargets());
-    //}
-
-
-    //private IEnumerator SpotForTargets()
-    //{
-    //    if (debug)
-    //        Debug.Log("starting spotting coroutine");
-
-    //    WaitForSeconds interval = new(1);
-
-
-            
-
-    //    if (gameObject.CompareTag("Ally"))
-    //        targetMask = LayerMask.GetMask("Enemies");
-    //    else if (gameObject.CompareTag("Enemy"))
-    //        targetMask = LayerMask.GetMask("Allies");
-
-
-    //    while (true)
-    //    {
-    //        if (currentState != AiState.Combat)
-    //        {
-    //            if (debug)
-    //                Debug.Log("spotting...");
-
-    //            int count = Physics.OverlapSphereNonAlloc(transform.position, unitValues.spotDistance, colliders, targetMask);
-    //            if (count > 0)
-    //            {
-    //                if (debug)
-    //                    Debug.Log("enemy spotted");
-
-    //                TaskForceController enemyTaskForce = colliders[0].gameObject.GetComponent<AiController>().unitTaskForce;
-    //                onTaskForceSpotted?.Invoke(enemyTaskForce);
-    //            }
-    //            else if (count == 0)
-    //            {
-    //                if (debug)
-    //                    Debug.Log("no enemies spotted");
-    //            }
-    //        }
-
-    //        else if (currentState == AiState.Combat)
-    //        {
-    //            if (debug)
-    //                Debug.Log("combat state, waiting to exit state");
-    //        }
-
-    //        yield return interval;
-    //    }
-    //}
-
-
-
-
-
-    //private void Start()
-    //{
-    //    health = unitValues.health;
-
-    //    if (gameObject.CompareTag("Ally"))
-    //        unitSide = Side.Ally;
-
-    //    else if (gameObject.CompareTag("Enemy"))
-    //        unitSide = Side.Enemy;
-
-    //    agent = GetComponent<NavMeshAgent>();
-    //    agent.speed = unitValues.unitSpeed;
-    //    agent.stoppingDistance = unitValues.attackDistance;
-    //    agent.acceleration = unitValues.acceleration;
-
-
-    //    childModel = GetComponentInChildren<Transform>();
-
-    //    pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
-    //    projectiles = pool.GetPool();
-    //}
 
 
     private void Update()
@@ -205,11 +106,11 @@ public class AiController : MonoBehaviour
         if (target)
         {
             Vector3 velocityVector = agent.velocity - target.agent.velocity;
-            relativeVelocity = velocityVector.magnitude;
+            targetRelativeVelocity = velocityVector.magnitude;
         } 
         else
         {
-            relativeVelocity = 0;
+            targetRelativeVelocity = 0;
         }
         ownSpeed = agent.velocity.magnitude;
 
@@ -329,19 +230,6 @@ public class AiController : MonoBehaviour
         else
             friendly = true;
 
-        //GameObject projectile = ProjectilePooling.GetProjectile(friendly);
-        //if (projectile)
-        //{
-        //    projectile.transform.position = transform.position;
-        //    projectile.transform.rotation = SetProjectileRotation();
-        //    projectile.SetActive(true);
-        //}
-
-        //else
-        //{
-        //    SpawnProjectile(friendly);
-        //}
-
         GameObject projectile;
         if (pool.TryGetProjectile(out projectile))
         {
@@ -429,7 +317,7 @@ public class AiController : MonoBehaviour
         {
             //agent.acceleration = 10000;
             if (target != null && targetDistance > unitValues.attackDistance)
-                agent.stoppingDistance = relativeVelocity * 2;
+                agent.stoppingDistance = targetRelativeVelocity * 2;
 
             SetState(AiState.Combat);
         }
@@ -470,10 +358,4 @@ public class AiController : MonoBehaviour
     {
         Destroy(gameObject);
     }
-
-    //public void ClearProjectilePool()
-    //{
-    //    Debug.Log("clearing pool for unit: " + name);
-    //    pool.DestroyProjectiles();
-    //}
 }
