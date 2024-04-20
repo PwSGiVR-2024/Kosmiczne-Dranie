@@ -298,7 +298,10 @@ public class TaskForceController : MonoBehaviour
     public void AddUnit(GameObject unit)
     {
         units.Add(unit);
-        controllers.Add(unit.GetComponent<AiController>());
+        AiController unitController = unit.GetComponent<AiController>();
+        unitController.UnitTaskForce = this;
+        controllers.Add(unitController);
+
         //OnSizeChanged?.Invoke(units.Count);
 
         SetNewSpotDistance();
@@ -312,7 +315,6 @@ public class TaskForceController : MonoBehaviour
             
 
         // jeœli jednostka zostanie zniszczona, trzeba to odzwierciedliæ w tym taskForce
-        AiController unitController = unit.GetComponent<AiController>();
         unitController.onUnitDestroyed.AddListener(RemoveUnitFromTaskForce);
         unitController.onUnitEngaged.AddListener(SetTarget);
     }
@@ -378,6 +380,9 @@ public class TaskForceController : MonoBehaviour
     // fleetManger subskrybuje ten event kiedy taskForce zostanie stworzony
     public void DestroyTaskForce()
     {
+        if (debug)
+            Debug.Log("destroying task force " + name);
+
         onTaskForceDestroyed?.Invoke(this);
         ClearDeactivatedUnits();
         Destroy(icon);
@@ -445,9 +450,15 @@ public class TaskForceController : MonoBehaviour
         if (controllers.Count == 0)
             return;
 
+        if (controllers[index] == null)
+        {
+            controllers.RemoveAt(index);
+            return;
+        }
+
         if (index == controllers.Count - 1)
         {
-            if (!controllers[index].gameObject.activeSelf)
+            if (!controllers[index].gameObject.activeSelf && controllers[index] != null)
             {
                 if (debug)
                     Debug.Log("Destroying: " + controllers[index].name);
@@ -461,7 +472,7 @@ public class TaskForceController : MonoBehaviour
 
         else
         {
-            if (!controllers[index].gameObject.activeSelf)
+            if (!controllers[index].gameObject.activeSelf && controllers[index] != null)
             {
 
 

@@ -10,8 +10,8 @@ GameObject:
   m_Component:
   - component: {fileID: 1918876369271580627}
   - component: {fileID: 645919149357938216}
-  - component: {fileID: 6534507268359132799}
   - component: {fileID: 8800178573030612678}
+  - component: {fileID: 2915173169156331830}
   m_Layer: 0
   m_Name: allrounder
   m_TagString: Ally
@@ -28,11 +28,11 @@ Transform:
   m_GameObject: {fileID: 1884448166627179468}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 1, z: 0}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 8736844335699721627}
+  - {fileID: 8875880617870411380}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!195 &645919149357938216
@@ -44,7 +44,7 @@ NavMeshAgent:
   m_GameObject: {fileID: 1884448166627179468}
   m_Enabled: 1
   m_AgentTypeID: -1372625422
-  m_Radius: 1
+  m_Radius: 2
   m_Speed: 4
   m_Acceleration: 10000
   avoidancePriority: 50
@@ -57,53 +57,6 @@ NavMeshAgent:
   m_BaseOffset: 1
   m_WalkableMask: 4294967295
   m_ObstacleAvoidanceType: 0
---- !u!114 &6534507268359132799
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1884448166627179468}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e81dfa188770fed4ba1672f97bd15c4d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  unitTaskForce: {fileID: 0}
-  currentState: 0
-  unitSide: 0
-  logCurrentState: 0
-  childModel: {fileID: 8736844335699721627}
-  unitValues: {fileID: 11400000, guid: ee062f304e3bfca4c814ac170181e9d8, type: 2}
-  agent: {fileID: 645919149357938216}
-  disabled: 0
-  enablePoolLogging: 0
-  health: 0
-  onUnitDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
-  onProjectileSpawned:
-    m_PersistentCalls:
-      m_Calls: []
-  projectileContainer: {fileID: 0}
-  closestTargetPastPosition: {x: 0, y: 0, z: 0}
-  closestTarget: {x: 0, y: 0, z: 0}
-  projectiles: []
-  targetSpeed: 0
-  ownSpeed: 0
-  facingObject: {fileID: 0}
-  target: {fileID: 0}
-  debug: 0
-  relativeVelocity: 0
-  targetDistance: 0
-  onUnitEngaged:
-    m_PersistentCalls:
-      m_Calls: []
-  colliders:
-  - {fileID: 0}
-  targetMask:
-    serializedVersion: 2
-    m_Bits: 0
 --- !u!65 &8800178573030612678
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -123,9 +76,40 @@ BoxCollider:
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
-  m_Size: {x: 2, y: 2, z: 2}
+  m_Size: {x: 4, y: 2, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!1 &3295627946928928103
+--- !u!114 &2915173169156331830
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884448166627179468}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6acfcaab9616a974680601afa37ba8d6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  disabled: 0
+  debug: 0
+  logCurrentState: 0
+  enablePoolLogging: 0
+  childModel: {fileID: 8875880617870411380}
+  unitValues: {fileID: 11400000, guid: ee062f304e3bfca4c814ac170181e9d8, type: 2}
+  agent: {fileID: 645919149357938216}
+  currentState: 0
+  unitSide: 0
+  unitTaskForce: {fileID: 0}
+  onUnitDestroyed:
+    m_PersistentCalls:
+      m_Calls: []
+  onProjectileSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  onUnitEngaged:
+    m_PersistentCalls:
+      m_Calls: []
+--- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -133,46 +117,38 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 8736844335699721627}
-  - component: {fileID: 7048143824122834791}
-  - component: {fileID: 2811310505868416604}
+  - component: {fileID: 8875880617870411380}
+  - component: {fileID: 7294347076784777128}
+  - component: {fileID: 8107042551590850482}
   m_Layer: 0
-  m_Name: Capsule
+  m_Name: mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &8736844335699721627
+--- !u!4 &8875880617870411380
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3295627946928928103}
+  m_GameObject: {fileID: 2097357443315631661}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: -0.282, z: 0}
-  m_LocalScale: {x: 0.5, y: 0.5, z: 0.5}
+  m_LocalPosition: {x: 0, y: -3, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 1918876369271580627}
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!33 &7048143824122834791
-MeshFilter:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3295627946928928103}
-  m_Mesh: {fileID: -2432090755550338912, guid: e8980af8fd3f0624a9c080d2532e0c74, type: 3}
---- !u!23 &2811310505868416604
+--- !u!23 &7294347076784777128
 MeshRenderer:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3295627946928928103}
+  m_GameObject: {fileID: 2097357443315631661}
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
@@ -208,3 +184,11 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!33 &8107042551590850482
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2097357443315631661}
+  m_Mesh: {fileID: -2432090755550338912, guid: e8980af8fd3f0624a9c080d2532e0c74, type: 3}

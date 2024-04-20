@@ -14,18 +14,18 @@ using static UnityEditor.PlayerSettings;
 // wiele jedostek wchodzi w sk³ad TaskForceController
 
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
-public class AiController : MonoBehaviour
+public abstract class AiController : MonoBehaviour
 {
     [Header("Miscellaneous:")]
-    [SerializeField] private bool disabled = false;
-    [SerializeField] private bool debug = false;
-    [SerializeField] private bool logCurrentState = false;
-    [SerializeField] private bool enablePoolLogging = false;
+    [SerializeField] protected bool disabled = false;
+    [SerializeField] protected bool debug = false;
+    [SerializeField] protected bool logCurrentState = false;
+    [SerializeField] protected bool enablePoolLogging = false;
 
     [Header("Components:")]
-    [SerializeField] protected Transform childModel;
-    [SerializeField] protected Unit unitValues;
-    [SerializeField] protected NavMeshAgent agent;
+    [SerializeField] private Transform childModel;
+    [SerializeField] private Unit unitValues;
+    [SerializeField] private NavMeshAgent agent;
 
     
     [Header("States:")]
@@ -35,19 +35,19 @@ public class AiController : MonoBehaviour
     protected enum Side { Ally, Enemy }
 
     public int Health { get => health; }
-    public TaskForceController UnitTaskForce { get => unitTaskForce; }
+    public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
     public Unit Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }
 
     protected GameObject[] projectiles;
-    protected TaskForceController unitTaskForce;
-    protected GameObject projectileContainer;
+    [SerializeField] private TaskForceController unitTaskForce;
+    private GameObject projectileContainer;
     protected GameObject facingObject;
     protected ProjectilePool pool;
     protected AiController target;
     protected Vector3 closestTargetPastPosition;
     protected Vector3 closestTarget;
-    protected int health;
+    private int health;
     protected float cooldownRemaining;
     protected bool onCooldown;
     protected float targetSpeed;
@@ -140,17 +140,17 @@ public class AiController : MonoBehaviour
         }
     }
 
-    void IdleState()
+    private void IdleState()
     {
 
     }
 
-    void MovingState()
+    private void MovingState()
     {
 
     }
 
-    void CombatState()
+    private void CombatState()
     {
         if (agent.hasPath)
         {
@@ -188,12 +188,12 @@ public class AiController : MonoBehaviour
 
     }
 
-    void SetState(AiState newState)
+    private void SetState(AiState newState)
     {
         currentState = newState;
     }
 
-    private void Attack()
+    protected void Attack()
     {
         if (onCooldown)
             return;
@@ -323,7 +323,7 @@ public class AiController : MonoBehaviour
         }
     }
 
-    public AiController GetFacingEnemy(float maxDistance)
+    private AiController GetFacingEnemy(float maxDistance)
     {
         RaycastHit hit;
         if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
@@ -335,7 +335,7 @@ public class AiController : MonoBehaviour
         return null;
     }
 
-    public AiController GetTargetEnemy()
+    private AiController GetTargetEnemy()
     {
         Ray ray = new Ray(new Vector3(closestTarget.x, -1, closestTarget.z), Vector3.up);
         RaycastHit hit;
@@ -352,10 +352,5 @@ public class AiController : MonoBehaviour
             Debug.DrawRay(ray.origin, ray.direction, Color.red, 2.0f);
 
         return null;
-    }
-
-    public void DestroyUnit()
-    {
-        Destroy(gameObject);
     }
 }
