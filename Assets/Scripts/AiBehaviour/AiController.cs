@@ -229,7 +229,6 @@ public abstract class AiController : MonoBehaviour
         GameObject projectile = Instantiate(unitValues.projectile, transform.position, SetProjectileRotation());
         projectile.GetComponent<Projectile>().Init(unitValues, friendly, projectileContainer, this);
         return projectile;
-            
     }
 
     private Quaternion SetProjectileRotation()
