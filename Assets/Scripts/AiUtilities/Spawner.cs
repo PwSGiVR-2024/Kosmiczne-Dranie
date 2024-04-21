@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Events;
+using static AiController;
 
 
 // klasa odpowiada za instancjonowanie ka¿dej jednostki oraz Task Forca w œwiecie gry
@@ -20,12 +21,33 @@ public class Spawner : MonoBehaviour
     private int allyCount = 1;
     private int enemyCount = 1;
 
+    private AiController CreateUnit(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer)
+    {
+        GameObject instance = Instantiate(prefab, pos, Quaternion.identity, allyContainer.transform);
+        instance.name = name;
 
+        Side unitSide = Side.Neutral;
+        if (instance.CompareTag("Ally"))
+        {
+            unitSide = Side.Ally;
+            instance.layer = LayerMask.NameToLayer("Allies");
+        }
+
+        else if (instance.CompareTag("Enemy"))
+        {
+            unitSide = Side.Enemy;
+            instance.layer = LayerMask.NameToLayer("Enemies");
+        }
+
+        AiController controller = instance.GetComponent<AiController>();
+        controller.Init(unitSide, taskForce, projectileContainer);
+        return controller;
+    }
 
 
     private AiController SpawnAlly(GameObject prefab, Vector3 pos, TaskForceController taskForce)
     {
-        AiController unit = AiController.Create("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer);
+        AiController unit = CreateUnit("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer);
 
 
         //GameObject currentEntity = Instantiate(prefab, pos, Quaternion.identity, allyContainer.transform);
@@ -58,7 +80,7 @@ public class Spawner : MonoBehaviour
         //enemyCount++;
         //return currentEntity;
 
-        AiController unit = AiController.Create("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer);
+        AiController unit = CreateUnit("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer);
         onAllySpawned?.Invoke(unit.gameObject);
         enemyCount++;
 

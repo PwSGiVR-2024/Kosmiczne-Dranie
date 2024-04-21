@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: kamikaze
   m_EditorClassIdentifier: 
   prefabName: 
-  spotDistance: 10
+  spotDistance: 50
   health: 10
   xp: 0
   projectileDamage: 400
@@ -22,6 +22,7 @@ MonoBehaviour:
   attackCooldown: 0.5
   attackDistance: 10
   unitSpeed: 150
+  stoppingDistance: 0
   angleError: 5
   acceleration: 80
   description: kamikazeeeeeeeeeeee

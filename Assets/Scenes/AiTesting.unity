@@ -1646,69 +1646,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!1 &542842683
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 542842685}
-  - component: {fileID: 542842684}
-  m_Layer: 0
-  m_Name: GameObject
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!114 &542842684
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542842683}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: dd877d122adf5944e8b506e1ebe21d97, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  disabled: 0
-  debug: 0
-  logCurrentState: 0
-  enablePoolLogging: 0
-  childModel: {fileID: 0}
-  unitValues: {fileID: 0}
-  agent: {fileID: 0}
-  currentState: 0
-  unitSide: 0
-  onUnitDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
-  onProjectileSpawned:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitEngaged:
-    m_PersistentCalls:
-      m_Calls: []
-  value: 0
---- !u!4 &542842685
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 542842683}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 163.46774, y: 230.52861, z: -315.8573}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &567587452
 GameObject:
   m_ObjectHideFlags: 0
@@ -3693,16 +3630,16 @@ MonoBehaviour:
   OnStateChange:
     m_PersistentCalls:
       m_Calls: []
-  OnPlaneLeftClick:
+  onPlaneLeftClick:
     m_PersistentCalls:
       m_Calls: []
-  OnPlaneLeftClickCtrl:
+  onPlaneLeftClickCtrl:
     m_PersistentCalls:
       m_Calls: []
-  OnPlaneRightClick:
+  onPlaneRightClick:
     m_PersistentCalls:
       m_Calls: []
-  OnPlaneRightClickCtrl:
+  onPlaneRightClickCtrl:
     m_PersistentCalls:
       m_Calls: []
 --- !u!4 &1203598362
@@ -6484,15 +6421,17 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0d7aa6437e147842891cf6ac4cdd48b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  debug: 0
   targetFrameRate: 0
   spawner: {fileID: 1713200678}
   inputManager: {fileID: 1203598361}
   ally: {fileID: 1884448166627179468, guid: df8e832971f29394abee61a9c91fb1d3, type: 3}
-  allyVariation1: {fileID: 1884448166627179468, guid: 6f583f8e13e10e24d8ff00c63449ac90, type: 3}
-  allyVariation2: {fileID: 1884448166627179468, guid: db2a8726bf5292d4e98d4ea16cb794a1, type: 3}
-  allyVariation3: {fileID: 1884448166627179468, guid: c76b636926d7d904aa3b447c7d89fcf0, type: 3}
-  allyVariation4: {fileID: 1884448166627179468, guid: c8c008151bce37e42813c56155fa2c9b, type: 3}
+  allyVariation1: {fileID: 1884448166627179468, guid: f92cb02458026994e96dc52116e00a35, type: 3}
+  allyVariation2: {fileID: 1884448166627179468, guid: 74aeb1c6dff280b4a9678882d554f121, type: 3}
+  allyVariation3: {fileID: 1884448166627179468, guid: 8cf33cda2cb868249a08e22ee9f9460b, type: 3}
+  allyVariation4: {fileID: 1884448166627179468, guid: b7e1be7fa29a7c548aa85941e673899e, type: 3}
   enemy: {fileID: 1884448166627179468, guid: adcd96daa2c1bf64f9b824cd40ada811, type: 3}
+  debugPrefab: {fileID: 1884448166627179468, guid: 390551d566c8e82448d462f5b46d03a7, type: 3}
   worldSpaceCanvas: {fileID: 1426129218}
   iconPrefab: {fileID: 9173054345054333190, guid: efb0348c3ed9ce14894f69d56fe3c2c3, type: 3}
   iconOffset: {x: 0, y: 20, z: 0}
@@ -6759,4 +6698,3 @@ SceneRoots:
   - {fileID: 793203629}
   - {fileID: 1544278193}
   - {fileID: 438082948}
-  - {fileID: 542842685}

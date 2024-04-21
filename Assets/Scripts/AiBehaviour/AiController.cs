@@ -16,6 +16,25 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
+    private AiController target;
+    private TaskForceController unitTaskForce;
+    private GameObject projectileContainer;
+    private ProjectilePool pool;
+
+    private bool initialized = false;
+    private int health;
+    protected float cooldownRemaining;
+    protected bool onCooldown;
+
+    protected Vector3 closestTargetPastPosition;
+    protected Vector3 closestTargetPosition;
+    protected float targetRelativeVelocity;
+    protected float targetDistance;
+    protected float targetSpeed;
+
+    public enum AiState { Idle, Moving, Combat, Retreat }
+    public enum Side { Ally, Enemy, Neutral }
+
     [Header("Miscellaneous:")]
     [SerializeField] protected bool disabled = false;
     [SerializeField] protected bool debug = false;
@@ -27,99 +46,61 @@ public abstract class AiController : MonoBehaviour
     [SerializeField] private Unit unitValues;
     [SerializeField] private NavMeshAgent agent;
 
-    
     [Header("States:")]
     [SerializeField] protected AiState currentState = AiState.Idle;
     [SerializeField] protected Side unitSide;
-    protected enum AiState { Idle, Moving, Combat, Retreat }
-    protected enum Side { Ally, Enemy }
-
-    public int Health { get => health; }
-    public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
-    public Unit Values { get => unitValues; }
-    public NavMeshAgent Agent { get => agent; }
-
-    protected GameObject[] projectiles;
-    [SerializeField] private TaskForceController unitTaskForce;
-    private GameObject projectileContainer;
-    protected GameObject facingObject;
-    protected ProjectilePool pool;
-    protected AiController target;
-    protected Vector3 closestTargetPastPosition;
-    protected Vector3 closestTarget;
-    private int health;
-    protected float cooldownRemaining;
-    protected bool onCooldown;
-    protected float targetSpeed;
-    protected float ownSpeed;
-    protected float targetRelativeVelocity;
-    protected float targetDistance;
 
     [Header("Events:")]
     public UnityEvent<GameObject> onUnitDestroyed = new();
     public UnityEvent<GameObject> onProjectileSpawned = new();
     public UnityEvent<TaskForceController> onUnitEngaged = new();
+    public UnityEvent<AiState> onStateChanged = new();
 
+    public int Health { get => health; }
+    public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
+    public Unit Values { get => unitValues; }
+    public NavMeshAgent Agent { get => agent; }
+    public AiController Target { get => target; }
 
+    // debug
+    [SerializeField] private float ownSpeed;
+    [SerializeField] private GameObject[] projectiles;
 
-    public static AiController Create(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer)
+    protected abstract void AdditionalInit();
+
+    public void Init(Side side, TaskForceController taskForce, GameObject projectileContainer)
     {
-        GameObject instance = Instantiate(prefab, pos, Quaternion.identity, allyContainer.transform);
-        instance.name = name;
-        AiController controller = instance.GetComponent<AiController>();
-        controller.gameObject.transform.SetParent(allyContainer.transform);
-        controller.unitTaskForce = taskForce;
-        controller.projectileContainer = projectileContainer;
+        if (initialized)
+            return;
 
-        if (controller.CompareTag("Ally"))
-        {
-            controller.unitSide = Side.Ally;
-            instance.layer = 7;
-        }
-            
+        unitSide = side;
+        unitTaskForce = taskForce;
+        this.projectileContainer = projectileContainer;
 
-        else if (controller.CompareTag("Enemy"))
-        {
-            controller.unitSide = Side.Enemy;
-            instance.layer = 6;
-        }
-        
-        controller.health = controller.unitValues.health;
-        controller.agent.speed = controller.unitValues.unitSpeed;
-        controller.agent.stoppingDistance = controller.unitValues.attackDistance;
-        controller.agent.acceleration = controller.unitValues.acceleration;
+        health = unitValues.health;
+        agent.speed = unitValues.unitSpeed;
+        agent.stoppingDistance = unitValues.stoppingDistance;
+        agent.acceleration = unitValues.acceleration;
 
-        controller.pool = new(controller.unitValues.projectileLifeSpan, controller.unitValues.attackCooldown);
-        controller.projectiles = controller.pool.GetPool();
+        pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
+        projectiles = pool.GetPool();
 
-        return controller;
+        AdditionalInit();
+
+        initialized = true;
     }
 
-
-    private void Update()
+    protected void Update()
     {
-        if (enablePoolLogging)
-            pool.EnableLogging();
-
         if (disabled) return;
-
-        if (target)
-        {
-            Vector3 velocityVector = agent.velocity - target.agent.velocity;
-            targetRelativeVelocity = velocityVector.magnitude;
-        } 
-        else
-        {
-            targetRelativeVelocity = 0;
-        }
-        ownSpeed = agent.velocity.magnitude;
-
-        AiController tmp = GetTargetEnemy();
-        if (tmp != null)
-            target = tmp;
 
         if (logCurrentState)
             Debug.Log(currentState);
+
+        if (enablePoolLogging)
+            pool.EnableLogging();
+
+        ownSpeed = Agent.velocity.magnitude;
 
         switch (currentState)
         {
@@ -127,99 +108,97 @@ public abstract class AiController : MonoBehaviour
                 IdleState();
                 break;
 
-
             case AiState.Combat:
+                TryLockTarget();
                 CombatState();
                 break;
 
             case AiState.Moving:
                 MovingState();
                 break;
-
-
         }
     }
 
-    private void IdleState()
+    public void Damage(Projectile projectile)
     {
+        health -= projectile.dmg;
 
-    }
+        if (currentState != AiState.Combat)
+            onUnitEngaged?.Invoke(projectile.shotBy.unitTaskForce);
 
-    private void MovingState()
-    {
-
-    }
-
-    private void CombatState()
-    {
-        if (agent.hasPath)
+        if (health <= 0)
         {
-
-            targetDistance = Vector3.Distance(transform.position, agent.destination);
-
-
-            if (targetDistance <= unitValues.attackDistance)
-            {
-                Vector3 direction = closestTarget - transform.position;
-                direction.y = 0f;
-                direction.Normalize();
-                Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
-                transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 10f * Time.deltaTime);
-                
-                agent.speed = 0;
-                Attack();
-            } 
-            else
-            {
-                agent.speed = unitValues.unitSpeed;
-            }
-
-            //if (childModel)
-            //{
-            //    childModel.LookAt(target.transform.position);
-            //}
-                
-        }
-
-        else
-        {
-            SetState(AiState.Idle);
+            pool.DestroyProjectiles();
+            gameObject.SetActive(false);
+            onUnitDestroyed?.Invoke(gameObject);
         }
 
     }
 
-    private void SetState(AiState newState)
+    public void SetTargetPosition(Vector3 pos)
+    {
+        if (disabled) return;
+
+        closestTargetPastPosition = closestTargetPosition;
+        closestTargetPosition = pos;
+        OnTargetPositionChanged();
+    }
+
+    protected void SetState(AiState newState)
     {
         currentState = newState;
+        onStateChanged?.Invoke(currentState);
     }
 
-    protected void Attack()
+    /// <summary>
+    /// Namierza cel (AiController) na podstawie pozycji closestTargetPosition, jeœli to mo¿liwe
+    /// </summary>
+    protected bool TryLockTarget()
     {
-        if (onCooldown)
-            return;
+        Ray ray = new Ray(new Vector3(closestTargetPosition.x, -1, closestTargetPosition.z), Vector3.up);
+        RaycastHit hit;
 
-        PutProjectile();
-        cooldownRemaining = unitValues.attackCooldown;
+        if (Physics.Raycast(ray, out hit))
+        {
+            if (debug)
+                Debug.DrawRay(ray.origin, ray.direction + new Vector3(0, 10, 0), Color.green, 1);
 
-        StartCoroutine(AttackCooldown());
+            target = hit.collider.gameObject.GetComponent<AiController>();
+            return true;
+        }
+        else
+        {
+            if (debug)
+                Debug.DrawRay(ray.origin, ray.direction + new Vector3(0, 10, 0), Color.red, 1);
+
+            return false;
+        }
     }
 
-    private GameObject SpawnProjectile(bool friendly)
+    protected AiController GetFacingEnemy(float maxDistance)
     {
-        GameObject projectile = Instantiate(unitValues.projectile, transform.position, SetProjectileRotation());
-        projectile.GetComponent<Projectile>().Init(unitValues, friendly, projectileContainer, this);
-        return projectile;
-            
-    }    
+        RaycastHit hit;
+        if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
+        {
+            if (hit.collider.gameObject.CompareTag("Enemy") && gameObject.CompareTag("Ally") ||
+                hit.collider.gameObject.CompareTag("Ally") && gameObject.CompareTag("Enemy"))
 
-    private Quaternion SetProjectileRotation()
+                return hit.collider.gameObject.GetComponent<AiController>();
+        }
+
+        return null;
+    }
+
+    protected void ResetTarget()
     {
-        Quaternion projectileRotation = gameObject.transform.rotation;
+        target = null;
+    }
 
-        float randomAngle = UnityEngine.Random.Range(-unitValues.angleError, unitValues.angleError);
-        projectileRotation *= Quaternion.AngleAxis(randomAngle, Vector3.up);
-
-        return projectileRotation;
+    protected void ResetDestination()
+    {
+        agent.destination = transform.position;
+        agent.speed = unitValues.unitSpeed;
+        agent.stoppingDistance = 0;
     }
 
     private void PutProjectile()
@@ -243,8 +222,24 @@ public abstract class AiController : MonoBehaviour
             projectile = SpawnProjectile(friendly);
             pool.TryPutProjectileInPool(projectile);
         }
+    }
 
+    private GameObject SpawnProjectile(bool friendly)
+    {
+        GameObject projectile = Instantiate(unitValues.projectile, transform.position, SetProjectileRotation());
+        projectile.GetComponent<Projectile>().Init(unitValues, friendly, projectileContainer, this);
+        return projectile;
+            
+    }
 
+    private Quaternion SetProjectileRotation()
+    {
+        Quaternion projectileRotation = gameObject.transform.rotation;
+
+        float randomAngle = UnityEngine.Random.Range(-unitValues.angleError, unitValues.angleError);
+        projectileRotation *= Quaternion.AngleAxis(randomAngle, Vector3.up);
+
+        return projectileRotation;
     }
 
     private IEnumerator AttackCooldown()
@@ -264,37 +259,37 @@ public abstract class AiController : MonoBehaviour
         onCooldown = false;
     }
 
-    public void Damage(Projectile projectile)
+    
+
+    protected virtual void FireProjectile()
     {
-        health -= projectile.dmg;
+        if (onCooldown)
+            return;
 
-        if (currentState != AiState.Combat)
-            onUnitEngaged?.Invoke(projectile.shotBy.unitTaskForce);
-
-        if (health <= 0)
+        float angleToTarget = Vector3.Angle(closestTargetPosition - transform.position, transform.forward);
+        
+        if (angleToTarget <= Values.angleError)
         {
-            pool.DestroyProjectiles();
-            gameObject.SetActive(false);
-            onUnitDestroyed?.Invoke(gameObject);
-            //aiManager.DeactivateUnit(gameObject);
-            //unitTaskForce.DeactivateUnit(this);
-            // Destroy(gameObject);
-        }
+            PutProjectile();
+            cooldownRemaining = unitValues.attackCooldown;
 
+            StartCoroutine(AttackCooldown());
+        }
     }
 
-    public void SetIdleState()
+    public virtual void SetIdleState()
     {
-        if (agent.hasPath)
-            agent.ResetPath();
+        if (disabled) return;
 
-        agent.speed = unitValues.unitSpeed;
-        agent.stoppingDistance = 0;
+        ResetDestination();
+        ResetTarget();
         SetState(AiState.Idle);
     }
 
-    public void SetMovingState(Vector3 destination)
+    public virtual void SetMovingState(Vector3 destination)
     {
+        if (disabled) return;
+
         if (agent.SetDestination(destination))
         {
             agent.acceleration = unitValues.acceleration;
@@ -302,55 +297,25 @@ public abstract class AiController : MonoBehaviour
             agent.stoppingDistance = unitValues.unitSpeed;
             SetState(AiState.Moving);
         }
-            
     }
-
-    public void SetCombatState(Vector3 attackPos)
+    public virtual void SetCombatState()
     {
-        closestTargetPastPosition = closestTarget;
-        closestTarget = attackPos;
-
         if (agent.pathPending || disabled)
             return;
 
-        else if (agent.SetDestination(attackPos))
+        else
         {
-            //agent.acceleration = 10000;
-            if (target != null && targetDistance > unitValues.attackDistance)
-                agent.stoppingDistance = targetRelativeVelocity * 2;
-
+            Agent.stoppingDistance = unitValues.stoppingDistance;
             SetState(AiState.Combat);
         }
+            
     }
 
-    private AiController GetFacingEnemy(float maxDistance)
-    {
-        RaycastHit hit;
-        if (Physics.Raycast(transform.position, transform.forward, out hit, maxDistance))
-        {
-            if (hit.collider.gameObject.CompareTag("Enemy"))
-                return hit.collider.gameObject.GetComponent<AiController>();
-        }
+    protected abstract void IdleState();
 
-        return null;
-    }
+    protected abstract void MovingState();
 
-    private AiController GetTargetEnemy()
-    {
-        Ray ray = new Ray(new Vector3(closestTarget.x, -1, closestTarget.z), Vector3.up);
-        RaycastHit hit;
+    protected abstract void CombatState();
 
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (debug)
-                Debug.DrawRay(ray.origin, ray.direction, Color.green, 2.0f);
-
-            return hit.collider.gameObject.GetComponent<AiController>();
-        }
-
-        if (debug)
-            Debug.DrawRay(ray.origin, ray.direction, Color.red, 2.0f);
-
-        return null;
-    }
+    protected abstract void OnTargetPositionChanged();
 }

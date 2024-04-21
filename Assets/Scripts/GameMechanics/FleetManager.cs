@@ -10,6 +10,7 @@ using UnityEngine.Events;
 // posiada na razie czêœæ zadañ spawnera (np. prefaby jednostek), ale to siê zmieni
 public class FleetManager : MonoBehaviour
 {
+    public bool debug = false;
     public int targetFrameRate = 0;
 
     public Spawner spawner; // skrypt odpowiedzialny za instancjonowanie jednostek
@@ -19,7 +20,8 @@ public class FleetManager : MonoBehaviour
     public GameObject allyVariation2;
     public GameObject allyVariation3;
     public GameObject allyVariation4;
-    public GameObject enemy; 
+    public GameObject enemy;
+    public GameObject debugPrefab;
 
     public Canvas worldSpaceCanvas; // canvas, na którym bêd¹ renderowane ikony ka¿dego taskForca
     public GameObject iconPrefab; // prefab ikony
@@ -49,8 +51,8 @@ public class FleetManager : MonoBehaviour
         // input manager rejestruje rózne wejœcia, na podstawie których fleetManager mo¿e podejmowaæ ró¿ne akcje
         // ale potrzebne s¹ wrappery na metody, bo eventy przenosz¹ RaycastHit, a metody nie potrzebuj¹ takiego parametru (zazwyczaj)
         // albo potrzebuj¹ dodatkowych parametrów
-        inputManager.OnPlaneLeftClickCtrl.AddListener(ActionSpawnTaskForce);
-        inputManager.OnPlaneRightClick.AddListener(ActionSetTaskForceDestinationMultiple);
+        inputManager.onPlaneLeftClickCtrl.AddListener(ActionSpawnTaskForce);
+        inputManager.onPlaneRightClick.AddListener(ActionSetTaskForceDestinationMultiple);
     }
 
     // wrappery na metody
@@ -83,6 +85,16 @@ public class FleetManager : MonoBehaviour
     {
         if (unitsToSpawn < 1)
         {
+            return;
+        }
+
+        if (debug && debugPrefab)
+        {
+            TaskForceController allyTaskForce = spawner.SpawnAllyTaskForce(position, debugPrefab, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
+            allyTaskForceList.Add(allyTaskForce);
+            //taskForceIdList.Add(allyTaskForceCount);
+            allyTaskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
+            allyTaskForceCount++;
             return;
         }
 

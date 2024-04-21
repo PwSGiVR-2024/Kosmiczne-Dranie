@@ -17,6 +17,7 @@ public class Unit : ScriptableObject
     public float attackCooldown;
     public float attackDistance;
     public int unitSpeed;
+    public float stoppingDistance;
     public float angleError;
     public float acceleration;
     public string description;

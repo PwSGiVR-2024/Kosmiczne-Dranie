@@ -195,7 +195,7 @@ public class TaskForceController : MonoBehaviour
             for (int i = 0; i < controllers.Count; i++)
             {
                 if (controllers[i].gameObject.activeSelf && controllers[i].Agent)
-                    controllers[i].SetCombatState(outcomeTargets[i]);
+                    controllers[i].SetTargetPosition(outcomeTargets[i]);
             }
 
             if (currentTarget == null)
@@ -404,7 +404,7 @@ public class TaskForceController : MonoBehaviour
         }
 
         if (commander != null)
-            commander.GetComponent<AiController>().Agent.destination = destination;
+            commander.GetComponent<AiController>().SetMovingState(destination);
     }
 
     public void ResetOrders(Vector3 destination)

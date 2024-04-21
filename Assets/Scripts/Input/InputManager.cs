@@ -18,10 +18,10 @@ public class InputManager : MonoBehaviour
     public InputControl currentState = InputControl.Normal;
     public UnityEvent<InputControl> OnStateChange = new();
 
-    public UnityEvent<RaycastHit> OnPlaneLeftClick = new();
-    public UnityEvent<RaycastHit> OnPlaneLeftClickCtrl = new();
-    public UnityEvent<RaycastHit> OnPlaneRightClick = new();
-    public UnityEvent<RaycastHit> OnPlaneRightClickCtrl = new();
+    public UnityEvent<RaycastHit> onPlaneLeftClick = new();
+    public UnityEvent<RaycastHit> onPlaneLeftClickCtrl = new();
+    public UnityEvent<RaycastHit> onPlaneRightClick = new();
+    public UnityEvent<RaycastHit> onPlaneRightClickCtrl = new();
 
     
 
@@ -57,7 +57,7 @@ public class InputManager : MonoBehaviour
                     RaycastHit hit;
 
                     if (plane.Raycast(ray, out hit, Mathf.Infinity))
-                        OnPlaneLeftClick?.Invoke(hit);
+                        onPlaneLeftClick?.Invoke(hit);
                 }
 
                 if (Input.GetMouseButtonDown(1))
@@ -66,7 +66,7 @@ public class InputManager : MonoBehaviour
                     RaycastHit hit;
 
                     if (plane.Raycast(ray, out hit, Mathf.Infinity))
-                        OnPlaneRightClick?.Invoke(hit);
+                        onPlaneRightClick?.Invoke(hit);
                 }
 
                 break;
@@ -79,7 +79,7 @@ public class InputManager : MonoBehaviour
                     RaycastHit hit;
 
                     if (plane.Raycast(ray, out hit, Mathf.Infinity))
-                        OnPlaneLeftClickCtrl?.Invoke(hit);
+                        onPlaneLeftClickCtrl?.Invoke(hit);
                 }
 
                 if (Input.GetMouseButtonDown(1))
@@ -88,7 +88,7 @@ public class InputManager : MonoBehaviour
                     RaycastHit hit;
 
                     if (plane.Raycast(ray, out hit, Mathf.Infinity))
-                        OnPlaneRightClickCtrl?.Invoke(hit);
+                        onPlaneRightClickCtrl?.Invoke(hit);
                 }
 
                 break;

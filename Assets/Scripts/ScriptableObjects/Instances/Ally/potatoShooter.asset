@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: potatoShooter
   m_EditorClassIdentifier: 
   prefabName: 
-  spotDistance: 0
+  spotDistance: 100
   health: 150
   xp: 0
   projectileDamage: 33

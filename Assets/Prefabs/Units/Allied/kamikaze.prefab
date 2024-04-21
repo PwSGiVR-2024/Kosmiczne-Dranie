@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1918876369271580627}
   - component: {fileID: 645919149357938216}
   - component: {fileID: 8800178573030612678}
-  - component: {fileID: 2915173169156331830}
+  - component: {fileID: 198034525331082112}
   m_Layer: 0
   m_Name: kamikaze
   m_TagString: Ally
@@ -78,7 +78,7 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 2, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2915173169156331830
+--- !u!114 &198034525331082112
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -87,7 +87,7 @@ MonoBehaviour:
   m_GameObject: {fileID: 1884448166627179468}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6acfcaab9616a974680601afa37ba8d6, type: 3}
+  m_Script: {fileID: 11500000, guid: 1735e8b03c2b48347911130ffe01fd20, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   disabled: 0
@@ -99,7 +99,6 @@ MonoBehaviour:
   agent: {fileID: 645919149357938216}
   currentState: 0
   unitSide: 0
-  unitTaskForce: {fileID: 0}
   onUnitDestroyed:
     m_PersistentCalls:
       m_Calls: []
@@ -109,6 +108,11 @@ MonoBehaviour:
   onUnitEngaged:
     m_PersistentCalls:
       m_Calls: []
+  onStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  ownSpeed: 0
+  projectiles: []
 --- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
