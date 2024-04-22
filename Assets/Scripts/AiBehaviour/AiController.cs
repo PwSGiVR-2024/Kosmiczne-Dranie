@@ -53,8 +53,8 @@ public abstract class AiController : MonoBehaviour
     [SerializeField] protected Side unitSide;
 
     [Header("Events:")]
-    public UnityEvent<GameObject> onUnitDestroyed = new();
-    public UnityEvent<GameObject> onProjectileSpawned = new();
+    public UnityEvent<AiController> onUnitNeutralized = new();
+    //public UnityEvent<GameObject> onProjectileSpawned = new();
     public UnityEvent<TaskForceController> onUnitEngaged = new();
     public UnityEvent<AiState> onStateChanged = new();
 
@@ -143,7 +143,7 @@ public abstract class AiController : MonoBehaviour
         {
             pool.DestroyProjectiles();
             gameObject.SetActive(false);
-            onUnitDestroyed?.Invoke(gameObject);
+            onUnitNeutralized?.Invoke(this);
         }
 
     }

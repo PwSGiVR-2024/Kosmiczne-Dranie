@@ -27,7 +27,7 @@ public class TaskForceController : MonoBehaviour
     public bool friendly; // sojusznik/przeciwnik
     public string taskForceName;
     public float strength = 1.0f; // (0.0 - 1.0) si³a taskForca w %
-    public List<GameObject> units = new();
+    //public List<GameObject> units = new();
     public List<AiController> controllers = new();// lista jednostek
 
     // eventy sygnalizuj¹ce jakieœ zmiany. G³ównie przydatne do UI
@@ -96,7 +96,7 @@ public class TaskForceController : MonoBehaviour
                 if (debug)
                     Debug.Log("spotting...");
 
-                int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance, colliders, targetMask);
+                int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance + (float)Math.Sqrt(controllers.Count) * commander.Volume, colliders, targetMask);
                 if (count > 0)
                 {
                     if (debug)
@@ -292,7 +292,7 @@ public class TaskForceController : MonoBehaviour
         if (controllers.Count == 0)
             return;
 
-        if (commander == controllers[index] || !controllers[index].gameObject.activeSelf || controllers[index] == null)
+        if (commander == controllers[index] || !controllers[index].gameObject.activeSelf || controllers[index].gameObject == null)
         {
             FindNextCommanderRecursive(index + 1);
             return;
@@ -302,9 +302,8 @@ public class TaskForceController : MonoBehaviour
     }
 
 
-    public void AddUnit(GameObject unit)
+    public void AddUnit(AiController unit)
     {
-        units.Add(unit);
         AiController unitController = unit.GetComponent<AiController>();
         unitController.UnitTaskForce = this;
         controllers.Add(unitController);
@@ -322,46 +321,46 @@ public class TaskForceController : MonoBehaviour
             
 
         // jeœli jednostka zostanie zniszczona, trzeba to odzwierciedliæ w tym taskForce
-        unitController.onUnitDestroyed.AddListener(RemoveUnitFromTaskForce);
+        unitController.onUnitNeutralized.AddListener(RemoveUnitFromTaskForce);
         unitController.onUnitEngaged.AddListener(SetTarget);
     }
 
     private void SetNewSpotDistance()
     {
-        if (units.Count == 0)
+        if (controllers.Count == 0)
             return;
 
         spotDistance = 0;
 
-        if (units.Count == 1)
+        if (controllers.Count == 1)
         {
-            spotDistance = units[0].GetComponent<AiController>().Values.spotDistance;
+            spotDistance = controllers[0].Values.spotDistance;
             return;
         }
 
         else
         {
             float newSpotDistance;
-            foreach (var unit in units)
+            foreach (var unit in controllers)
             {
-                newSpotDistance = unit.GetComponent<AiController>().Values.spotDistance;
+                newSpotDistance = unit.Values.spotDistance;
                 if (newSpotDistance > spotDistance)
-                    spotDistance = newSpotDistance + (float)Math.Sqrt(units.Count) * 2;
+                    spotDistance = newSpotDistance;
             }
         }
     }
 
-    private void RemoveUnitFromTaskForce(GameObject unit)
+    private void RemoveUnitFromTaskForce(AiController unit)
     {
         //unit.SetActive(false);
 
-        units.Remove(unit);
+        controllers.Remove(unit);
         //controllers.Remove(unit.GetComponent<AiController>());
 
-        if (units.Count == 0)
+        if (controllers.Count == 0)
             DestroyTaskForce();
 
-        float unitSpotDistance = unit.GetComponent<AiController>().Values.spotDistance;
+        float unitSpotDistance = unit.Values.spotDistance;
         if (unitSpotDistance == spotDistance)
             SetNewSpotDistance();
 
@@ -370,7 +369,7 @@ public class TaskForceController : MonoBehaviour
 
         UpdateStrength();
 
-        onSizeChanged?.Invoke(units.Count);
+        onSizeChanged?.Invoke(controllers.Count);
 
         //Destroy(unit);
 
@@ -379,7 +378,7 @@ public class TaskForceController : MonoBehaviour
 
     private void UpdateStrength()
     {
-        strength = (float)units.Count / maxSize;
+        strength = (float)controllers.Count / maxSize;
         onStrengthChanged?.Invoke(strength);
     }
 
@@ -404,10 +403,10 @@ public class TaskForceController : MonoBehaviour
     // dla ka¿dej jednostki ustawia stan "Moving" i randomowy destination w zakresie zale¿nym od wielkoœci taskForce
     public void SetDestination(Vector3 destination)
     {
-        for (int i = 0; i < units.Count; i++)
+        for (int i = 0; i < controllers.Count; i++)
         {
-            if (units[i] != null)
-                units[i].GetComponent<AiController>().SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(units.Count) * commander.Volume));
+            if (controllers[i] != null)
+                controllers[i].SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(controllers.Count) * commander.Volume));
         }
 
         if (commander != null)
@@ -426,14 +425,14 @@ public class TaskForceController : MonoBehaviour
             return;
 
         // potencjalny bug, jeœli iloœæ jednostek w do³¹czanym TaskForce zmniejszy siê w trakcie iteracji
-        for (int i = 0; i < reinforcements.units.Count; i++)
+        for (int i = 0; i < reinforcements.controllers.Count; i++)
         {
-            AddUnit(reinforcements.units[i]);
+            AddUnit(reinforcements.controllers[i]);
         }
 
-        maxSize = units.Count;
+        maxSize = controllers.Count;
         strength = 1.0f;
-        onSizeChanged?.Invoke(units.Count);
+        onSizeChanged?.Invoke(controllers.Count);
         onStrengthChanged?.Invoke(strength);
         reinforcements.DestroyTaskForce();
     }

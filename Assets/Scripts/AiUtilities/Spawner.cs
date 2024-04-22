@@ -77,7 +77,7 @@ public class Spawner : MonoBehaviour
         TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, allyTaskForceContainer);
 
         AiController commander = SpawnAlly(unitPrefab, pos, taskForce);
-        taskForce.AddUnit(commander.gameObject);
+        taskForce.AddUnit(commander);
 
         // randomowa pozycja jednostki jest ustawiana w zale¿noœci od ilosci spawnowanych jednostek
         float range = 0;
@@ -91,7 +91,7 @@ public class Spawner : MonoBehaviour
         for (int i = 1; i < unitsToSpawn; i++)
         {
             AiController ally = SpawnAlly(unitPrefab, GameUtils.RandomPlanePositionCircle(pos, range), taskForce);
-            taskForce.AddUnit(ally.gameObject);
+            taskForce.AddUnit(ally);
         }
 
         onAllyTaskForceSpawned?.Invoke(taskForce);
@@ -109,7 +109,7 @@ public class Spawner : MonoBehaviour
         TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, enemyTaskForceContainer);
 
         AiController commander = SpawnEnemy(unitPrefab, pos, taskForce);
-        taskForce.AddUnit(commander.gameObject);
+        taskForce.AddUnit(commander);
 
         // randomowa pozycja jednostki jest ustawiana w zale¿noœci od ilosci spawnowanych jednostek
         float range = 0;
@@ -123,7 +123,7 @@ public class Spawner : MonoBehaviour
         for (int i = 1; i < unitsToSpawn; i++)
         {
             AiController enemy = SpawnEnemy(unitPrefab, GameUtils.RandomPlanePositionCircle(pos, range), taskForce);
-            taskForce.AddUnit(enemy.gameObject);
+            taskForce.AddUnit(enemy);
         }
 
         onEnemyTaskForceSpawned?.Invoke(taskForce);

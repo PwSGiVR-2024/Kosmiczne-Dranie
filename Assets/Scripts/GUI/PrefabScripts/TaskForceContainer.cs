@@ -41,7 +41,7 @@ public class TaskForceContainer : MonoBehaviour
         taskForce = tf;
 
         taskForceName.text = taskForce.taskForceName;
-        size.text = taskForce.units.Count.ToString();
+        size.text = taskForce.controllers.Count.ToString();
         strength.text = taskForce.strength * 100 + "%";
 
         taskForce.onTaskForceDestroyed.AddListener(RemoveSelf); // taskForce posiada eventy sygnalizuj¹ce zmianê jakichœ atrybutów/parametrów. Element UI powinien to odzwierciedlaæ

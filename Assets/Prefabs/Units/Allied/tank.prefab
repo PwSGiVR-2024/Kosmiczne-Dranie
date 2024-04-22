@@ -99,16 +99,17 @@ MonoBehaviour:
   agent: {fileID: 645919149357938216}
   currentState: 0
   unitSide: 0
-  unitTaskForce: {fileID: 0}
   onUnitDestroyed:
-    m_PersistentCalls:
-      m_Calls: []
-  onProjectileSpawned:
     m_PersistentCalls:
       m_Calls: []
   onUnitEngaged:
     m_PersistentCalls:
       m_Calls: []
+  onStateChanged:
+    m_PersistentCalls:
+      m_Calls: []
+  ownSpeed: 0
+  projectiles: []
 --- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
