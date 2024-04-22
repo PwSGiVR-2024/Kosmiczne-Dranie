@@ -15,14 +15,6 @@ public class FleetManager : MonoBehaviour
 
     public Spawner spawner; // skrypt odpowiedzialny za instancjonowanie jednostek
     public InputManager inputManager; // skrpyt odpowiedzialny za input gracza
-    public GameObject ally; // prefaby jednostek (rozwi¹zanie tymczasowe)
-    public GameObject allyVariation1;
-    public GameObject allyVariation2;
-    public GameObject allyVariation3;
-    public GameObject allyVariation4;
-    public GameObject enemy;
-    public GameObject debugPrefab;
-
     public Canvas worldSpaceCanvas; // canvas, na którym bêd¹ renderowane ikony ka¿dego taskForca
     public GameObject iconPrefab; // prefab ikony
     public Vector3 iconOffset = new(0, 20, 0); // offset ikony, ¿eby by³a renderowana trochê wy¿ej
@@ -83,72 +75,23 @@ public class FleetManager : MonoBehaviour
     // spawner instancjonuje taskForca i jednostki. Listy fleetManagera s¹ updateowane
     public void SpawnTaskForce(Vector3 position)
     {
-        if (unitsToSpawn < 1)
-        {
-            return;
-        }
+        TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
+        taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
 
-        if (debug && debugPrefab)
+        if (taskForce.friendly)
         {
-            TaskForceController allyTaskForce = spawner.SpawnAllyTaskForce(position, debugPrefab, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-            allyTaskForceList.Add(allyTaskForce);
-            //taskForceIdList.Add(allyTaskForceCount);
-            allyTaskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
+            allyTaskForceList.Add(taskForce);
+            taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
             allyTaskForceCount++;
-            return;
         }
-
-        switch (unitToSpawn)
+        else if (!taskForce.friendly)
         {
-            case UnitType.Allrounder:
-                TaskForceController allyTaskForce = spawner.SpawnAllyTaskForce(position, ally, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                allyTaskForceList.Add(allyTaskForce);
-                //taskForceIdList.Add(allyTaskForceCount);
-                allyTaskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                allyTaskForceCount++;
-                break;
-
-            case UnitType.Sniper:
-                TaskForceController allyTaskForce1 = spawner.SpawnAllyTaskForce(position, allyVariation1, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                allyTaskForceList.Add(allyTaskForce1);
-                //taskForceIdList.Add(allyTaskForceCount);
-                allyTaskForce1.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                allyTaskForceCount++;
-                break;
-
-            case UnitType.Tank:
-                TaskForceController allyTaskForce2 = spawner.SpawnAllyTaskForce(position, allyVariation2, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                allyTaskForceList.Add(allyTaskForce2);
-                //taskForceIdList.Add(allyTaskForceCount);
-                allyTaskForce2.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                allyTaskForceCount++;
-                break;
-
-            case UnitType.Potato:
-                TaskForceController allyTaskForce3 = spawner.SpawnAllyTaskForce(position, allyVariation3, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                allyTaskForceList.Add(allyTaskForce3);
-                //taskForceIdList.Add(allyTaskForceCount);
-                allyTaskForce3.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                allyTaskForceCount++;
-                break;
-
-            case UnitType.Kamikaze:
-                TaskForceController allyTaskForce4 = spawner.SpawnAllyTaskForce(position, allyVariation4, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                allyTaskForceList.Add(allyTaskForce4);
-                //taskForceIdList.Add(allyTaskForceCount);
-                allyTaskForce4.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                allyTaskForceCount++;
-                break;
-
-            case UnitType.Enemy:
-                TaskForceController enemyTaskForce = spawner.SpawnEnemyTaskForce(position, enemy, unitsToSpawn, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
-                enemyTaskForceList.Add(enemyTaskForce);
-                enemyTaskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
-                enemyTaskForceCount++;
-                break;
-
+            enemyTaskForceList.Add(taskForce);
+            taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
+            enemyTaskForceCount++;
         }
     }
+
 
     private void RemoveTaskForce(TaskForceController taskForce)
     {
@@ -165,4 +108,6 @@ public class FleetManager : MonoBehaviour
 
         //Destroy(taskForce);
     }
+
+    
 }

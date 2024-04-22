@@ -16,6 +16,8 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
+    private float volume;
+
     private AiController target;
     private TaskForceController unitTaskForce;
     private GameObject projectileContainer;
@@ -61,6 +63,7 @@ public abstract class AiController : MonoBehaviour
     public Unit Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }
     public AiController Target { get => target; }
+    public float Volume {  get => volume; }
 
     // debug
     [SerializeField] private float ownSpeed;
@@ -84,6 +87,16 @@ public abstract class AiController : MonoBehaviour
 
         pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
         projectiles = pool.GetPool();
+
+
+        Collider col = gameObject.GetComponent<Collider>();
+        float volX = col.bounds.size.x;
+        float volZ = col.bounds.size.z;
+
+        if (volX > volZ)
+            volume = volX;
+        else
+            volume = volZ;
 
         AdditionalInit();
 

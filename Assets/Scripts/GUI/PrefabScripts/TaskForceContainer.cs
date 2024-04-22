@@ -71,7 +71,7 @@ public class TaskForceContainer : MonoBehaviour
     // Skupia kamerê na danym taskForce, work in progress
     public void FocusCamera()
     {
-        if (taskForce.commander != null && taskForce.commander.activeSelf)
+        if (taskForce.commander != null && taskForce.commander.gameObject.activeSelf)
             Camera.main.transform.LookAt(taskForce.commander.transform.position);
     }
 

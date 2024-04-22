@@ -17,7 +17,8 @@ public class TaskForceController : MonoBehaviour
 {
     public bool debug = false;
 
-    public GameObject commander; // jednostka dowodz¹ca. Potrzebne tak naprawdê tylko dlatego, ¿eby ikona taskForca mog³a coœ followowaæ
+    public AiController commander;
+    //public GameObject commander; // jednostka dowodz¹ca. Potrzebne tak naprawdê tylko dlatego, ¿eby ikona taskForca mog³a coœ followowaæ
     public GameObject icon; // atrybuty przypisywane podczas instancjonowania
     public Vector3 iconOffset;
 
@@ -85,6 +86,11 @@ public class TaskForceController : MonoBehaviour
 
         while (true)
         {
+            if (commander == null)
+            {
+                yield return interval;
+            }
+
             if (currentStatus != Status.Combat)
             {
                 if (debug)
@@ -256,7 +262,8 @@ public class TaskForceController : MonoBehaviour
 
     public void Update()
     {
-        GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);
+        if (commander)
+            GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);
 
         UpdateHUD();
         //ClearDeactivatedUnitsRecursive();
@@ -282,16 +289,16 @@ public class TaskForceController : MonoBehaviour
 
     private void FindNextCommanderRecursive(int index)
     {
-        if (units.Count == 0)
+        if (controllers.Count == 0)
             return;
 
-        if (commander == units[index] || !units[index].activeSelf || units[index] == null)
+        if (commander == controllers[index] || !controllers[index].gameObject.activeSelf || controllers[index] == null)
         {
             FindNextCommanderRecursive(index + 1);
             return;
         }
 
-        commander = units[index];
+        commander = controllers[index];
     }
 
 
@@ -307,9 +314,9 @@ public class TaskForceController : MonoBehaviour
         SetNewSpotDistance();
 
 
-        if (units.Count == 1)
+        if (controllers.Count == 1)
         {
-            commander = unit;
+            commander = unitController;
             StartCoroutine(SpotForTargets());
         }
             
@@ -400,7 +407,7 @@ public class TaskForceController : MonoBehaviour
         for (int i = 0; i < units.Count; i++)
         {
             if (units[i] != null)
-                units[i].GetComponent<AiController>().SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(units.Count) * 2));
+                units[i].GetComponent<AiController>().SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(units.Count) * commander.Volume));
         }
 
         if (commander != null)
