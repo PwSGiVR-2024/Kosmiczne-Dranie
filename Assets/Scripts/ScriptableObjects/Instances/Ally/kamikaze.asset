@@ -22,8 +22,8 @@ MonoBehaviour:
   attackCooldown: 0.5
   attackDistance: 10
   unitSpeed: 150
-  stoppingDistance: 0
   angleError: 5
   acceleration: 80
+  angularSpeed: 180
   description: kamikazeeeeeeeeeeee
   projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}

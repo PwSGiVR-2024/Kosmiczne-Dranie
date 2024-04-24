@@ -5,17 +5,13 @@ using static UnityEngine.GraphicsBuffer;
 
 public class BasicUnitController : AiController
 {
-    /// <summary>
-    /// Kalibruje stoppingDistance Agenta na podstawie relatywnej prêdkoœci do namierzonego celu. Zapobiega zbytniemu zbli¿eniu siê do celu, jeœli obie jednostki zmierzaj¹ naprzeciwko siebie.
-    /// </summary>
-    private void CalibrateStoppingDistance()
+    private void RotateToTarget()
     {
-        if (Target == null)
-            return;
-
-        Vector3 velocityVector = Agent.velocity - Target.Agent.velocity;
-        targetRelativeVelocity = velocityVector.magnitude;
-        Agent.stoppingDistance = targetRelativeVelocity * 2;
+        Vector3 direction = ClosestTargetPosition - transform.position;
+        direction.y = 0f;
+        direction.Normalize();
+        Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 10f * Time.deltaTime);
     }
 
     protected override void AdditionalInit()
@@ -25,25 +21,10 @@ public class BasicUnitController : AiController
 
     protected override void CombatState()
     {
-        CalibrateStoppingDistance();
-
-        targetDistance = Vector3.Distance(transform.position, Agent.destination);
-
-        if (targetDistance <= Values.attackDistance)
+        if (TargetDistance <= Values.attackDistance)
         {
-            Agent.speed = 0;
-
-            Vector3 direction = closestTargetPosition - transform.position;
-            direction.y = 0f;
-            direction.Normalize();
-            Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
-            transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 10f * Time.deltaTime);
-            
+            RotateToTarget();
             FireProjectile();
-        }
-        else
-        {
-            Agent.speed = Values.unitSpeed;
         }
     }
 
@@ -61,12 +42,7 @@ public class BasicUnitController : AiController
     protected override void OnTargetPositionChanged()
     {
         SetCombatState();
-        Agent.SetDestination(closestTargetPosition);
-    }
-
-    protected override void FireProjectile()
-    {
-        base.FireProjectile();
+        Agent.SetDestination(ClosestTargetPosition);
     }
 
     public override void SetCombatState()

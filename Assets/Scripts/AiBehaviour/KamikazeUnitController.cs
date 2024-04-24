@@ -4,7 +4,14 @@ using UnityEngine;
 
 public class KamikazeUnitController : AiController
 {
+    protected override float StoppingDistanceFormula()
+    {
+        if (CurrentState == AiState.Combat)
+            return 0;
 
+        else
+            return Values.unitSpeed;
+    }
 
     protected override void AdditionalInit()
     {
@@ -13,7 +20,7 @@ public class KamikazeUnitController : AiController
 
     protected override void CombatState()
     {
-        float targetDistance = Vector3.Distance(transform.position, closestTargetPosition);
+        float targetDistance = Vector3.Distance(transform.position, ClosestTargetPosition);
 
         if (targetDistance <= Values.attackDistance)
             FireProjectile();
@@ -32,6 +39,6 @@ public class KamikazeUnitController : AiController
     protected override void OnTargetPositionChanged()
     {
         SetCombatState();
-        Agent.SetDestination(closestTargetPosition);
+        Agent.SetDestination(ClosestTargetPosition);
     }
 }

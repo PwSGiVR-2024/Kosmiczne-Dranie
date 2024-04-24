@@ -16,8 +16,6 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
-    private float volume;
-
     private AiController target;
     private TaskForceController unitTaskForce;
     private GameObject projectileContainer;
@@ -25,14 +23,15 @@ public abstract class AiController : MonoBehaviour
 
     private bool initialized = false;
     private int health;
-    protected float cooldownRemaining;
-    protected bool onCooldown;
+    private float cooldownRemaining;
+    private bool onCooldown;
+    private float volume;
 
-    protected Vector3 closestTargetPastPosition;
-    protected Vector3 closestTargetPosition;
-    protected float targetRelativeVelocity;
-    protected float targetDistance;
-    protected float targetSpeed;
+    private Vector3 closestTargetPastPosition;
+    private Vector3 closestTargetPosition;
+    private float targetRelativeVelocity;
+    private float targetDistance;
+    private float tempStoppingDistance;
 
     public enum AiState { Idle, Moving, Combat, Retreat }
     public enum Side { Ally, Enemy, Neutral }
@@ -49,8 +48,8 @@ public abstract class AiController : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
 
     [Header("States:")]
-    [SerializeField] protected AiState currentState = AiState.Idle;
-    [SerializeField] protected Side unitSide;
+    [SerializeField] private AiState currentState = AiState.Idle;
+    [SerializeField] private Side unitSide;
 
     [Header("Events:")]
     public UnityEvent<AiController> onUnitNeutralized = new();
@@ -64,6 +63,12 @@ public abstract class AiController : MonoBehaviour
     public NavMeshAgent Agent { get => agent; }
     public AiController Target { get => target; }
     public float Volume {  get => volume; }
+    public Vector3 ClosestTargetPosition { get => closestTargetPosition; }
+    public Vector3 ClosestTargetPastPosition { get => closestTargetPastPosition; }
+    public float TargetDistance { get => targetDistance; }
+    public float TargetRelativeVelocity { get => targetRelativeVelocity; }
+    public AiState CurrentState { get => currentState; }
+    public Side UnitSide { get => unitSide; }
 
     // debug
     [SerializeField] private float ownSpeed;
@@ -82,8 +87,8 @@ public abstract class AiController : MonoBehaviour
 
         health = unitValues.health;
         agent.speed = unitValues.unitSpeed;
-        agent.stoppingDistance = unitValues.stoppingDistance;
         agent.acceleration = unitValues.acceleration;
+        agent.angularSpeed = unitValues.angularSpeed;
 
         pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
         projectiles = pool.GetPool();
@@ -115,6 +120,8 @@ public abstract class AiController : MonoBehaviour
 
         ownSpeed = Agent.velocity.magnitude;
 
+        UpdateOperations();
+
         switch (currentState)
         {
             case AiState.Idle:
@@ -122,7 +129,6 @@ public abstract class AiController : MonoBehaviour
                 break;
 
             case AiState.Combat:
-                TryLockTarget();
                 CombatState();
                 break;
 
@@ -141,7 +147,14 @@ public abstract class AiController : MonoBehaviour
 
         if (health <= 0)
         {
-            pool.DestroyProjectiles();
+            //pool.SetProjectilesToDestroy();
+
+            foreach (GameObject go in projectiles)
+            {
+                if (go != null)
+                    unitTaskForce.gameManager.AddToExterminationCamp(go);
+            }
+
             gameObject.SetActive(false);
             onUnitNeutralized?.Invoke(this);
         }
@@ -155,6 +168,8 @@ public abstract class AiController : MonoBehaviour
         closestTargetPastPosition = closestTargetPosition;
         closestTargetPosition = pos;
         OnTargetPositionChanged();
+        targetDistance = Vector3.Distance(transform.position, closestTargetPosition);
+        TryLockTarget();
     }
 
     protected void SetState(AiState newState)
@@ -177,6 +192,7 @@ public abstract class AiController : MonoBehaviour
                 Debug.DrawRay(ray.origin, ray.direction + new Vector3(0, 10, 0), Color.green, 1);
 
             target = hit.collider.gameObject.GetComponent<AiController>();
+            CalculateTargetRelativeVelocity();
             return true;
         }
         else
@@ -211,7 +227,12 @@ public abstract class AiController : MonoBehaviour
     {
         agent.destination = transform.position;
         agent.speed = unitValues.unitSpeed;
-        agent.stoppingDistance = 0;
+    }
+
+    private void CalculateTargetRelativeVelocity()
+    {
+        Vector3 velocityVector = Agent.velocity - Target.Agent.velocity;
+        targetRelativeVelocity = velocityVector.magnitude;
     }
 
     private void PutProjectile()
@@ -273,7 +294,7 @@ public abstract class AiController : MonoBehaviour
 
     
 
-    protected virtual void FireProjectile()
+    protected void FireProjectile()
     {
         if (onCooldown)
             return;
@@ -316,11 +337,36 @@ public abstract class AiController : MonoBehaviour
             return;
 
         else
-        {
-            Agent.stoppingDistance = unitValues.stoppingDistance;
             SetState(AiState.Combat);
-        }
             
+    }
+
+    protected virtual void UpdateOperations()
+    {
+        Agent.stoppingDistance = StoppingDistanceFormula();
+    }
+
+    /// <summary>
+    /// Funkcja kalibruje stoppingDistance Agenta, w ka¿dej iteracji metody Update(), jeœli UpdateOperations() nie zostanie nadpisane.
+    /// Bazowa formu³a wykonuje obliczenia na podstawie relatywnej prêdkoœci do celu. Zapobiega to zbytniemu zbli¿eniu siê do celu, jeœli obie jednostki poruszaj¹ sie naprzeciwko siebie. 
+    /// </summary>
+    protected virtual float StoppingDistanceFormula()
+    {
+        if (CurrentState == AiState.Combat)
+        {
+            if (Agent.remainingDistance <= Values.attackDistance)
+                return Values.attackDistance;
+
+            else if (Target)
+            {
+                tempStoppingDistance = targetRelativeVelocity + Values.attackDistance;
+                return tempStoppingDistance;
+            }
+            else
+                return tempStoppingDistance;
+        }
+        else
+            return Values.unitSpeed;
     }
 
     protected abstract void IdleState();

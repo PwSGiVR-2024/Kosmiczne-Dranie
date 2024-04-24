@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: allrounder
   m_EditorClassIdentifier: 
   prefabName: Ally
-  spotDistance: 200
+  spotDistance: 150
   health: 100
   xp: 0
   projectileDamage: 36
@@ -24,5 +24,6 @@ MonoBehaviour:
   unitSpeed: 60
   angleError: 0.5
   acceleration: 30
+  angularSpeed: 180
   description: all-rounder
   projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}

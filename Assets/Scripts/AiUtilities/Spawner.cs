@@ -6,6 +6,8 @@ using static AiController;
 // klasa odpowiada za instancjonowanie ka¿dej jednostki oraz Task Forca w œwiecie gry
 public class Spawner : MonoBehaviour
 {
+    public GameManager gameManager;
+
     public GameObject enemyContainer; // kontenery ¿eby by³ porz¹dek na scenie. Tylko przechowuj¹ gameObjecty, nic wiêcej nie robi¹
     public GameObject allyContainer;
     public GameObject enemyProjectileContainer;
@@ -74,7 +76,7 @@ public class Spawner : MonoBehaviour
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, allyTaskForceContainer);
+        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, allyTaskForceContainer, gameManager);
 
         AiController commander = SpawnAlly(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);
@@ -106,7 +108,7 @@ public class Spawner : MonoBehaviour
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, enemyTaskForceContainer);
+        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, enemyTaskForceContainer, gameManager);
 
         AiController commander = SpawnEnemy(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);

@@ -15,6 +15,7 @@ using static UnityEditor.PlayerSettings;
 // Jednostki mog¹ wp³ywaæ na stan tej klasy
 public class TaskForceController : MonoBehaviour
 {
+    public GameManager gameManager;
     public bool debug = false;
 
     public AiController commander;
@@ -180,12 +181,12 @@ public class TaskForceController : MonoBehaviour
 
             for (int i = 0; i < controllers.Count; i++)
             {
-                unitsLocations[i] = controllers[i].gameObject.transform.position;
+                unitsLocations[i] = controllers[i].transform.position;
             }
 
             for (int i = 0; i < enemies.Count; i++)
             {
-                potentialTargets[i] = enemies[i].gameObject.transform.position;
+                potentialTargets[i] = enemies[i].transform.position;
             }
 
             var job = new DestinationProvider
@@ -200,7 +201,7 @@ public class TaskForceController : MonoBehaviour
 
             for (int i = 0; i < controllers.Count; i++)
             {
-                if (controllers[i].gameObject.activeSelf && controllers[i].Agent)
+                if (controllers[i].gameObject.activeSelf)
                     controllers[i].SetTargetPosition(outcomeTargets[i]);
             }
 
@@ -218,7 +219,7 @@ public class TaskForceController : MonoBehaviour
             Debug.Log("refresh destination stopped");
     }
 
-    public static TaskForceController Create(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset, GameObject container)
+    public static TaskForceController Create(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager)
     {
         TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
         instance.gameObject.transform.SetParent(container.transform);
@@ -227,6 +228,7 @@ public class TaskForceController : MonoBehaviour
         instance.maxSize = maxSize;
         instance.icon = icon;
         instance.iconOffset = iconOffset;
+        instance.gameManager = gameManager;
 
         //instance.StartCoroutine(instance.SpotForTargets());
 
@@ -263,7 +265,7 @@ public class TaskForceController : MonoBehaviour
     public void Update()
     {
         if (commander)
-            GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);
+            GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(controllers.Count) * commander.Volume, commander.transform);
 
         UpdateHUD();
         //ClearDeactivatedUnitsRecursive();
@@ -352,6 +354,7 @@ public class TaskForceController : MonoBehaviour
 
     private void RemoveUnitFromTaskForce(AiController unit)
     {
+        gameManager.AddToExterminationCamp(unit.gameObject);
         //unit.SetActive(false);
 
         controllers.Remove(unit);
@@ -389,6 +392,7 @@ public class TaskForceController : MonoBehaviour
         if (debug)
             Debug.Log("destroying task force " + name);
 
+        StopAllCoroutines();
         onTaskForceDestroyed?.Invoke(this);
         ClearDeactivatedUnits();
         Destroy(icon);
@@ -469,7 +473,7 @@ public class TaskForceController : MonoBehaviour
                 if (debug)
                     Debug.Log("Destroying: " + controllers[index].name);
 
-                Destroy(controllers[index].gameObject);
+                //Destroy(controllers[index].gameObject);
                 //controllers.RemoveAt(index);
                 controllers.RemoveAt(index);
                 return;

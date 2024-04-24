@@ -24,5 +24,6 @@ MonoBehaviour:
   unitSpeed: 45
   angleError: 0.1
   acceleration: 20
+  angularSpeed: 180
   description: sniper
   projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}

@@ -102,7 +102,7 @@ public class ProjectilePool
         return true;
     }
 
-    public void DestroyProjectiles()
+    public void SetProjectilesToDestroy()
     {
         for (int i = 0; i < pool.Length; i++)
         {
