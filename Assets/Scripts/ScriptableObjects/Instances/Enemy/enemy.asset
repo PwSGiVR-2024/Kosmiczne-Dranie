@@ -22,8 +22,8 @@ MonoBehaviour:
   attackCooldown: 0.8
   attackDistance: 100
   unitSpeed: 100
-  stoppingDistance: 100
   angleError: 2
   acceleration: 30
+  angularSpeed: 180
   description: blind but big dps
   projectile: {fileID: 4219372591201158213, guid: 5f52b94b64b907647a2093f7969f8a25, type: 3}
