@@ -9,21 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c747a07252ffc46afd2d72ec952d00, type: 3}
+  m_Script: {fileID: 11500000, guid: a50f5f9c56896754180f3dbf022ad838, type: 3}
   m_Name: kamikaze
   m_EditorClassIdentifier: 
-  prefabName: 
+  prefabName: Ally
   spotDistance: 50
   health: 10
   xp: 0
-  projectileDamage: 400
-  projectileSpeed: 100
-  projectileLifeSpan: 0.5
-  attackCooldown: 0.5
-  attackDistance: 10
-  unitSpeed: 150
-  angleError: 5
+  attackDistance: 25
+  unitSpeed: 120
   acceleration: 80
   angularSpeed: 180
-  description: kamikazeeeeeeeeeeee
-  projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}
+  description: 

@@ -16,11 +16,13 @@ public class ProjectilePool
         public InvalidSize(string message) : base(message) { }
     }
 
-    private GameObject[] pool;
+    private Projectile[] projectiles;
     private int getIndex = 0;
     private int putIndex = 0;
     private int length;
     private bool loggingEnabled = false;
+
+    public Projectile[] Projectiles { get => projectiles; }
 
     public ProjectilePool(float projectileLifeSpan, float attackCooldown)
     {
@@ -29,10 +31,10 @@ public class ProjectilePool
 
         length = (int) ((projectileLifeSpan / attackCooldown) + 1.0f);
 
-        pool = new GameObject[length];
+        projectiles = new Projectile[length];
     }
 
-    public bool TryGetProjectile(out GameObject projectile)
+    public bool TryGetProjectile(out Projectile projectile)
     {
         if (loggingEnabled)
             Debug.Log("[TryGetProjectile] Trying to get projectile at index: " + getIndex);
@@ -46,8 +48,8 @@ public class ProjectilePool
         }
             
 
-        if (pool[getIndex] == null ||
-            pool[getIndex].activeSelf)
+        if (projectiles[getIndex] == null ||
+            projectiles[getIndex].gameObject.activeSelf)
         {
             if (loggingEnabled)
                 Debug.LogWarning("[TryGetProjectile] Projectile at index " + getIndex + " is null or active in the scene. Method returned false");
@@ -58,7 +60,7 @@ public class ProjectilePool
 
         else
         {
-            projectile = pool[getIndex];
+            projectile = projectiles[getIndex];
             getIndex++;
 
             if (loggingEnabled)
@@ -68,7 +70,7 @@ public class ProjectilePool
         }
     }
 
-    public bool TryPutProjectileInPool(GameObject projectile)
+    public bool TryPutProjectile(Projectile projectile)
     {
         if (loggingEnabled)
             Debug.Log("[TryPutProjectileInPool] Trying to put projectile at index: " + putIndex);
@@ -78,22 +80,22 @@ public class ProjectilePool
             if (loggingEnabled)
                 Debug.LogWarning("[TryPutProjectileInPool] Maximum pool size reached. Pool size: " + length + ". Method returned false and projectile will be destroyed");
 
-            projectile.GetComponent<Projectile>().MarkToDestroy();
+            projectile.DestroyAfterDeactivated();
             return false;
         }
             
 
-        if (pool[putIndex] != null)
+        if (projectiles[putIndex] != null)
         {
             if (loggingEnabled)
                 Debug.LogWarning("[TryPutProjectileInPool] Projectile already exists at index: " + putIndex + ". Method returned false and projectile will be destroyed");
 
-            projectile.GetComponent<Projectile>().MarkToDestroy();
+            projectile.DestroyAfterDeactivated();
             return false;
         }
             
 
-        pool[putIndex] = projectile;
+        projectiles[putIndex] = projectile;
 
         if (loggingEnabled)
             Debug.Log("[TryPutProjectileInPool] Projectile successfully placed in the pool at index: " + putIndex);
@@ -102,17 +104,20 @@ public class ProjectilePool
         return true;
     }
 
-    public void SetProjectilesToDestroy()
+    public void Clean()
     {
-        for (int i = 0; i < pool.Length; i++)
+        for (int i = 0; i < projectiles.Length; i++)
         {
-            if (pool[i] != null)
-                pool[i].GetComponent<Projectile>().MarkToDestroy();
+            if (projectiles[i] == null)
+                continue;
 
+            if (projectiles[i].gameObject.activeSelf)
+                projectiles[i].ShotBy.GameManager.AddToTemporaryCamp(projectiles[i].gameObject);
+
+            else
+                projectiles[i].ShotBy.GameManager.AddToExterminationCamp(projectiles[i].gameObject);
         }
     }
-
-    public GameObject[] GetPool() { return pool; }
 
     public void EnableLogging()
     {
