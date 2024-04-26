@@ -88,4 +88,9 @@ public static class GameUtils
         }
     }
 
+    public static float CalculateForwardAngle(Transform pos, Vector3 target)
+    {
+        return Vector3.Angle(target - pos.position, pos.forward);
+    }
+
 }

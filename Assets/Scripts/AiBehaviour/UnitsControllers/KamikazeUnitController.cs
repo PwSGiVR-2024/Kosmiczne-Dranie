@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class KamikazeUnitController : AiController
 {
+    [SerializeField] private WeaponController weapon_1;
+
     protected override float StoppingDistanceFormula()
     {
         if (CurrentState == AiState.Combat)
@@ -15,7 +17,7 @@ public class KamikazeUnitController : AiController
 
     protected override void AdditionalInit()
     {
-
+        weapon_1.Init(this);
     }
 
     protected override void CombatState()
@@ -23,7 +25,8 @@ public class KamikazeUnitController : AiController
         float targetDistance = Vector3.Distance(transform.position, ClosestTargetPosition);
 
         if (targetDistance <= Values.attackDistance)
-            FireProjectile();
+            if (weapon_1.CheckIfFacingTarget(ClosestTargetPastPosition))
+                weapon_1.FireProjectile();
     }
 
     protected override void IdleState()
@@ -40,5 +43,10 @@ public class KamikazeUnitController : AiController
     {
         SetCombatState();
         Agent.SetDestination(ClosestTargetPosition);
+    }
+
+    protected override void BeforeDeactivation()
+    {
+        
     }
 }

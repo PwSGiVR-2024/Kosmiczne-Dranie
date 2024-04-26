@@ -7,6 +7,7 @@ public class GameManager : MonoBehaviour
     public bool logExterminationCamp = false;
 
     private Stack<GameObject> exterminationCamp = new();
+    private Stack<GameObject> temporaryCamp = new();
 
     private IEnumerator ExterminationChamber()
     {
@@ -34,6 +35,33 @@ public class GameManager : MonoBehaviour
                     exterminationCamp.Pop();
                 }
             }
+
+            if (temporaryCamp.TryPeek(out obj))
+            {
+                if (obj)
+                {
+                    if (logExterminationCamp)
+                        Debug.Log("destroying: " + obj.name);
+
+                    Destroy(obj);
+                    temporaryCamp.Pop();
+                }
+                else if (obj == null)
+                {
+                    if (logExterminationCamp)
+                        Debug.Log("object is null");
+
+                    temporaryCamp.Pop();
+                }
+                else if (obj.activeSelf)
+                {
+                    if (logExterminationCamp)
+                        Debug.Log("object is active in temporary camp. Skipping iteration");
+
+                    yield return null;
+                }
+
+            }
             yield return null;
         }
     }
@@ -44,8 +72,13 @@ public class GameManager : MonoBehaviour
         StartCoroutine(ExterminationChamber());
     }
 
-    public void AddToExterminationCamp(GameObject unit)
+    public void AddToExterminationCamp(GameObject obj)
     {
-        exterminationCamp.Push(unit);
+        exterminationCamp.Push(obj);
+    }
+
+    public void AddToTemporaryCamp(GameObject obj)
+    {
+        temporaryCamp.Push(obj);
     }
 }

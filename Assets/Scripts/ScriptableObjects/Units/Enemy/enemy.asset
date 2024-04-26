@@ -9,21 +9,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 0}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: c4c747a07252ffc46afd2d72ec952d00, type: 3}
-  m_Name: allrounder
+  m_Script: {fileID: 11500000, guid: a50f5f9c56896754180f3dbf022ad838, type: 3}
+  m_Name: enemy
   m_EditorClassIdentifier: 
   prefabName: Ally
   spotDistance: 150
-  health: 100
+  health: 200
   xp: 0
-  projectileDamage: 36
-  projectileSpeed: 180
-  projectileLifeSpan: 2
-  attackCooldown: 2
   attackDistance: 240
   unitSpeed: 60
-  angleError: 0.5
   acceleration: 30
   angularSpeed: 180
   description: all-rounder
-  projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}

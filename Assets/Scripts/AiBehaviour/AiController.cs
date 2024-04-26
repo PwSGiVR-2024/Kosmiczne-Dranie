@@ -16,15 +16,14 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
+    private GameManager gameManager;
+
     private AiController target;
     private TaskForceController unitTaskForce;
     private GameObject projectileContainer;
-    private ProjectilePool pool;
 
     private bool initialized = false;
     private int health;
-    private float cooldownRemaining;
-    private bool onCooldown;
     private float volume;
 
     private Vector3 closestTargetPastPosition;
@@ -40,11 +39,10 @@ public abstract class AiController : MonoBehaviour
     [SerializeField] protected bool disabled = false;
     [SerializeField] protected bool debug = false;
     [SerializeField] protected bool logCurrentState = false;
-    [SerializeField] protected bool enablePoolLogging = false;
 
     [Header("Components:")]
     [SerializeField] private Transform childModel;
-    [SerializeField] private Unit unitValues;
+    [SerializeField] private UnitValues unitValues;
     [SerializeField] private NavMeshAgent agent;
 
     [Header("States:")]
@@ -59,7 +57,7 @@ public abstract class AiController : MonoBehaviour
 
     public int Health { get => health; }
     public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
-    public Unit Values { get => unitValues; }
+    public UnitValues Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }
     public AiController Target { get => target; }
     public float Volume {  get => volume; }
@@ -69,10 +67,11 @@ public abstract class AiController : MonoBehaviour
     public float TargetRelativeVelocity { get => targetRelativeVelocity; }
     public AiState CurrentState { get => currentState; }
     public Side UnitSide { get => unitSide; }
+    public GameObject ProjectileContainer { get => projectileContainer; }
+    public GameManager GameManager { get => gameManager; }
 
     // debug
     [SerializeField] private float ownSpeed;
-    [SerializeField] private GameObject[] projectiles;
 
     protected abstract void AdditionalInit();
 
@@ -90,10 +89,6 @@ public abstract class AiController : MonoBehaviour
         agent.acceleration = unitValues.acceleration;
         agent.angularSpeed = unitValues.angularSpeed;
 
-        pool = new(unitValues.projectileLifeSpan, unitValues.attackCooldown);
-        projectiles = pool.GetPool();
-
-
         Collider col = gameObject.GetComponent<Collider>();
         float volX = col.bounds.size.x;
         float volZ = col.bounds.size.z;
@@ -102,6 +97,8 @@ public abstract class AiController : MonoBehaviour
             volume = volX;
         else
             volume = volZ;
+
+        gameManager = taskForce.GameManager;
 
         AdditionalInit();
 
@@ -114,9 +111,6 @@ public abstract class AiController : MonoBehaviour
 
         if (logCurrentState)
             Debug.Log(currentState);
-
-        if (enablePoolLogging)
-            pool.EnableLogging();
 
         ownSpeed = Agent.velocity.magnitude;
 
@@ -140,23 +134,24 @@ public abstract class AiController : MonoBehaviour
 
     public void Damage(Projectile projectile)
     {
-        health -= projectile.dmg;
+        health -= projectile.Values.projectileDamage;
 
         if (currentState != AiState.Combat)
-            onUnitEngaged?.Invoke(projectile.shotBy.unitTaskForce);
+            onUnitEngaged.Invoke(projectile.ShotBy?.UnitTaskForce);
 
         if (health <= 0)
         {
             //pool.SetProjectilesToDestroy();
 
-            foreach (GameObject go in projectiles)
-            {
-                if (go != null)
-                    unitTaskForce.gameManager.AddToExterminationCamp(go);
-            }
-
+            //foreach (Projectile proj in projectiles)
+            //{
+            //    if (proj != null)
+            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
+            //}
+            BeforeDeactivation();
             gameObject.SetActive(false);
             onUnitNeutralized?.Invoke(this);
+            gameManager.AddToExterminationCamp(gameObject);
         }
 
     }
@@ -235,81 +230,6 @@ public abstract class AiController : MonoBehaviour
         targetRelativeVelocity = velocityVector.magnitude;
     }
 
-    private void PutProjectile()
-    {
-        bool friendly;
-        if (unitSide == Side.Enemy)
-            friendly = false;
-        else
-            friendly = true;
-
-        GameObject projectile;
-        if (pool.TryGetProjectile(out projectile))
-        {
-            projectile.transform.position = transform.position;
-            projectile.transform.rotation = SetProjectileRotation();
-            projectile.SetActive(true);
-        }
-
-        else
-        {
-            projectile = SpawnProjectile(friendly);
-            pool.TryPutProjectileInPool(projectile);
-        }
-    }
-
-    private GameObject SpawnProjectile(bool friendly)
-    {
-        GameObject projectile = Instantiate(unitValues.projectile, transform.position, SetProjectileRotation());
-        projectile.GetComponent<Projectile>().Init(unitValues, friendly, projectileContainer, this);
-        return projectile;
-    }
-
-    private Quaternion SetProjectileRotation()
-    {
-        Quaternion projectileRotation = gameObject.transform.rotation;
-
-        float randomAngle = UnityEngine.Random.Range(-unitValues.angleError, unitValues.angleError);
-        projectileRotation *= Quaternion.AngleAxis(randomAngle, Vector3.up);
-
-        return projectileRotation;
-    }
-
-    private IEnumerator AttackCooldown()
-    {
-        onCooldown = true;
-
-        while (cooldownRemaining > 0)
-        {
-            cooldownRemaining -= Time.deltaTime;
-
-            if (cooldownRemaining < 0)
-                cooldownRemaining = 0;
-
-            yield return null;
-        }
-
-        onCooldown = false;
-    }
-
-    
-
-    protected void FireProjectile()
-    {
-        if (onCooldown)
-            return;
-
-        float angleToTarget = Vector3.Angle(closestTargetPosition - transform.position, transform.forward);
-        
-        if (angleToTarget <= Values.angleError)
-        {
-            PutProjectile();
-            cooldownRemaining = unitValues.attackCooldown;
-
-            StartCoroutine(AttackCooldown());
-        }
-    }
-
     public virtual void SetIdleState()
     {
         if (disabled) return;
@@ -376,4 +296,6 @@ public abstract class AiController : MonoBehaviour
     protected abstract void CombatState();
 
     protected abstract void OnTargetPositionChanged();
+
+    protected abstract void BeforeDeactivation();
 }

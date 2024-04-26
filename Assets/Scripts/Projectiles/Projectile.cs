@@ -8,27 +8,24 @@ using UnityEngine;
 // klasa definiuje zachowanie pocisku i wszytskie jego atrybuty
 public class Projectile : MonoBehaviour
 {
-    public AiController shotBy;
-    public int speed;
-    public int dmg;
-    public float lifeSpan;
-    public bool friendly;
-    public float angleError = 0;
+    private AiController.Side side;
+    private AiController shotBy;
     private WaitForSeconds waitForSeconds;
-    public bool destroyAfterDeactivated = false;
+    private bool destroyAfterDeactivated = false;
+    private WeaponValues values;
 
-    public void Init(Unit values, bool friendly, GameObject container, AiController shooter)
+    public WeaponValues Values { get => values; }
+    public AiController ShotBy { get => shotBy; }
+
+    public void Init(WeaponValues values, AiController shooter)
     {
-        transform.SetParent(container.transform);
-
+        this.values = values;
         shotBy = shooter;
-        dmg = values.projectileDamage;
-        speed = values.projectileSpeed;
-        lifeSpan = values.projectileLifeSpan;
-        waitForSeconds = new WaitForSeconds(lifeSpan);
-        this.friendly = friendly;
+        waitForSeconds = new WaitForSeconds(values.projectileLifeSpan);
+        transform.SetParent(shotBy.ProjectileContainer.transform);
 
-        //Destroy(gameObject, lifeSpan);
+        side = shotBy.UnitSide;
+
         StartCoroutine(DeactivateProjectile());
     }
 
@@ -43,10 +40,10 @@ public class Projectile : MonoBehaviour
         yield return waitForSeconds;
         gameObject.SetActive(false);
     }
-    // Update is called once per frame
+
     void Update()
     {
-        Vector3 newPosition = transform.position + transform.forward * speed * Time.deltaTime;
+        Vector3 newPosition = transform.position + transform.forward * values.projectileSpeed * Time.deltaTime;
         transform.position = newPosition;
     }
 
@@ -55,45 +52,38 @@ public class Projectile : MonoBehaviour
         if (collider.CompareTag("Projectile"))
             return;
 
-        if (friendly)
+        if (collider.CompareTag("Ally"))
         {
-            if (collider.CompareTag("Ally"))
+            if (side == AiController.Side.Ally)
                 return;
 
-            else if (collider.CompareTag("Enemy"))
-                collider.gameObject.GetComponent<AiController>().Damage(this);
+            else if (side == AiController.Side.Enemy)
+                collider.GetComponent<AiController>().Damage(this);
         }
 
-        else
+        else if (collider.CompareTag("Enemy"))
         {
-            if (collider.CompareTag("Enemy"))
+            if (side == AiController.Side.Enemy)
                 return;
 
-            else if (collider.CompareTag("Ally"))
-                collider.gameObject.GetComponent<AiController>().Damage(this);
+            else if (side == AiController.Side.Ally)
+                collider.GetComponent<AiController>().Damage(this);
         }
 
-        
         gameObject.SetActive(false);
-        //ProjectilePooling.PutProjectileOnStack(gameObject, friendly);
-        //Destroy(gameObject);
     }
 
     private void OnDisable()
     {
-        if (destroyAfterDeactivated)
+        if (shotBy == null || destroyAfterDeactivated)
             Destroy(gameObject);
 
         else
             StopCoroutine(DeactivateProjectile());
     }
 
-    public void MarkToDestroy()
+    public void DestroyAfterDeactivated()
     {
-        if (gameObject.activeSelf)
-            destroyAfterDeactivated = true;
-
-        else
-            Destroy(gameObject);
+        destroyAfterDeactivated = true;
     }
 }

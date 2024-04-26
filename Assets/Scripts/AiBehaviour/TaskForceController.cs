@@ -15,7 +15,7 @@ using static UnityEditor.PlayerSettings;
 // Jednostki mog¹ wp³ywaæ na stan tej klasy
 public class TaskForceController : MonoBehaviour
 {
-    public GameManager gameManager;
+    private GameManager gameManager;
     public bool debug = false;
 
     public AiController commander;
@@ -43,6 +43,8 @@ public class TaskForceController : MonoBehaviour
     public enum Behaviour { Passive, Aggresive, Evasive }
     public Behaviour behaviour = Behaviour.Passive;
     public TaskForceController currentTarget;
+
+    public GameManager GameManager { get => gameManager; }
 
     //public UnityEvent<int, bool> OnTaskForceDestroyed; // invokowany kiedy lista jednostek bêdzie mia³a d³ugoœæ 0. FleetManager musi zaj¹æ siê wyczyszczeniem wszystkich referencji zwi¹zanych z taskForcem jeœli zostanie zniszczony 
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
@@ -354,7 +356,7 @@ public class TaskForceController : MonoBehaviour
 
     private void RemoveUnitFromTaskForce(AiController unit)
     {
-        gameManager.AddToExterminationCamp(unit.gameObject);
+        //gameManager.AddToExterminationCamp(unit.gameObject);
         //unit.SetActive(false);
 
         controllers.Remove(unit);
