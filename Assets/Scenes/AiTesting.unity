@@ -3065,6 +3065,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0de6006d1b17ce848990f032d534047c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  minZoom: 20
+  maxZoom: 100
+  zoomSpeed: 10
   moveSpeed: 100
   dragSpeed: 200
   modifierKey: 306

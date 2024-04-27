@@ -192,9 +192,7 @@ MeshFilter:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2097357443315631661}
-<<<<<<< HEAD
   m_Mesh: {fileID: -2432090755550338912, guid: 27485f95bca4d494882155756c42f3ec, type: 3}
-=======
   m_Mesh: {fileID: -2432090755550338912, guid: e8980af8fd3f0624a9c080d2532e0c74, type: 3}
 --- !u!1 &7896498393258097077
 GameObject:
@@ -241,4 +239,3 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   values: {fileID: 11400000, guid: f18462bad3234b6409cbc022924b1947, type: 2}
->>>>>>> b9586ce75eef8c382ba0aed68b50da11e25ab60b

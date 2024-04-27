@@ -226,8 +226,12 @@ public abstract class AiController : MonoBehaviour
 
     private void CalculateTargetRelativeVelocity()
     {
-        Vector3 velocityVector = Agent.velocity - Target.Agent.velocity;
-        targetRelativeVelocity = velocityVector.magnitude;
+        if (target)
+        {
+            Vector3 velocityVector = Agent.velocity - Target.Agent.velocity;
+            targetRelativeVelocity = velocityVector.magnitude;
+        }
+
     }
 
     public virtual void SetIdleState()
