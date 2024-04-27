@@ -196,7 +196,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2101570498365106387}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
         m_MethodName: FocusCamera
         m_Mode: 1
@@ -463,7 +463,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2101570498365106387}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
         m_MethodName: FocusCamera
         m_Mode: 1
@@ -596,7 +596,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2101570498365106387}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
         m_MethodName: FocusCamera
         m_Mode: 1
@@ -729,7 +729,7 @@ MonoBehaviour:
   m_OnClick:
     m_PersistentCalls:
       m_Calls:
-      - m_Target: {fileID: 2101570498365106387}
+      - m_Target: {fileID: 0}
         m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
         m_MethodName: FocusCamera
         m_Mode: 1
@@ -1154,7 +1154,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4576720771843536968}
-  - component: {fileID: 2101570498365106387}
   - component: {fileID: 8135211942226875012}
   - component: {fileID: 805659165928640440}
   - component: {fileID: 8142243826625476498}
@@ -1190,40 +1189,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 120, y: 120}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &2101570498365106387
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7496962586747415593}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: d26ae4386d3bd274aa97ff0bdf1f6525, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  image: {fileID: 805659165928640440}
-  OnDestroy:
-    m_PersistentCalls:
-      m_Calls: []
-  OnSelect:
-    m_PersistentCalls:
-      m_Calls: []
-  OnDeselect:
-    m_PersistentCalls:
-      m_Calls: []
-  selected: 0
-  selectedColor: {r: 0.2320754, g: 1, b: 0.64038503, a: 1}
-  idleColor: {r: 0.5803922, g: 0.9098039, b: 0.85882354, a: 1}
-  combatColor: {r: 1, g: 0.4433962, b: 0.4433962, a: 1}
-  movingColor: {r: 1, g: 0.9701722, b: 0.42830187, a: 1}
-  retreatColor: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
-  taskForce: {fileID: 0}
-  taskForceName: {fileID: 0}
-  size: {fileID: 0}
-  strength: {fileID: 0}
-  power: {fileID: 0}
-  status: {fileID: 0}
 --- !u!222 &8135211942226875012
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -1305,19 +1270,7 @@ MonoBehaviour:
   m_TargetGraphic: {fileID: 805659165928640440}
   m_OnClick:
     m_PersistentCalls:
-      m_Calls:
-      - m_Target: {fileID: 11500000, guid: 4b2316237f2bd404aa98865ea6b28af0, type: 3}
-        m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
-        m_MethodName: 
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
+      m_Calls: []
 --- !u!114 &8120826635345252577
 MonoBehaviour:
   m_ObjectHideFlags: 0
