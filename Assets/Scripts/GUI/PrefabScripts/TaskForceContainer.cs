@@ -40,9 +40,9 @@ public class TaskForceContainer : MonoBehaviour
     {
         taskForce = tf;
 
-        taskForceName.text = taskForce.taskForceName;
-        size.text = taskForce.controllers.Count.ToString();
-        strength.text = taskForce.strength * 100 + "%";
+        taskForceName.text = taskForce.TaskForceName;
+        size.text = taskForce.Units.Count.ToString();
+        strength.text = taskForce.Strength * 100 + "%";
 
         taskForce.onTaskForceDestroyed.AddListener(RemoveSelf); // taskForce posiada eventy sygnalizuj¹ce zmianê jakichœ atrybutów/parametrów. Element UI powinien to odzwierciedlaæ
         taskForce.onSizeChanged.AddListener(UpdateSize);
@@ -71,8 +71,8 @@ public class TaskForceContainer : MonoBehaviour
     // Skupia kamerê na danym taskForce, work in progress
     public void FocusCamera()
     {
-        if (taskForce.commander != null && taskForce.commander.gameObject.activeSelf)
-            Camera.main.transform.LookAt(taskForce.commander.transform.position);
+        if (taskForce.Commander != null && taskForce.Commander.gameObject.activeSelf)
+            Camera.main.transform.LookAt(taskForce.Commander.transform.position);
     }
 
 

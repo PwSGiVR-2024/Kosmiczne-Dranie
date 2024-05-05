@@ -46,7 +46,9 @@ public class BasicUnitController : AiController
     protected override void OnTargetPositionChanged()
     {
         SetCombatState();
-        Agent.SetDestination(ClosestTargetPosition);
+
+        if (TargetDistance > Values.attackDistance)
+            Agent.SetDestination(ClosestTargetPosition);
     }
 
     public override void SetCombatState()
@@ -66,5 +68,10 @@ public class BasicUnitController : AiController
     protected override void BeforeDeactivation()
     {
         
+    }
+
+    protected override void RetreatState()
+    {
+        throw new System.NotImplementedException();
     }
 }

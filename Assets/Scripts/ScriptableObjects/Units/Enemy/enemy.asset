@@ -17,7 +17,7 @@ MonoBehaviour:
   health: 200
   xp: 0
   attackDistance: 240
-  unitSpeed: 60
+  unitSpeed: 40
   acceleration: 30
   angularSpeed: 180
   description: all-rounder

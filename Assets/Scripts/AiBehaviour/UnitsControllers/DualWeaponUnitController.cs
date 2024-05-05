@@ -91,4 +91,9 @@ public class DualWeaponUnitController : AiController
             weapon_1.Pool.DisableLogging();
         
     }
+
+    protected override void RetreatState()
+    {
+        throw new System.NotImplementedException();
+    }
 }

@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 645919149357938216}
   - component: {fileID: 8800178573030612678}
   - component: {fileID: 2915173169156331830}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: allrounder
   m_TagString: Ally
   m_Icon: {fileID: 0}

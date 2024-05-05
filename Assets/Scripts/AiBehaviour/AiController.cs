@@ -32,8 +32,8 @@ public abstract class AiController : MonoBehaviour
     private float targetDistance;
     private float tempStoppingDistance;
 
-    public enum AiState { Idle, Moving, Combat, Retreat }
-    public enum Side { Ally, Enemy, Neutral }
+    public enum UnitState { Idle, Moving, Combat, Retreat }
+    public enum UnitSide { Ally, Enemy, Neutral }
 
     [Header("Miscellaneous:")]
     [SerializeField] protected bool disabled = false;
@@ -46,15 +46,18 @@ public abstract class AiController : MonoBehaviour
     [SerializeField] private NavMeshAgent agent;
 
     [Header("States:")]
-    [SerializeField] private AiState currentState = AiState.Idle;
-    [SerializeField] private Side unitSide;
+    [SerializeField] private UnitState currentState = UnitState.Idle;
+    [SerializeField] private UnitSide side;
 
     [Header("Events:")]
     public UnityEvent<AiController> onUnitNeutralized = new();
     //public UnityEvent<GameObject> onProjectileSpawned = new();
     public UnityEvent<TaskForceController> onUnitEngaged = new();
-    public UnityEvent<AiState> onStateChanged = new();
+    public UnityEvent<UnitState> onStateChanged = new();
 
+    /// <summary>
+    /// Current health of this unit
+    /// </summary>
     public int Health { get => health; }
     public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
     public UnitValues Values { get => unitValues; }
@@ -65,8 +68,8 @@ public abstract class AiController : MonoBehaviour
     public Vector3 ClosestTargetPastPosition { get => closestTargetPastPosition; }
     public float TargetDistance { get => targetDistance; }
     public float TargetRelativeVelocity { get => targetRelativeVelocity; }
-    public AiState CurrentState { get => currentState; }
-    public Side UnitSide { get => unitSide; }
+    public UnitState CurrentState { get => currentState; }
+    public UnitSide Side { get => side; }
     public GameObject ProjectileContainer { get => projectileContainer; }
     public GameManager GameManager { get => gameManager; }
 
@@ -75,12 +78,12 @@ public abstract class AiController : MonoBehaviour
 
     protected abstract void AdditionalInit();
 
-    public void Init(Side side, TaskForceController taskForce, GameObject projectileContainer)
+    public void Init(UnitSide side, TaskForceController taskForce, GameObject projectileContainer)
     {
         if (initialized)
             return;
 
-        unitSide = side;
+        this.side = side;
         unitTaskForce = taskForce;
         this.projectileContainer = projectileContainer;
 
@@ -98,7 +101,7 @@ public abstract class AiController : MonoBehaviour
         else
             volume = volZ;
 
-        gameManager = taskForce.GameManager;
+        gameManager = taskForce.gameManager;
 
         AdditionalInit();
 
@@ -118,16 +121,20 @@ public abstract class AiController : MonoBehaviour
 
         switch (currentState)
         {
-            case AiState.Idle:
+            case UnitState.Idle:
                 IdleState();
                 break;
 
-            case AiState.Combat:
+            case UnitState.Combat:
                 CombatState();
                 break;
 
-            case AiState.Moving:
+            case UnitState.Moving:
                 MovingState();
+                break;
+
+            case UnitState.Retreat:
+                RetreatState();
                 break;
         }
     }
@@ -136,7 +143,7 @@ public abstract class AiController : MonoBehaviour
     {
         health -= projectile.Values.projectileDamage;
 
-        if (currentState != AiState.Combat)
+        if (currentState != UnitState.Combat)
             onUnitEngaged.Invoke(projectile.ShotBy?.UnitTaskForce);
 
         if (health <= 0)
@@ -164,10 +171,12 @@ public abstract class AiController : MonoBehaviour
         closestTargetPosition = pos;
         OnTargetPositionChanged();
         targetDistance = Vector3.Distance(transform.position, closestTargetPosition);
-        TryLockTarget();
+
+        if (targetDistance > Values.attackDistance)
+            TryLockTarget();
     }
 
-    protected void SetState(AiState newState)
+    protected void SetState(UnitState newState)
     {
         currentState = newState;
         onStateChanged?.Invoke(currentState);
@@ -221,7 +230,7 @@ public abstract class AiController : MonoBehaviour
     protected void ResetDestination()
     {
         agent.destination = transform.position;
-        agent.speed = unitValues.unitSpeed;
+        //agent.speed = unitValues.unitSpeed;
     }
 
     private void CalculateTargetRelativeVelocity()
@@ -240,7 +249,7 @@ public abstract class AiController : MonoBehaviour
 
         ResetDestination();
         ResetTarget();
-        SetState(AiState.Idle);
+        SetState(UnitState.Idle);
     }
 
     public virtual void SetMovingState(Vector3 destination)
@@ -249,10 +258,10 @@ public abstract class AiController : MonoBehaviour
 
         if (agent.SetDestination(destination))
         {
-            agent.acceleration = unitValues.acceleration;
-            agent.speed = unitValues.unitSpeed;
+            //agent.acceleration = unitValues.acceleration;
+            //agent.speed = unitValues.unitSpeed;
             agent.stoppingDistance = unitValues.unitSpeed;
-            SetState(AiState.Moving);
+            SetState(UnitState.Moving);
         }
     }
     public virtual void SetCombatState()
@@ -261,8 +270,19 @@ public abstract class AiController : MonoBehaviour
             return;
 
         else
-            SetState(AiState.Combat);
+            SetState(UnitState.Combat);
             
+    }
+
+    public virtual void SetRetreatState(Vector3 escapePoint)
+    {
+        if (agent.SetDestination(escapePoint))
+        {
+            //agent.acceleration = unitValues.acceleration;
+            //agent.speed = unitValues.unitSpeed;
+            agent.stoppingDistance = unitValues.unitSpeed;
+            SetState(UnitState.Retreat);
+        }
     }
 
     protected virtual void UpdateOperations()
@@ -276,7 +296,7 @@ public abstract class AiController : MonoBehaviour
     /// </summary>
     protected virtual float StoppingDistanceFormula()
     {
-        if (CurrentState == AiState.Combat)
+        if (CurrentState == UnitState.Combat)
         {
             if (Agent.remainingDistance <= Values.attackDistance)
                 return Values.attackDistance;
@@ -298,6 +318,8 @@ public abstract class AiController : MonoBehaviour
     protected abstract void MovingState();
 
     protected abstract void CombatState();
+
+    protected abstract void RetreatState();
 
     protected abstract void OnTargetPositionChanged();
 

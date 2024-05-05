@@ -1,130 +1,96 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Reflection;
+using System.ComponentModel.Design;
+using System.Diagnostics;
 using Unity.Collections;
 using Unity.Jobs;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
+using Debug = UnityEngine.Debug;
 
-// Klasa odpowiada za sterowanie ka¿d¹ jednostk¹ wchodz¹c¹ w jej sk³ad
-// Ka¿dy Task Force to oddzielny byt, z niezale¿nym zachowaniem zdefiniowanym przez jego atrybuty i atrybuty jednostek
-// Jednostki mog¹ wp³ywaæ na stan tej klasy
 public class TaskForceController : MonoBehaviour
 {
-    private GameManager gameManager;
-    public bool debug = false;
+    public enum TaskForceSide { Ally, Enemy, Neutral }
+    public enum TaskForceState { Idle, Moving, Combat, Retreat }
+    public enum TaskForceBehaviour { Passive, Aggresive, Evasive }
+    public enum TaskForceOrder { None, Engage, Disengage, Move, Patrol, Defend }
 
-    public AiController commander;
-    //public GameObject commander; // jednostka dowodz¹ca. Potrzebne tak naprawdê tylko dlatego, ¿eby ikona taskForca mog³a coœ followowaæ
-    public GameObject icon; // atrybuty przypisywane podczas instancjonowania
-    public Vector3 iconOffset;
+    // helper attributes
+    private float secondsAfterStop = 0;
+    private bool counterRunning = false;
+    private readonly float waitingForSeconds = 1.0f;
+    //
 
-    public float spotDistance = 0;
-    public int maxSize;
-    public bool friendly; // sojusznik/przeciwnik
-    public string taskForceName;
-    public float strength = 1.0f; // (0.0 - 1.0) si³a taskForca w %
-    //public List<GameObject> units = new();
-    public List<AiController> controllers = new();// lista jednostek
+    private bool initialized = false;
+    public GameManager gameManager;
+    [SerializeField] private bool debug = false;
+    
+    [Header("Display info:")]
+    [SerializeField] private GameObject icon;
+    [SerializeField] private Vector3 iconOffset;
 
-    // eventy sygnalizuj¹ce jakieœ zmiany. G³ównie przydatne do UI
+    [Header("Main attributes:")]
+    [SerializeField] private AiController commander;
+    [SerializeField] private string taskForceName;
+    [SerializeField] private float spotDistance;
+    [SerializeField] private int maxSize;
+    [SerializeField] private float strength;
+    [SerializeField] private List<AiController> unitControllers = new();
+
+    [Header("Misc attributes:")]
+    [SerializeField] private Vector3 escapePoint;
+    [SerializeField] private LayerMask targetMask;
+    [SerializeField] private Collider[] targetCollider = new Collider[1];
+
+    [Header("Dynamic attributes:")]
+    [SerializeField] private float travelSpeed;
+    [SerializeField] private float travelAcceleration;
+
+    [Header("States:")]
+    [SerializeField] private TaskForceSide side = TaskForceSide.Neutral;
+    [SerializeField] private TaskForceState currentState = TaskForceState.Idle;
+    [SerializeField] private TaskForceBehaviour currentBehaviour = TaskForceBehaviour.Passive;
+    [SerializeField] private TaskForceOrder currentOrder = TaskForceOrder.None;
+
+    [Header("Events:")]
     public UnityEvent<int> onSizeChanged = new();
     public UnityEvent<float> onStrengthChanged = new();
-    public UnityEvent<int> onPowerChanged = new();
-    public UnityEvent<int> onStatusChanged = new();
-
-    // work in progress
-    public enum Status { Idle, Moving, Combat, Retreat }
-    public Status currentStatus = Status.Idle;
-    public enum Behaviour { Passive, Aggresive, Evasive }
-    public Behaviour behaviour = Behaviour.Passive;
-    public TaskForceController currentTarget;
-
-    public GameManager GameManager { get => gameManager; }
-
-    //public UnityEvent<int, bool> OnTaskForceDestroyed; // invokowany kiedy lista jednostek bêdzie mia³a d³ugoœæ 0. FleetManager musi zaj¹æ siê wyczyszczeniem wszystkich referencji zwi¹zanych z taskForcem jeœli zostanie zniszczony 
+    public UnityEvent<TaskForceState> onStateChanged = new();
+    public UnityEvent<TaskForceBehaviour> onBehaviourChanged = new();
+    public UnityEvent<TaskForceOrder> onOrderChanged = new();
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
 
-    public UnityEvent<TaskForceController, TaskForceController> onEnemyTaskForceSpotted = new();
-
-
-    //public TaskForceController(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset)
-    //{
-    //    this.friendly = friendly;
-    //    this.name = name;
-    //    this.maxSize = maxSize;
-    //    this.icon = icon;
-    //    this.iconOffset = iconOffset;
-    //}
-
-    //public void Init(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset)
-    //{
-    //    this.friendly = friendly;
-    //    this.taskForceName = name;
-    //    this.maxSize = maxSize;
-    //    this.icon = icon;
-    //    this.iconOffset = iconOffset;
-    //}
-
-    public LayerMask targetMask;
-
-    public Collider[] colliders = new Collider[1];
-
-    public IEnumerator SpotForTargets()
-    {
-        if (debug)
-            Debug.Log("starting spotting coroutine");
-
-        WaitForSeconds interval = new(0.1f);
-
-        if (commander.CompareTag("Ally"))
-            targetMask = LayerMask.GetMask("Enemies");
-
-        else if (commander.CompareTag("Enemy"))
-            targetMask = LayerMask.GetMask("Allies");
-
-        while (true)
-        {
-            if (commander == null)
-            {
-                yield return interval;
-            }
-
-            if (currentStatus != Status.Combat)
-            {
-                if (debug)
-                    Debug.Log("spotting...");
-
-                int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance + (float)Math.Sqrt(controllers.Count) * commander.Volume, colliders, targetMask);
-                if (count > 0)
-                {
-                    if (debug)
-                        Debug.Log("enemy spotted");
-
-                    TaskForceController enemyTaskForce = colliders[0].gameObject.GetComponent<AiController>().UnitTaskForce;
-                    //onTaskForceSpotted?.Invoke(enemyTaskForce);
-                    SetTarget(enemyTaskForce);
-                }
-                else if (count == 0)
-                {
-                    if (debug)
-                        Debug.Log("no enemies spotted");
-                }
-            }
-
-            else if (currentStatus == Status.Combat)
-            {
-                if (debug)
-                    Debug.Log("combat state, waiting to exit state");
-            }
-
-            yield return interval;
+    public TaskForceSide Side { get => side; }
+    public TaskForceState CurrentState {
+        get => currentState;
+        set {
+            currentState = value;
+            onStateChanged.Invoke(value);
         }
     }
+    public TaskForceBehaviour CurrentBehaviour {
+        get => currentBehaviour;
+        set
+        {
+            currentBehaviour = value;
+            onBehaviourChanged.Invoke(value);
+        }
+    }
+    public TaskForceOrder CurrentOrder
+    {
+        get => currentOrder;
+        set
+        {
+            currentOrder = value;
+            onOrderChanged.Invoke(value);
+        }
+    }
+
+    public string TaskForceName { get => taskForceName; }
+    public AiController Commander { get =>  commander; }
+    public List<AiController> Units { get => unitControllers; }
+    public float Strength { get => strength; }
 
     struct DestinationProvider : IJobParallelFor
     {
@@ -161,29 +127,29 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    private IEnumerator RefreshDestination(TaskForceController target)
+    private IEnumerator RefreshTargets(TaskForceController target)
     {
-        if (debug)
-            Debug.Log("refresh destination started");
-
         WaitForSeconds interval = new(0.1f);
-        List<AiController> enemies = target.controllers;
+        List<AiController> enemies = target.unitControllers;
 
-        while (currentStatus == Status.Combat)
+        while (CurrentState == TaskForceState.Combat)
         {
-            if (debug)
-                Debug.Log("combat");
-
+            if (target == null)
+            {
+                SetIdleState();
+                yield break;
+            }
+                
             this.ClearDeactivatedUnits();
             target.ClearDeactivatedUnits();
 
-            NativeArray<Vector3> unitsLocations = new(controllers.Count, Allocator.Persistent);
+            NativeArray<Vector3> unitsLocations = new(unitControllers.Count, Allocator.Persistent);
             NativeArray<Vector3> potentialTargets = new(enemies.Count, Allocator.Persistent);
-            NativeArray<Vector3> outcomeTargets = new(controllers.Count, Allocator.Persistent);
+            NativeArray<Vector3> outcomeTargets = new(unitControllers.Count, Allocator.Persistent);
 
-            for (int i = 0; i < controllers.Count; i++)
+            for (int i = 0; i < unitControllers.Count; i++)
             {
-                unitsLocations[i] = controllers[i].transform.position;
+                unitsLocations[i] = unitControllers[i].transform.position;
             }
 
             for (int i = 0; i < enemies.Count; i++)
@@ -198,17 +164,14 @@ public class TaskForceController : MonoBehaviour
                 outcomeTargets = outcomeTargets
             };
 
-            JobHandle handle = job.Schedule(controllers.Count, 1);
+            JobHandle handle = job.Schedule(unitControllers.Count, 1);
             handle.Complete();
 
-            for (int i = 0; i < controllers.Count; i++)
+            for (int i = 0; i < unitControllers.Count; i++)
             {
-                if (controllers[i].gameObject.activeSelf)
-                    controllers[i].SetTargetPosition(outcomeTargets[i]);
+                if (unitControllers[i].gameObject.activeSelf)
+                    unitControllers[i].SetTargetPosition(outcomeTargets[i]);
             }
-
-            if (currentTarget == null)
-                SetIdleState();
 
             unitsLocations.Dispose();
             potentialTargets.Dispose();
@@ -216,136 +179,94 @@ public class TaskForceController : MonoBehaviour
 
             yield return interval;
         }
-
-        if (debug)
-            Debug.Log("refresh destination stopped");
     }
 
-    public static TaskForceController Create(string name, int maxSize, bool friendly, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager)
+    public void Init(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameManager gameManager, TaskForceSide side)
     {
-        TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
-        instance.gameObject.transform.SetParent(container.transform);
-        instance.taskForceName = name;
-        instance.friendly = friendly;
-        instance.maxSize = maxSize;
-        instance.icon = icon;
-        instance.iconOffset = iconOffset;
-        instance.gameManager = gameManager;
-
-        //instance.StartCoroutine(instance.SpotForTargets());
-
-        return instance;
-    }
-
-    public void SetTarget(TaskForceController taskForce)
-    {
-        if (currentStatus == Status.Combat)
+        if (initialized)
             return;
 
-        currentStatus = Status.Combat;
-        currentTarget = taskForce;
+        taskForceName = name;
+        this.maxSize = maxSize;
+        this.icon = icon;
+        this.iconOffset = iconOffset;
+        this.gameManager = gameManager;
+        this.side = side;
 
-        StartCoroutine(RefreshDestination(taskForce));
-        //onEnemyTaskForceSpotted.Invoke(this, taskForce);
+        if (side == TaskForceSide.Ally)
+            targetMask = LayerMask.GetMask("Enemies");
 
-        if (debug)
-            Debug.Log("task force detected");
+        else if (side == TaskForceSide.Enemy)
+            targetMask = LayerMask.GetMask("Allies");
+
+
+        onStateChanged.AddListener(OnStateChanged);
+
+        initialized = true;
     }
-
-
-    // Wywo³ywane w update() dla ka¿dego taskForce (w HUDManager). Ustawia ikonê w odpowiedniej pozycji
-    private void UpdateHUD()
-    {
-
-        if (commander == null)
-            return;
-
-        icon.transform.LookAt(Camera.main.transform, Vector3.up);
-        icon.transform.position = commander.transform.position + iconOffset;
-    }
-
-    public void Update()
-    {
-        if (commander)
-            GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(controllers.Count) * commander.Volume, commander.transform);
-
-        UpdateHUD();
-        //ClearDeactivatedUnitsRecursive();
-
-        // Jeœli task force jest w walce to zniszczenie dezaktywowanych jednostek musi zostaæ wykonane w algorytmie odpowiedzialnym za wyznaczanie celów (TaskForceManager.RefreshDestination())
-        // Jest tak poniewa¿ jednostki nie mog¹ byæ null, w czasie wykonywania algorytmu
-        // Algorytm sam kontroluje wtedy moment, w którym jednostki mog¹ zostaæ zniszczone
-        //if (currentStatus != Status.Combat)
-        //    ClearDeactivatedUnitsRecursive();
-    }
-
-    public void SetIdleState()
-    {
-        currentStatus = Status.Idle;
-
-
-
-        foreach (var unit in controllers)
-        {
-            unit.SetIdleState();
-        }
-    }
-
-    private void FindNextCommanderRecursive(int index)
-    {
-        if (controllers.Count == 0)
-            return;
-
-        if (commander == controllers[index] || !controllers[index].gameObject.activeSelf || controllers[index].gameObject == null)
-        {
-            FindNextCommanderRecursive(index + 1);
-            return;
-        }
-
-        commander = controllers[index];
-    }
-
 
     public void AddUnit(AiController unit)
     {
-        AiController unitController = unit.GetComponent<AiController>();
-        unitController.UnitTaskForce = this;
-        controllers.Add(unitController);
-
-        //OnSizeChanged?.Invoke(units.Count);
+        unit.UnitTaskForce = this;
+        unitControllers.Add(unit);
 
         SetNewSpotDistance();
+        SetNewTravelSpeed();
 
+        if (unitControllers.Count == 1)
+            commander = unit;
 
-        if (controllers.Count == 1)
+        unit.onUnitNeutralized.AddListener(RemoveUnitFromTaskForce);
+        unit.onUnitEngaged.AddListener((attacker) => EngageTaskForce(attacker));
+    }
+
+    private void SetNewTravelSpeed()
+    {
+        if (unitControllers.Count == 0)
+            return;
+
+        if (unitControllers.Count == 1)
         {
-            commander = unitController;
-            StartCoroutine(SpotForTargets());
+            travelSpeed = unitControllers[0].Values.unitSpeed;
+            travelAcceleration = unitControllers[0].Values.acceleration;
+            return;
         }
-            
 
-        // jeœli jednostka zostanie zniszczona, trzeba to odzwierciedliæ w tym taskForce
-        unitController.onUnitNeutralized.AddListener(RemoveUnitFromTaskForce);
-        unitController.onUnitEngaged.AddListener(SetTarget);
+        else
+        {
+            float newSpeed;
+            float newAcceleration;
+            foreach (var unit in unitControllers)
+            {
+                newSpeed = unit.Values.unitSpeed;
+                newAcceleration = unit.Values.acceleration;
+
+                if (newSpeed < travelSpeed)
+                    travelSpeed = newSpeed;
+
+                if (newAcceleration < travelAcceleration)
+                    travelAcceleration = newAcceleration;
+            }
+        }
     }
 
     private void SetNewSpotDistance()
     {
-        if (controllers.Count == 0)
+        if (unitControllers.Count == 0)
             return;
 
         spotDistance = 0;
 
-        if (controllers.Count == 1)
+        if (unitControllers.Count == 1)
         {
-            spotDistance = controllers[0].Values.spotDistance;
+            spotDistance = unitControllers[0].Values.spotDistance;
             return;
         }
 
         else
         {
             float newSpotDistance;
-            foreach (var unit in controllers)
+            foreach (var unit in unitControllers)
             {
                 newSpotDistance = unit.Values.spotDistance;
                 if (newSpotDistance > spotDistance)
@@ -356,13 +277,9 @@ public class TaskForceController : MonoBehaviour
 
     private void RemoveUnitFromTaskForce(AiController unit)
     {
-        //gameManager.AddToExterminationCamp(unit.gameObject);
-        //unit.SetActive(false);
+        unitControllers.Remove(unit);
 
-        controllers.Remove(unit);
-        //controllers.Remove(unit.GetComponent<AiController>());
-
-        if (controllers.Count == 0)
+        if (unitControllers.Count == 0)
             DestroyTaskForce();
 
         float unitSpotDistance = unit.Values.spotDistance;
@@ -374,26 +291,17 @@ public class TaskForceController : MonoBehaviour
 
         UpdateStrength();
 
-        onSizeChanged?.Invoke(controllers.Count);
-
-        //Destroy(unit);
-
-
+        onSizeChanged?.Invoke(unitControllers.Count);
     }
 
     private void UpdateStrength()
     {
-        strength = (float)controllers.Count / maxSize;
+        strength = (float)unitControllers.Count / maxSize;
         onStrengthChanged?.Invoke(strength);
     }
 
-    // jest invokowany event poniewa¿ FleetManager musi siê zaj¹æ wyczyszczeniem wszystkich referencji przed zniszczeniem
-    // fleetManger subskrybuje ten event kiedy taskForce zostanie stworzony
     public void DestroyTaskForce()
     {
-        if (debug)
-            Debug.Log("destroying task force " + name);
-
         StopAllCoroutines();
         onTaskForceDestroyed?.Invoke(this);
         ClearDeactivatedUnits();
@@ -401,101 +309,296 @@ public class TaskForceController : MonoBehaviour
         Destroy(gameObject);
     }
 
-    public void AddDestination(Vector3 destination)
+    private void FindNextCommanderRecursive(int index)
+    {
+        if (unitControllers.Count == 0)
+            return;
+
+        if (commander == unitControllers[index] || !unitControllers[index].gameObject.activeSelf || unitControllers[index].gameObject == null)
+        {
+            FindNextCommanderRecursive(index + 1);
+            return;
+        }
+
+        commander = unitControllers[index];
+    }
+
+    private void Update()
+    {
+        if (commander == null)
+            return;
+
+        GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
+
+        icon.transform.LookAt(Camera.main.transform, Vector3.up);
+        icon.transform.position = commander.transform.position + iconOffset;
+
+        switch (currentBehaviour)
+        {
+            case TaskForceBehaviour.Passive:
+                PassiveBehaviour();
+                break;
+
+            case TaskForceBehaviour.Aggresive:
+                AggresiveBehaviour();
+                break;
+
+            case TaskForceBehaviour.Evasive:
+                EvasiveBehaviour();
+                break;
+        }
+
+        switch (CurrentState)
+        {
+            case TaskForceState.Idle:
+                break;
+
+            case TaskForceState.Combat:
+                break;
+
+            case TaskForceState.Moving:
+                MovingState();
+                break;
+
+            case TaskForceState.Retreat:
+                break;
+        }
+    }
+
+    private void AggresiveBehaviour()
+    {
+        if (SpotForTargets(out TaskForceController target))
+            EngageTaskForce(target);
+    }
+
+    private void EvasiveBehaviour()
     {
 
     }
 
-    // dla ka¿dej jednostki ustawia stan "Moving" i randomowy destination w zakresie zale¿nym od wielkoœci taskForce
+    private void PassiveBehaviour()
+    {
+
+    }
+
+    private void MovingState()
+    {
+        if (commander.Agent.pathPending)
+            return;
+
+        IEnumerator Counter()
+        {
+            counterRunning = true;
+            secondsAfterStop = 0;
+            WaitForSeconds interval = new WaitForSeconds(0.1f);
+
+            while (commander.Agent.velocity.magnitude == 0)
+            {
+                yield return interval;
+                secondsAfterStop += 0.1f;
+
+                if (waitingForSeconds <= secondsAfterStop)
+                {
+                    CurrentState = TaskForceState.Idle;
+                    counterRunning = false;
+                    yield break;
+                }
+            }
+            counterRunning = false;
+            yield break;
+        }
+
+        if (commander.Agent.velocity.magnitude == 0)
+        {
+            if (!counterRunning)
+                StartCoroutine(Counter());
+        }
+    }
+
+    private void OnStateChanged(TaskForceState state)
+    {
+        switch (state)
+        {
+            case TaskForceState.Idle:
+                OnIdleChange();
+                break;
+
+            case TaskForceState.Moving:
+                OnMovingChange();
+                break;
+
+            case TaskForceState.Combat:
+                OnCombatChange();
+                break;
+
+            case TaskForceState.Retreat:
+                OnRetreatChange();
+                break;
+        }
+    }
+
+    private void OnIdleChange()
+    {
+        foreach (var unit in unitControllers)
+        {
+            unit.Agent.speed = unit.Values.unitSpeed;
+            unit.Agent.acceleration = unit.Values.acceleration;
+        }
+    }
+
+    private void OnMovingChange()
+    {
+        foreach (var unit in unitControllers)
+        {
+            unit.Agent.speed = travelSpeed;
+            unit.Agent.acceleration = travelAcceleration;
+        }
+    }
+
+    private void OnCombatChange()
+    {
+        foreach (var unit in unitControllers)
+        {
+            unit.Agent.speed = unit.Values.unitSpeed;
+            unit.Agent.acceleration = unit.Values.acceleration;
+        }
+    }
+
+    private void OnRetreatChange()
+    {
+        foreach (var unit in unitControllers)
+        {
+            unit.Agent.speed = unit.Values.unitSpeed;
+            unit.Agent.acceleration = unit.Values.acceleration;
+        }
+    }
+
+
+    private bool SpotForTargets(out TaskForceController target)
+    {
+        if (CurrentState == TaskForceState.Combat || commander == null)
+        {
+            target = null;
+            return false;
+        }
+
+        int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, targetCollider, targetMask);
+        if (count > 0)
+        {
+            TaskForceController enemyTaskForce = targetCollider[0].gameObject.GetComponent<AiController>().UnitTaskForce;
+            target = enemyTaskForce;
+            return true;
+        }
+
+        else
+        {
+            target = null;
+            return false;
+        }
+            
+    }
+
+    public void EngageTaskForce(TaskForceController target)
+    {
+        if (target == null)
+            return;
+
+        CurrentState = TaskForceState.Combat;
+        StartCoroutine(RefreshTargets(target));
+    }
+
+    public void Disengage(Vector3 escapePoint)
+    {
+        CurrentState = TaskForceState.Retreat;
+
+        foreach (var controller in unitControllers)
+        {
+            if (controller != null)
+                controller.SetRetreatState(GameUtils.RandomPlanePositionCircle(escapePoint, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
+        }
+
+        if (commander != null)
+            commander.GetComponent<AiController>().SetRetreatState(escapePoint);
+    }
+
     public void SetDestination(Vector3 destination)
     {
-        for (int i = 0; i < controllers.Count; i++)
+        CurrentState = TaskForceState.Moving;
+
+        foreach (var controller in unitControllers)
         {
-            if (controllers[i] != null)
-                controllers[i].SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(controllers.Count) * commander.Volume));
+            if (controller != null)
+                controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
         }
 
         if (commander != null)
             commander.GetComponent<AiController>().SetMovingState(destination);
     }
 
-    public void ResetOrders(Vector3 destination)
+    public void SetIdleState()
     {
+        CurrentState = TaskForceState.Idle;
 
-    }
-
-    // merguje dwa taskForcy. Wszystkie jednostki z reinforcements s¹ dodawane do listy, a nastêpnie reinforcements jest niszczone
-    public void Merge(TaskForceController reinforcements)
-    {
-        if (reinforcements == this || reinforcements == null)
-            return;
-
-        // potencjalny bug, jeœli iloœæ jednostek w do³¹czanym TaskForce zmniejszy siê w trakcie iteracji
-        for (int i = 0; i < reinforcements.controllers.Count; i++)
+        foreach (var unit in unitControllers)
         {
-            AddUnit(reinforcements.controllers[i]);
+            unit.SetIdleState();
         }
-
-        maxSize = controllers.Count;
-        strength = 1.0f;
-        onSizeChanged?.Invoke(controllers.Count);
-        onStrengthChanged?.Invoke(strength);
-        reinforcements.DestroyTaskForce();
     }
-
-    //public void DeactivateUnit(AiController unit)
-    //{
-    //    unit.gameObject.SetActive(false);
-    //}
 
     public void ClearDeactivatedUnits()
     {
-        if (debug)
-            Debug.Log("clearing units for: " + taskForceName);
-
         ClearDeactivatedUnitsRecursive(0);
     }
 
     private void ClearDeactivatedUnitsRecursive(int index)
     {
-
-        if (controllers.Count == 0)
+        if (unitControllers.Count == 0)
             return;
 
-        if (controllers[index] == null)
+        if (unitControllers[index] == null)
         {
-            controllers.RemoveAt(index);
+            unitControllers.RemoveAt(index);
             return;
         }
 
-        if (index == controllers.Count - 1)
+        if (index == unitControllers.Count - 1)
         {
-            if (!controllers[index].gameObject.activeSelf && controllers[index] != null)
+            if (!unitControllers[index].gameObject.activeSelf && unitControllers[index] != null)
             {
-                if (debug)
-                    Debug.Log("Destroying: " + controllers[index].name);
-
-                //Destroy(controllers[index].gameObject);
-                //controllers.RemoveAt(index);
-                controllers.RemoveAt(index);
+                unitControllers.RemoveAt(index);
                 return;
             }
         }
 
         else
         {
-            if (!controllers[index].gameObject.activeSelf && controllers[index] != null)
+            if (!unitControllers[index].gameObject.activeSelf && unitControllers[index] != null)
             {
-
-
-                Destroy(controllers[index].gameObject);
-                //controllers.RemoveAt(index);
-                controllers.RemoveAt(index);
+                Destroy(unitControllers[index].gameObject);
+                unitControllers.RemoveAt(index);
                 ClearDeactivatedUnitsRecursive(index);
                 return;
             }
 
             ClearDeactivatedUnitsRecursive(index + 1);
         }
+    }
+
+    public void Merge(TaskForceController reinforcements)
+    {
+        if (reinforcements == this || reinforcements == null)
+            return;
+
+        foreach (var controller in reinforcements.unitControllers)
+        {
+            AddUnit(controller);
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(commander.transform.position, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
+        }
+
+        maxSize = unitControllers.Count;
+        strength = 1.0f;
+        onSizeChanged?.Invoke(unitControllers.Count);
+        onStrengthChanged?.Invoke(strength);
+        reinforcements.DestroyTaskForce();
     }
 }

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 using UnityEngine.Events;
+using static TaskForceController;
 
 
 // klasa odpowiada za zarz¹dzanie flot¹ gracza (wszystkie task forcy)
@@ -78,13 +79,13 @@ public class FleetManager : MonoBehaviour
         TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
         taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
 
-        if (taskForce.friendly)
+        if (taskForce.Side == TaskForceSide.Ally)
         {
             allyTaskForceList.Add(taskForce);
             taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
             allyTaskForceCount++;
         }
-        else if (!taskForce.friendly)
+        else if (taskForce.Side == TaskForceSide.Enemy)
         {
             enemyTaskForceList.Add(taskForce);
             taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
@@ -100,10 +101,10 @@ public class FleetManager : MonoBehaviour
 
         //Destroy(taskForce.icon);
 
-        if (taskForce.friendly)
+        if (taskForce.Side == TaskForceSide.Ally)
             allyTaskForceList.Remove(taskForce);
 
-        else if (!taskForce.friendly)
+        else if (taskForce.Side == TaskForceSide.Enemy)
             enemyTaskForceList.Remove(taskForce);
 
         //Destroy(taskForce);

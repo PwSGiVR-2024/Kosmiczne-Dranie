@@ -2,6 +2,7 @@ using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
 using static AiController;
+using static TaskForceController;
 
 
 // klasa odpowiada za instancjonowanie ka¿dej jednostki oraz Task Forca w œwiecie gry
@@ -28,33 +29,31 @@ public class Spawner : MonoBehaviour
     public int unitsToSpawn = 0;
 
 
-    private AiController CreateUnit(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer)
+    private TaskForceController CreateTaskForce(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager, TaskForceSide side)
+    {
+        TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
+        instance.Init(name, maxSize, icon, iconOffset, gameManager, side);
+        instance.gameObject.transform.SetParent(container.transform);
+
+        return instance;
+    }
+
+
+
+    private AiController CreateUnit(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer, UnitSide side)
     {
         GameObject instance = Instantiate(prefab, pos, Quaternion.identity, allyContainer.transform);
         instance.name = name;
 
-        Side unitSide = Side.Neutral;
-        if (instance.CompareTag("Ally"))
-        {
-            unitSide = Side.Ally;
-            instance.layer = LayerMask.NameToLayer("Allies");
-        }
-
-        else if (instance.CompareTag("Enemy"))
-        {
-            unitSide = Side.Enemy;
-            instance.layer = LayerMask.NameToLayer("Enemies");
-        }
-
         AiController controller = instance.GetComponent<AiController>();
-        controller.Init(unitSide, taskForce, projectileContainer);
+        controller.Init(side, taskForce, projectileContainer);
         return controller;
     }
 
 
     private AiController SpawnAlly(GameObject prefab, Vector3 pos, TaskForceController taskForce)
     {
-        AiController unit = CreateUnit("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer);
+        AiController unit = CreateUnit("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer, UnitSide.Ally);
 
         onAllySpawned?.Invoke(unit.gameObject);
         allyCount++;
@@ -64,7 +63,7 @@ public class Spawner : MonoBehaviour
 
     private AiController SpawnEnemy(GameObject prefab, Vector3 pos, TaskForceController taskForce)
     {
-        AiController unit = CreateUnit("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer);
+        AiController unit = CreateUnit("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer, UnitSide.Enemy);
         onAllySpawned?.Invoke(unit.gameObject);
         enemyCount++;
 
@@ -78,7 +77,7 @@ public class Spawner : MonoBehaviour
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, allyTaskForceContainer, gameManager);
+        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, allyTaskForceContainer, gameManager, TaskForceSide.Ally);
 
         AiController commander = SpawnAlly(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);
@@ -110,7 +109,7 @@ public class Spawner : MonoBehaviour
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, false, icon, iconOffset, enemyTaskForceContainer, gameManager);
+        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, enemyTaskForceContainer, gameManager, TaskForceSide.Enemy);
 
         AiController commander = SpawnEnemy(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);

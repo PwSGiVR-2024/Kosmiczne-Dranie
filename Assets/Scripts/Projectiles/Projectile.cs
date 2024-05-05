@@ -8,7 +8,7 @@ using UnityEngine;
 // klasa definiuje zachowanie pocisku i wszytskie jego atrybuty
 public class Projectile : MonoBehaviour
 {
-    private AiController.Side side;
+    private AiController.UnitSide side;
     private AiController shotBy;
     private WaitForSeconds waitForSeconds;
     private bool destroyAfterDeactivated = false;
@@ -24,7 +24,7 @@ public class Projectile : MonoBehaviour
         waitForSeconds = new WaitForSeconds(values.projectileLifeSpan);
         transform.SetParent(shotBy.ProjectileContainer.transform);
 
-        side = shotBy.UnitSide;
+        side = shotBy.Side;
 
         StartCoroutine(DeactivateProjectile());
     }
@@ -54,19 +54,19 @@ public class Projectile : MonoBehaviour
 
         if (collider.CompareTag("Ally"))
         {
-            if (side == AiController.Side.Ally)
+            if (side == AiController.UnitSide.Ally)
                 return;
 
-            else if (side == AiController.Side.Enemy)
+            else if (side == AiController.UnitSide.Enemy)
                 collider.GetComponent<AiController>().Damage(this);
         }
 
         else if (collider.CompareTag("Enemy"))
         {
-            if (side == AiController.Side.Enemy)
+            if (side == AiController.UnitSide.Enemy)
                 return;
 
-            else if (side == AiController.Side.Ally)
+            else if (side == AiController.UnitSide.Ally)
                 collider.GetComponent<AiController>().Damage(this);
         }
 
