@@ -4,14 +4,14 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public bool logExterminationCamp = false;
+    public bool logExterminationChamber = false;
 
     private Stack<GameObject> exterminationCamp = new();
     private Stack<GameObject> temporaryCamp = new();
 
     private IEnumerator ExterminationChamber()
     {
-        if (logExterminationCamp)
+        if (logExterminationChamber)
             Debug.Log("chamber activated");
 
         GameObject obj;
@@ -21,7 +21,7 @@ public class GameManager : MonoBehaviour
             {
                 if (obj)
                 {
-                    if (logExterminationCamp)
+                    if (logExterminationChamber)
                         Debug.Log("destroying: " + obj.name);
 
                     Destroy(obj);
@@ -29,7 +29,7 @@ public class GameManager : MonoBehaviour
                 }
                 else
                 {
-                    if (logExterminationCamp)
+                    if (logExterminationChamber)
                         Debug.Log("object is null");
 
                     exterminationCamp.Pop();
@@ -40,7 +40,7 @@ public class GameManager : MonoBehaviour
             {
                 if (obj)
                 {
-                    if (logExterminationCamp)
+                    if (logExterminationChamber)
                         Debug.Log("destroying: " + obj.name);
 
                     Destroy(obj);
@@ -48,14 +48,14 @@ public class GameManager : MonoBehaviour
                 }
                 else if (obj == null)
                 {
-                    if (logExterminationCamp)
+                    if (logExterminationChamber)
                         Debug.Log("object is null");
 
                     temporaryCamp.Pop();
                 }
                 else if (obj.activeSelf)
                 {
-                    if (logExterminationCamp)
+                    if (logExterminationChamber)
                         Debug.Log("object is active in temporary camp. Skipping iteration");
 
                     yield return null;

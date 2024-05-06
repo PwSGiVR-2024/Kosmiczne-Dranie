@@ -50,7 +50,7 @@ public class TaskForceController : MonoBehaviour
     [Header("States:")]
     [SerializeField] private TaskForceSide side = TaskForceSide.Neutral;
     [SerializeField] private TaskForceState currentState = TaskForceState.Idle;
-    [SerializeField] private TaskForceBehaviour currentBehaviour = TaskForceBehaviour.Passive;
+    [SerializeField] private TaskForceBehaviour currentBehaviour = TaskForceBehaviour.Aggresive;
     [SerializeField] private TaskForceOrder currentOrder = TaskForceOrder.None;
 
     [Header("Events:")]

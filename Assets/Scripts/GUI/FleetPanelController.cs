@@ -36,10 +36,10 @@ public class FleetPanelController : MonoBehaviour
 
         //elementy ui
         buttonMerge.onClick.AddListener(MergeWrapper);
-        dropdownUnitType.onValueChanged.AddListener(SetUnitType);
-        inputUnitCount.onValidateInput += ValidateCountInput; // walidacja ¿eby akceptowaæ tylko cyfry
-        inputUnitCount.onValueChanged.AddListener(SetUnitCount);
-        inputTaskForceName.onValueChanged.AddListener(SetTaskForceName);
+        //dropdownUnitType.onValueChanged.AddListener(SetUnitType);
+       // inputUnitCount.onValidateInput += ValidateCountInput; // walidacja ¿eby akceptowaæ tylko cyfry
+        //inputUnitCount.onValueChanged.AddListener(SetUnitCount);
+       // inputTaskForceName.onValueChanged.AddListener(SetTaskForceName);
 
         spawner.onAllyTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
     }
