@@ -12,13 +12,13 @@ GameObject:
   - component: {fileID: 7321033797636765974}
   - component: {fileID: 875441132069479821}
   - component: {fileID: 69923541674433542}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Projectile(sprite)
   m_TagString: Projectile
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &1144987573377175752
 Transform:
   m_ObjectHideFlags: 0
@@ -47,12 +47,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 278b9600f98859d4cb7e1587ce72418d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  speed: 0
-  dmg: 0
-  lifeSpan: 0
-  friendly: 0
-  angleError: 0
-  destroyAfterDeactivated: 0
+  side: 0
+  shotBy: {fileID: 0}
+  timeTillDeactivation: 0
+  values: {fileID: 0}
+  projectileMask:
+    serializedVersion: 2
+    m_Bits: 8
+  alliesMask:
+    serializedVersion: 2
+    m_Bits: 7
+  enemiesMask:
+    serializedVersion: 2
+    m_Bits: 6
 --- !u!54 &875441132069479821
 Rigidbody:
   m_ObjectHideFlags: 0

@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting;
@@ -15,47 +16,40 @@ public class WeaponController: MonoBehaviour
     private float cooldownRemaining = 0f;
     public WeaponValues Values { get => values; }
     public ProjectilePool Pool { get => pool; }
+    public AiController Unit { get => unit; }
 
     public void Init(AiController unit)
     {
         this.unit = unit;
         unit.onUnitNeutralized.AddListener((_) => pool.Clean());
-        pool = new(values.projectileLifeSpan, values.attackCooldown);
+
+        int poolSize = (int)((values.projectileLifeSpan / values.attackCooldown) + 2.0f);
+
+        pool = new(poolSize, this);
     }
 
-    private Projectile SpawnProjectile()
+    //private Projectile SpawnProjectile()
+    //{
+    //    GameObject instance = Instantiate(values.projectile, transform.position, SetProjectileRotation());
+    //    Projectile projectile = instance.GetComponent<Projectile>();
+    //    projectile.Init(this);
+    //    return projectile;
+    //}
+
+    private void SteProjectilePosition(Projectile projectile)
     {
-        GameObject instance = Instantiate(values.projectile, transform.position, SetProjectileRotation());
-        Projectile projectile = instance.GetComponent<Projectile>();
-        projectile.Init(values, unit);
-        return projectile;
-    }
+        Quaternion newRotation = transform.rotation;
+        float randomAngle = UnityEngine.Random.Range(-values.angleError, values.angleError);
+        newRotation *= Quaternion.AngleAxis(randomAngle, Vector3.up);
 
-    private Quaternion SetProjectileRotation()
-    {
-        Quaternion projectileRotation = transform.rotation;
-
-        float randomAngle = Random.Range(-values.angleError, values.angleError);
-        projectileRotation *= Quaternion.AngleAxis(randomAngle, Vector3.up);
-
-        return projectileRotation;
+        projectile.transform.rotation = newRotation;
+        projectile.transform.position = transform.position;
     }
 
     private void PutProjectile()
     {
-        Projectile projectile;
-        if (pool.TryGetProjectile(out projectile))
-        {
-            projectile.transform.position = transform.position;
-            projectile.transform.rotation = SetProjectileRotation();
-            projectile.gameObject.SetActive(true);
-        }
-
-        else
-        {
-            projectile = SpawnProjectile();
-            pool.TryPutProjectile(projectile);
-        }
+        Projectile projectile = pool.GetProjectile();
+        SteProjectilePosition(projectile);
     }
 
     private IEnumerator AttackCooldown()

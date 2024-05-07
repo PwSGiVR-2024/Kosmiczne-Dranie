@@ -17,101 +17,64 @@ public class ProjectilePool
     }
 
     private Projectile[] projectiles;
-    private int getIndex = 0;
-    private int putIndex = 0;
-    private int length;
+    private int index = 0;
     private bool loggingEnabled = false;
 
     public Projectile[] Projectiles { get => projectiles; }
 
-    public ProjectilePool(float projectileLifeSpan, float attackCooldown)
+    public ProjectilePool(int size, WeaponController weapon)
     {
-        if (projectileLifeSpan <= 0 || attackCooldown <= 0)
-            throw new InvalidSize("[ProjectilePool] Parameters must be greater than 0. Projectile pool not initialized.");
+        if (size < 1)
+            throw new InvalidSize("[ProjectilePool] Size must be greater than 0. Projectile pool not initialized.");
 
-        length = (int) ((projectileLifeSpan / attackCooldown) + 1.0f);
+        projectiles = new Projectile[size];
 
-        projectiles = new Projectile[length];
+        for (int i = 0; i < size; i++)
+        {
+            projectiles[i] = Projectile.Create(weapon);
+            //projectiles[i].gameObject.SetActive(false);
+        }
     }
 
-    public bool TryGetProjectile(out Projectile projectile)
+    public Projectile GetProjectile()
     {
         if (loggingEnabled)
-            Debug.Log("[TryGetProjectile] Trying to get projectile at index: " + getIndex);
+            Debug.Log("[TryGetProjectile] Trying to get projectile at index: " + index);
 
-        if (getIndex == length)
+        if (index == projectiles.Length)
         {
-            getIndex = 0;
-
             if (loggingEnabled)
                 Debug.Log("[TryGetProjectile] Maximum index. Going back to 0");
-        }
-            
 
-        if (projectiles[getIndex] == null ||
-            projectiles[getIndex].gameObject.activeSelf)
+            index = 0;
+            return GetProjectile();
+        }
+
+        else if (projectiles[index].gameObject.activeInHierarchy)
         {
             if (loggingEnabled)
-                Debug.LogWarning("[TryGetProjectile] Projectile at index " + getIndex + " is null or active in the scene. Method returned false");
+                Debug.LogWarning("[TryGetProjectile] Projectile at index " + index + " is active in the scene");
 
-            projectile = null;
-            return false;
+            index++;
+            return GetProjectile();
         }
 
         else
         {
-            projectile = projectiles[getIndex];
-            getIndex++;
-
             if (loggingEnabled)
-                Debug.Log("[TryGetProjectile] Projectile successfully fetched at index: " + (getIndex - 1));
+                Debug.Log("[TryGetProjectile] Projectile successfully fetched at index: " + index);
 
-            return true;
+            index++;
+            projectiles[index - 1].gameObject.SetActive(true);
+            return projectiles[index - 1];
         }
-    }
-
-    public bool TryPutProjectile(Projectile projectile)
-    {
-        if (loggingEnabled)
-            Debug.Log("[TryPutProjectileInPool] Trying to put projectile at index: " + putIndex);
-
-        if (putIndex == length)
-        {
-            if (loggingEnabled)
-                Debug.LogWarning("[TryPutProjectileInPool] Maximum pool size reached. Pool size: " + length + ". Method returned false and projectile will be destroyed");
-
-            projectile.DestroyAfterDeactivated();
-            return false;
-        }
-            
-
-        if (projectiles[putIndex] != null)
-        {
-            if (loggingEnabled)
-                Debug.LogWarning("[TryPutProjectileInPool] Projectile already exists at index: " + putIndex + ". Method returned false and projectile will be destroyed");
-
-            projectile.DestroyAfterDeactivated();
-            return false;
-        }
-            
-
-        projectiles[putIndex] = projectile;
-
-        if (loggingEnabled)
-            Debug.Log("[TryPutProjectileInPool] Projectile successfully placed in the pool at index: " + putIndex);
-
-        putIndex++;
-        return true;
     }
 
     public void Clean()
     {
         for (int i = 0; i < projectiles.Length; i++)
         {
-            if (projectiles[i] == null)
-                continue;
-
-            if (projectiles[i].gameObject.activeSelf)
+            if (projectiles[i].gameObject.activeInHierarchy)
                 projectiles[i].ShotBy.GameManager.AddToTemporaryCamp(projectiles[i].gameObject);
 
             else
@@ -128,10 +91,4 @@ public class ProjectilePool
     {
         loggingEnabled = false;
     }
-
-    public bool CheckIfloggingEnabled()
-    {
-        return loggingEnabled;
-    }
-
 }

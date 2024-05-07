@@ -34,7 +34,7 @@ public class BasicUnitController : AiController
 
     protected override void IdleState()
     {
-        
+
     }
 
     protected override void MovingState()
