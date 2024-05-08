@@ -16,6 +16,7 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
+    private LayerMask hostileProjectileMask;
     private GameManager gameManager;
 
     private AiController target;
@@ -102,6 +103,12 @@ public abstract class AiController : MonoBehaviour
             volume = volZ;
 
         gameManager = taskForce.gameManager;
+
+        if (side == UnitSide.Ally)
+            hostileProjectileMask = LayerMask.GetMask("EnemyProjectiles");
+
+        else if (side == UnitSide.Enemy)
+            hostileProjectileMask = LayerMask.GetMask("AllyProjectiles");
 
         AdditionalInit();
 
@@ -324,4 +331,10 @@ public abstract class AiController : MonoBehaviour
     protected abstract void OnTargetPositionChanged();
 
     protected abstract void BeforeDeactivation();
+
+    protected virtual void OnTriggerEnter(Collider collider)
+    {
+        if ((hostileProjectileMask & (1 << collider.gameObject.layer)) != 0)
+            Damage(collider.gameObject.GetComponent<Projectile>());
+    }
 }

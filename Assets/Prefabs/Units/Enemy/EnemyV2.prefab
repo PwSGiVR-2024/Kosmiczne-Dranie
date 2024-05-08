@@ -57,6 +57,7 @@ GameObject:
   - component: {fileID: 645919149357938216}
   - component: {fileID: 5108977575048652193}
   - component: {fileID: 3012276605248696598}
+  - component: {fileID: -7522782024333851740}
   m_Layer: 6
   m_Name: EnemyV2
   m_TagString: Enemy
@@ -118,7 +119,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3
@@ -143,7 +144,7 @@ MonoBehaviour:
   unitValues: {fileID: 11400000, guid: ee062f304e3bfca4c814ac170181e9d8, type: 2}
   agent: {fileID: 645919149357938216}
   currentState: 0
-  unitSide: 0
+  side: 0
   onUnitNeutralized:
     m_PersistentCalls:
       m_Calls: []
@@ -155,6 +156,33 @@ MonoBehaviour:
       m_Calls: []
   ownSpeed: 0
   weapon_1: {fileID: 2636007260852464078}
+--- !u!54 &-7522782024333851740
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1884448166627179468}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 0, y: 0, z: 0}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 36
+  m_CollisionDetection: 0
 --- !u!1 &7249120258299425669
 GameObject:
   m_ObjectHideFlags: 0

@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 1144987573377175752}
   - component: {fileID: 7321033797636765974}
-  - component: {fileID: 875441132069479821}
   - component: {fileID: 69923541674433542}
   m_Layer: 8
   m_Name: Projectile(sprite)1
@@ -47,46 +46,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 278b9600f98859d4cb7e1587ce72418d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  side: 0
-  shotBy: {fileID: 0}
-  timeTillDeactivation: 0
-  values: {fileID: 0}
-  projectileMask:
-    serializedVersion: 2
-    m_Bits: 8
-  alliesMask:
-    serializedVersion: 2
-    m_Bits: 7
-  enemiesMask:
-    serializedVersion: 2
-    m_Bits: 6
---- !u!54 &875441132069479821
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4219372591201158213}
-  serializedVersion: 4
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0
-  m_CenterOfMass: {x: 0, y: 0, z: 0}
-  m_InertiaTensor: {x: 1, y: 1, z: 1}
-  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_IncludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ExcludeLayers:
-    serializedVersion: 2
-    m_Bits: 0
-  m_ImplicitCom: 0
-  m_ImplicitTensor: 0
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 1
 --- !u!65 &69923541674433542
 BoxCollider:
   m_ObjectHideFlags: 0
@@ -102,7 +61,7 @@ BoxCollider:
     serializedVersion: 2
     m_Bits: 0
   m_LayerOverridePriority: 0
-  m_IsTrigger: 1
+  m_IsTrigger: 0
   m_ProvidesContacts: 0
   m_Enabled: 1
   serializedVersion: 3

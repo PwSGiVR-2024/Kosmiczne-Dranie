@@ -26,6 +26,8 @@ public class WeaponController: MonoBehaviour
         int poolSize = (int)((values.projectileLifeSpan / values.attackCooldown) + 2.0f);
 
         pool = new(poolSize, this);
+
+        StartCoroutine(AttackCooldown());
     }
 
     //private Projectile SpawnProjectile()
@@ -54,19 +56,18 @@ public class WeaponController: MonoBehaviour
 
     private IEnumerator AttackCooldown()
     {
-        onCooldown = true;
-
-        while (cooldownRemaining > 0)
+        while (true)
         {
-            cooldownRemaining -= Time.deltaTime;
+            if (onCooldown)
+            {
+                cooldownRemaining -= Time.deltaTime;
 
-            if (cooldownRemaining < 0)
-                cooldownRemaining = 0;
-
+                if (cooldownRemaining <= 0)
+                    onCooldown = false;
+            }
+            
             yield return null;
         }
-
-        onCooldown = false;
     }
 
     public void FireProjectile()
@@ -76,8 +77,7 @@ public class WeaponController: MonoBehaviour
 
         PutProjectile();
         cooldownRemaining = values.attackCooldown;
-
-        StartCoroutine(AttackCooldown());
+        onCooldown = true;
     }
 
     public bool CheckIfFacingTarget(Vector3 targetPos)
