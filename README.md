@@ -3,4 +3,4 @@ Jedna z możliwych refleksji, jakie można przekazać, to konieczność empatii 
 
 Gra w stylu RTS z epickimi kosmicznymi starciami na ogromną skalę.
 
-https://trello.com/w/kodra_
+https://trello.com/w/kodra_ 
