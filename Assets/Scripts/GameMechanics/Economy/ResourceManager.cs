@@ -1,9 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
+using System.Resources;
 using UnityEngine;
+using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
+using UnityEngine.UIElements;
+using TMPro;
 
 public class ResourceManager : MonoBehaviour
 {
+    public int money;
+    public int crystals;
+    public int metals;
+    public int scrap;
+    public int rareMaterials;
+    public int redFactionAffiliation;//Frakcje todo na potem albo nie
+    public int blueFactionAffiliation;//Frakcje todo na potem albo nie
+    public TMP_Text ResourceText;
     List<ResourceHolder> holders;
 
     // oddzielne profile ¿eby zachowaæ porz¹dek
@@ -12,10 +24,14 @@ public class ResourceManager : MonoBehaviour
 
     void Start()
     {
-        foreach (var holder in holders)
+        /*foreach (var holder in holders)
         {
             holder.onCaptured.AddListener((side) => UpdateResource(side, holder));
-        }
+        }*/
+    }
+    private void FixedUpdate()
+    {
+        ResourceCount();
     }
 
     private void UpdateResource(Outpost.OutpostSide side, ResourceHolder holder)
@@ -32,5 +48,9 @@ public class ResourceManager : MonoBehaviour
             enemyProfile.RemoveResource(holder);
             playerProfile.AddResource(holder);
         }
+    }
+    private void ResourceCount()
+    {
+        ResourceText.text = "Space Credits:" + money + " Crystals:" + crystals + " Metals:" + metals + " Scrap:" + scrap + " RareMaterials:" + rareMaterials;
     }
 }
