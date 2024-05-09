@@ -29,6 +29,7 @@ public abstract class AiController : MonoBehaviour
 
     private Vector3 closestTargetPastPosition;
     private Vector3 closestTargetPosition;
+    private float targetAngle;
     private float targetRelativeVelocity;
     private float targetDistance;
     private float tempStoppingDistance;
@@ -52,7 +53,6 @@ public abstract class AiController : MonoBehaviour
 
     [Header("Events:")]
     public UnityEvent<AiController> onUnitNeutralized = new();
-    //public UnityEvent<GameObject> onProjectileSpawned = new();
     public UnityEvent<TaskForceController> onUnitEngaged = new();
     public UnityEvent<UnitState> onStateChanged = new();
 
@@ -68,6 +68,7 @@ public abstract class AiController : MonoBehaviour
     public Vector3 ClosestTargetPosition { get => closestTargetPosition; }
     public Vector3 ClosestTargetPastPosition { get => closestTargetPastPosition; }
     public float TargetDistance { get => targetDistance; }
+    public float TargetAngle { get => targetAngle; }
     public float TargetRelativeVelocity { get => targetRelativeVelocity; }
     public UnitState CurrentState { get => currentState; }
     public UnitSide Side { get => side; }
@@ -170,17 +171,42 @@ public abstract class AiController : MonoBehaviour
 
     }
 
-    public void SetTargetPosition(Vector3 pos)
+    public void Damage(int value, AiController attacker)
+    {
+        health -= value;
+
+        if (currentState != UnitState.Combat)
+            onUnitEngaged.Invoke(attacker.UnitTaskForce);
+
+        if (health <= 0)
+        {
+            //pool.SetProjectilesToDestroy();
+
+            //foreach (Projectile proj in projectiles)
+            //{
+            //    if (proj != null)
+            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
+            //}
+            BeforeDeactivation();
+            gameObject.SetActive(false);
+            onUnitNeutralized?.Invoke(this);
+            gameManager.AddToExterminationCamp(gameObject);
+        }
+
+    }
+
+    public void SetTargetData(Vector3 pos, float distance, float angle)
     {
         if (disabled) return;
 
         closestTargetPastPosition = closestTargetPosition;
         closestTargetPosition = pos;
+        targetDistance = distance;
+        targetAngle = angle;
         OnTargetPositionChanged();
-        targetDistance = Vector3.Distance(transform.position, closestTargetPosition);
 
-        if (targetDistance > Values.attackDistance)
-            TryLockTarget();
+        //if (targetDistance > Values.attackDistance)
+        //    TryLockTarget();
     }
 
     protected void SetState(UnitState newState)
@@ -332,9 +358,9 @@ public abstract class AiController : MonoBehaviour
 
     protected abstract void BeforeDeactivation();
 
-    protected virtual void OnTriggerEnter(Collider collider)
-    {
-        if ((hostileProjectileMask & (1 << collider.gameObject.layer)) != 0)
-            Damage(collider.gameObject.GetComponent<Projectile>());
-    }
+    //protected virtual void OnTriggerEnter(Collider collider)
+    //{
+    //    if ((hostileProjectileMask & (1 << collider.gameObject.layer)) != 0)
+    //        Damage(collider.gameObject.GetComponent<Projectile>());
+    //}
 }

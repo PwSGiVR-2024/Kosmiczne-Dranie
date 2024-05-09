@@ -27,7 +27,7 @@ public class BasicUnitController : AiController
         {
             RotateToTarget();
 
-            if (weapon_1.CheckIfFacingTarget(ClosestTargetPastPosition))
+            if (TargetAngle <= weapon_1.Values.angleError)
                 weapon_1.FireProjectile();
         }
     }

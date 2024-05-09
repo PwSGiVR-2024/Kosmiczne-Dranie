@@ -92,44 +92,57 @@ public class TaskForceController : MonoBehaviour
     public List<AiController> Units { get => unitControllers; }
     public float Strength { get => strength; }
 
-    struct DestinationProvider : IJobParallelFor
+
+    // provides target information for every unit in this TaskForce
+    struct TargetProvider : IJobParallelFor
     {
-        [ReadOnly]
+        [ReadOnly] // this TaskForce units locations
         public NativeArray<Vector3> unitsLocations;
 
-        [ReadOnly]
+        [ReadOnly] // this TaskForce units forward vectors (necessary for angle calculations)
+        public NativeArray<Vector3> unitsForwardVectors;
+
+        [ReadOnly] // units locations of enemy TaskForce
         public NativeArray<Vector3> potentialTargets;
 
+        // calculated data
+        // the paradigm is that value at given index corresponds to the unit from this taskForce at this exact index (in the List<AiController>)
         public NativeArray<Vector3> outcomeTargets;
+        public NativeArray<float> outcomeTragetDistances;
+        public NativeArray<float> outcomeTragetAngles;
+
 
         public void Execute(int index)
         {
+            // index is index of unit from this TaskForce
+            // j is index of unit from enemy TaskForce
+            // this method executes ownUnits * enemyUnits times
+
             float distance = -1;
+            float newDistance;
+            int chosenTargetIndex = 0;
+
 
             for (int j = 0; j < potentialTargets.Length; j++)
             {
-                float newDistance = Vector3.Distance(unitsLocations[index], potentialTargets[j]);
+                newDistance = Vector3.Distance(unitsLocations[index], potentialTargets[j]);
 
-                if (distance == -1)
+                if (newDistance < distance || distance == -1)
                 {
                     distance = newDistance;
                     outcomeTargets[index] = potentialTargets[j];
+                    chosenTargetIndex = j;
                 }
-
-                else if (newDistance < distance)
-                {
-                    distance = newDistance;
-                    outcomeTargets[index] = potentialTargets[j];
-                }
-
             }
 
+            outcomeTragetDistances[index] = distance;
+            outcomeTragetAngles[index] = Vector3.Angle(unitsForwardVectors[index], potentialTargets[chosenTargetIndex] - unitsLocations[index]);
         }
     }
 
     private IEnumerator RefreshTargets(TaskForceController target)
     {
-        WaitForSeconds interval = new(0.1f);
+        WaitForSeconds interval = new(0.25f);
         List<AiController> enemies = target.unitControllers;
 
         while (CurrentState == TaskForceState.Combat)
@@ -139,17 +152,18 @@ public class TaskForceController : MonoBehaviour
                 SetIdleState();
                 yield break;
             }
-                
-            this.ClearDeactivatedUnits();
-            target.ClearDeactivatedUnits();
 
             NativeArray<Vector3> unitsLocations = new(unitControllers.Count, Allocator.Persistent);
+            NativeArray<Vector3> unitsForwardVectors = new(unitControllers.Count, Allocator.Persistent);
             NativeArray<Vector3> potentialTargets = new(enemies.Count, Allocator.Persistent);
             NativeArray<Vector3> outcomeTargets = new(unitControllers.Count, Allocator.Persistent);
+            NativeArray<float> outcomeTragetDistances = new(unitControllers.Count, Allocator.Persistent);
+            NativeArray<float> outcomeTragetAngles = new(unitControllers.Count, Allocator.Persistent);
 
             for (int i = 0; i < unitControllers.Count; i++)
             {
                 unitsLocations[i] = unitControllers[i].transform.position;
+                unitsForwardVectors[i] = unitControllers[i].transform.forward;
             }
 
             for (int i = 0; i < enemies.Count; i++)
@@ -157,11 +171,14 @@ public class TaskForceController : MonoBehaviour
                 potentialTargets[i] = enemies[i].transform.position;
             }
 
-            var job = new DestinationProvider
+            var job = new TargetProvider
             {
                 unitsLocations = unitsLocations,
+                unitsForwardVectors = unitsForwardVectors,
                 potentialTargets = potentialTargets,
-                outcomeTargets = outcomeTargets
+                outcomeTargets = outcomeTargets,
+                outcomeTragetDistances = outcomeTragetDistances,
+                outcomeTragetAngles = outcomeTragetAngles,
             };
 
             JobHandle handle = job.Schedule(unitControllers.Count, 1);
@@ -170,12 +187,15 @@ public class TaskForceController : MonoBehaviour
             for (int i = 0; i < unitControllers.Count; i++)
             {
                 if (unitControllers[i].gameObject.activeSelf)
-                    unitControllers[i].SetTargetPosition(outcomeTargets[i]);
+                    unitControllers[i].SetTargetData(outcomeTargets[i], outcomeTragetDistances[i], outcomeTragetAngles[i]);
             }
 
             unitsLocations.Dispose();
+            unitsForwardVectors.Dispose();
             potentialTargets.Dispose();
             outcomeTargets.Dispose();
+            outcomeTragetDistances.Dispose();
+            outcomeTragetAngles.Dispose();
 
             yield return interval;
         }
@@ -304,7 +324,6 @@ public class TaskForceController : MonoBehaviour
     {
         StopAllCoroutines();
         onTaskForceDestroyed?.Invoke(this);
-        ClearDeactivatedUnits();
         Destroy(icon);
         Destroy(gameObject);
     }
@@ -542,45 +561,6 @@ public class TaskForceController : MonoBehaviour
         foreach (var unit in unitControllers)
         {
             unit.SetIdleState();
-        }
-    }
-
-    public void ClearDeactivatedUnits()
-    {
-        ClearDeactivatedUnitsRecursive(0);
-    }
-
-    private void ClearDeactivatedUnitsRecursive(int index)
-    {
-        if (unitControllers.Count == 0)
-            return;
-
-        if (unitControllers[index] == null)
-        {
-            unitControllers.RemoveAt(index);
-            return;
-        }
-
-        if (index == unitControllers.Count - 1)
-        {
-            if (!unitControllers[index].gameObject.activeSelf && unitControllers[index] != null)
-            {
-                unitControllers.RemoveAt(index);
-                return;
-            }
-        }
-
-        else
-        {
-            if (!unitControllers[index].gameObject.activeSelf && unitControllers[index] != null)
-            {
-                Destroy(unitControllers[index].gameObject);
-                unitControllers.RemoveAt(index);
-                ClearDeactivatedUnitsRecursive(index);
-                return;
-            }
-
-            ClearDeactivatedUnitsRecursive(index + 1);
         }
     }
 

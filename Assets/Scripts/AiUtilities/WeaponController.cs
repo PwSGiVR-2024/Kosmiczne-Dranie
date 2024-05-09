@@ -27,6 +27,8 @@ public class WeaponController: MonoBehaviour
 
         pool = new(poolSize, this);
 
+        ProjectileTracker.RegisterWeapon(this);
+
         StartCoroutine(AttackCooldown());
     }
 
@@ -38,7 +40,7 @@ public class WeaponController: MonoBehaviour
     //    return projectile;
     //}
 
-    private void SteProjectilePosition(Projectile projectile)
+    private void SetProjectilePosition(Projectile projectile)
     {
         Quaternion newRotation = transform.rotation;
         float randomAngle = UnityEngine.Random.Range(-values.angleError, values.angleError);
@@ -51,7 +53,7 @@ public class WeaponController: MonoBehaviour
     private void PutProjectile()
     {
         Projectile projectile = pool.GetProjectile();
-        SteProjectilePosition(projectile);
+        SetProjectilePosition(projectile);
     }
 
     private IEnumerator AttackCooldown()

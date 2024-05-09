@@ -5291,7 +5291,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   unitPrefab: {fileID: 1884448166627179468, guid: df8e832971f29394abee61a9c91fb1d3, type: 3}
-  unitsToSpawn: 3000
+  unitsToSpawn: 1000
 --- !u!4 &1713200679
 Transform:
   m_ObjectHideFlags: 0
@@ -5898,6 +5898,50 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &2053185479
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2053185481}
+  - component: {fileID: 2053185480}
+  m_Layer: 0
+  m_Name: ProjectileTransformer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2053185480
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053185479}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5c034adc2dd2672498a58965eff9c44b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!4 &2053185481
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2053185479}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 73.78331, y: 160.9904, z: -112.98569}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2106478007
 GameObject:
   m_ObjectHideFlags: 0
@@ -6058,3 +6102,4 @@ SceneRoots:
   - {fileID: 1544278193}
   - {fileID: 438082948}
   - {fileID: 1668784701}
+  - {fileID: 2053185481}

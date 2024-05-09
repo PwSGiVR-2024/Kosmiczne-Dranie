@@ -14,6 +14,10 @@ using UnityEngine.UIElements;
 // klasa definiuje zachowanie pocisku i wszytskie jego atrybuty
 public class Projectile : MonoBehaviour
 {
+    public event Action<Projectile> OnProjectileEnable;
+    public event Action<Projectile> OnProjectileDisable;
+    public event Action<Projectile> OnProjectileDestroy;
+
     private AiController.UnitSide side;
     private AiController shotBy;
     private WeaponValues values;
@@ -27,9 +31,7 @@ public class Projectile : MonoBehaviour
     //private LayerMask alliesMask;
     //private LayerMask enemiesMask;
     //private LayerMask sceneMask;
-
-    //private TransformAccessArray thisTransform;
-    //private TransformCalculator calculator = new TransformCalculator();
+    private LayerMask targetMask;
 
     public static Projectile Create(WeaponController weapon)
     {
@@ -53,24 +55,22 @@ public class Projectile : MonoBehaviour
         //sceneMask = LayerMask.GetMask("Scene");
 
         if (side == AiController.UnitSide.Ally)
+        {
             gameObject.layer = LayerMask.NameToLayer("AllyProjectiles");
+            targetMask = LayerMask.GetMask("Enemies", "Scene");
+        }
 
         else if (side == AiController.UnitSide.Enemy)
+        {
             gameObject.layer = LayerMask.NameToLayer("EnemyProjectiles");
-
-        //thisTransform = new(1);
-        //thisTransform.Add(transform);
-        //calculator.speed = values.projectileSpeed;
+            targetMask = LayerMask.GetMask("Allies", "Scene");
+        }
     }
-
-    
 
     void Update()
     {
-        //calculator.deltaTime = Time.deltaTime;
-        //calculator.position = transform.position;
-        //calculator.forwardVector = transform.forward;
-        //JobHandle handle = calculator.Schedule(thisTransform);
+        if (TryProcessHit())
+            return;
 
         if (timeTillDeactivation <= 0)
         {
@@ -79,11 +79,10 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        Vector3 newPosition = transform.position + transform.forward * values.projectileSpeed * Time.deltaTime;
-        transform.position = newPosition;
+        //Vector3 newPosition = transform.position + transform.forward * values.projectileSpeed * Time.deltaTime;
+        //transform.position = newPosition;
 
         timeTillDeactivation -= Time.deltaTime;
-        //handle.Complete();
     }
 
     //private void OnTriggerEnter(Collider collider)
@@ -119,22 +118,35 @@ public class Projectile : MonoBehaviour
     //    gameObject.SetActive(false);
     //}
 
-    struct TransformCalculator : IJobParallelForTransform
+    private bool TryProcessHit()
     {
-        public float deltaTime;
-        public int speed;
-        public Vector3 position;
-        public Vector3 forwardVector;
-
-        public void Execute(int index, TransformAccess transform)
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 1, targetMask))
         {
-            Vector3 newPosition = position + forwardVector * speed * deltaTime;
-            transform.position = newPosition;
+            gameObject.SetActive(false);
+
+            if (hit.collider.gameObject.layer == 10) // Scene layer
+                return true;
+
+            // Enemies or Allies layer
+            hit.collider.GetComponent<AiController>().Damage(this);
+            return true;
         }
+
+        return false;
     }
 
-    //private void OnDestroy()
-    //{
-    //    thisTransform.Dispose();
-    //}
+    private void OnEnable()
+    {
+        OnProjectileEnable?.Invoke(this);
+    }
+
+    private void OnDisable()
+    {
+        OnProjectileDisable?.Invoke(this);
+    }
+
+    private void OnDestroy()
+    {
+        OnProjectileDestroy?.Invoke(this);
+    }
 }
