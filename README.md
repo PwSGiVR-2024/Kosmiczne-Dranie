@@ -2,3 +2,5 @@ Nasz bohater dołącza do galaktycznej rebelii mającej na celu znieść jarzmo 
 Jedna z możliwych refleksji, jakie można przekazać, to konieczność empatii i wsparcia dla osób borykających się z chorobami psychicznymi. Gra mogłaby zmusić graczy do zastanowienia się nad swoimi własnymi przekonaniami i uprzedzeniami wobec ludzi walczących z chorobami psychicznymi oraz skłonić ich do refleksji na temat sposobów, w jakie społeczeństwo może lepiej wspierać i zrozumieć tych ludzi. Bohater cierpi na psychoze paranoidalną.
 
 Gra w stylu RTS z epickimi kosmicznymi starciami na ogromną skalę.
+
+[https://trello.com/w/kodra_]
