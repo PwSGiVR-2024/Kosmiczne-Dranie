@@ -50,10 +50,11 @@ public class WeaponController: MonoBehaviour
         projectile.transform.position = transform.position;
     }
 
-    private void PutProjectile()
+    private Projectile PutProjectile()
     {
         Projectile projectile = pool.GetProjectile();
         SetProjectilePosition(projectile);
+        return projectile;
     }
 
     private IEnumerator AttackCooldown()
@@ -72,14 +73,14 @@ public class WeaponController: MonoBehaviour
         }
     }
 
-    public void FireProjectile()
+    public Projectile FireProjectile()
     {
         if (onCooldown)
-            return;
-
-        PutProjectile();
+            return null;
+        
         cooldownRemaining = values.attackCooldown;
         onCooldown = true;
+        return PutProjectile();
     }
 
     public bool CheckIfFacingTarget(Vector3 targetPos)

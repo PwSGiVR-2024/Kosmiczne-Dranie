@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: BiggerWeapon
   m_EditorClassIdentifier: 
   prefabName: wep1
-  projectileDamage: 260
+  projectileDamage: 400
   projectileSpeed: 110
   projectileLifeSpan: 3
   attackCooldown: 1.2

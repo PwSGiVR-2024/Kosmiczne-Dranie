@@ -4,10 +4,16 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
 using Unity.Collections;
+using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.Jobs;
+using UnityEngine.UIElements;
+using static UnityEngine.Rendering.VirtualTexturing.Debugging;
 using Debug = UnityEngine.Debug;
+
 
 public class TaskForceController : MonoBehaviour
 {
@@ -17,20 +23,32 @@ public class TaskForceController : MonoBehaviour
     public enum TaskForceOrder { None, Engage, Disengage, Move, Patrol, Defend }
 
     // helper attributes
+    private bool initialized = false;
+
     private float secondsAfterStop = 0;
     private bool counterRunning = false;
     private readonly float waitingForSeconds = 1.0f;
-    //
 
-    private bool initialized = false;
-    public GameManager gameManager;
-    [SerializeField] private bool debug = false;
+    private bool disposeJobData = false;
+    private JobHandle job;
+    private NativeArray<UnitData> allies;
+    private NativeArray<UnitData> enemies;
+    private NativeArray<AiController.TargetDataLite> targetData;
+    //
     
+    private enum TargetCalculations { Update, Coroutine }
+    [Header("Internal logic:")]
+    [SerializeField] private TargetCalculations targetCalculations = TargetCalculations.Update;
+    [SerializeField] public GameManager gameManager;
+    [SerializeField] private bool debug = false;
+    [SerializeField] [Range(0.01f, 5.0f)] private float coroutineRefreshRate = 0.1f;
+
     [Header("Display info:")]
     [SerializeField] private GameObject icon;
     [SerializeField] private Vector3 iconOffset;
 
     [Header("Main attributes:")]
+    [SerializeField] private TaskForceController target;
     [SerializeField] private AiController commander;
     [SerializeField] private string taskForceName;
     [SerializeField] private float spotDistance;
@@ -91,111 +109,106 @@ public class TaskForceController : MonoBehaviour
     public AiController Commander { get =>  commander; }
     public List<AiController> Units { get => unitControllers; }
     public float Strength { get => strength; }
+    public TaskForceController Target { get => target; }
 
-
-    // provides target information for every unit in this TaskForce
-    struct TargetProvider : IJobParallelFor
+    public struct UnitData
     {
-        [ReadOnly] // this TaskForce units locations
-        public NativeArray<Vector3> unitsLocations;
+        public Vector3 position { get; private set; }
+        public Quaternion rotation { get; private set; }
+        public Vector3 forward { get; private set; }
 
-        [ReadOnly] // this TaskForce units forward vectors (necessary for angle calculations)
-        public NativeArray<Vector3> unitsForwardVectors;
-
-        [ReadOnly] // units locations of enemy TaskForce
-        public NativeArray<Vector3> potentialTargets;
-
-        // calculated data
-        // the paradigm is that value at given index corresponds to the unit from this taskForce at this exact index (in the List<AiController>)
-        public NativeArray<Vector3> outcomeTargets;
-        public NativeArray<float> outcomeTragetDistances;
-        public NativeArray<float> outcomeTragetAngles;
-
-
-        public void Execute(int index)
+        public UnitData(Vector3 position, Quaternion rotation, Vector3 forward)
         {
-            // index is index of unit from this TaskForce
-            // j is index of unit from enemy TaskForce
-            // this method executes ownUnits * enemyUnits times
+            this.position = position;
+            this.rotation = rotation;
+            this.forward = forward;
+        }
 
-            float distance = -1;
+        public void Update(Vector3 position, Quaternion rotation, Vector3 forward)
+        {
+            this.position = position;
+            this.rotation = rotation;
+            this.forward = forward;
+        }
+    }
+
+    public NativeArray<UnitData> CreateUnitsDataSnapshot()
+    {
+        NativeArray<UnitData> data = new(Units.Count, Allocator.Persistent);
+
+        for (int i = 0; i < data.Length; i++)
+        {
+            data[i] = new UnitData(unitControllers[i].transform.position, unitControllers[i].transform.rotation, unitControllers[i].transform.forward);
+        }
+
+        return data;
+    }
+
+    struct TargetDataProvider : IJobParallelFor
+    {
+        [ReadOnly]
+        public NativeArray<UnitData> enemies;
+
+        [ReadOnly]
+        public NativeArray<UnitData> allies;
+
+        public NativeArray<AiController.TargetDataLite> outcomeTargets;
+
+        public void Execute(int allyIndex)
+        {
+            float distance = float.PositiveInfinity;
             float newDistance;
-            int chosenTargetIndex = 0;
+            int closestEnemy = 0;
 
-
-            for (int j = 0; j < potentialTargets.Length; j++)
+            for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
             {
-                newDistance = Vector3.Distance(unitsLocations[index], potentialTargets[j]);
+                newDistance = Vector3.Distance(allies[allyIndex].position, enemies[enemyIndex].position);
 
-                if (newDistance < distance || distance == -1)
+                if (newDistance < distance)
                 {
                     distance = newDistance;
-                    outcomeTargets[index] = potentialTargets[j];
-                    chosenTargetIndex = j;
+                    closestEnemy = enemyIndex;
                 }
             }
 
-            outcomeTragetDistances[index] = distance;
-            outcomeTragetAngles[index] = Vector3.Angle(unitsForwardVectors[index], potentialTargets[chosenTargetIndex] - unitsLocations[index]);
+            outcomeTargets[allyIndex] = new AiController.TargetDataLite(
+                position: enemies[closestEnemy].position,
+                rotation: enemies[closestEnemy].rotation,
+                forward: enemies[closestEnemy].forward,
+                distance: distance,
+                angle: Vector3.Angle(allies[allyIndex].forward, enemies[closestEnemy].position - allies[allyIndex].position));
         }
     }
 
     private IEnumerator RefreshTargets(TaskForceController target)
     {
-        WaitForSeconds interval = new(0.25f);
-        List<AiController> enemies = target.unitControllers;
+        WaitForSeconds interval = new(coroutineRefreshRate);
 
-        while (CurrentState == TaskForceState.Combat)
+        while (target != null)
         {
-            if (target == null)
-            {
-                SetIdleState();
-                yield break;
-            }
+            NativeArray<UnitData> enemies = target.CreateUnitsDataSnapshot();
+            NativeArray<UnitData> allies = CreateUnitsDataSnapshot();
+            NativeArray<AiController.TargetDataLite> targetData = new(allies.Length, Allocator.Persistent);
 
-            NativeArray<Vector3> unitsLocations = new(unitControllers.Count, Allocator.Persistent);
-            NativeArray<Vector3> unitsForwardVectors = new(unitControllers.Count, Allocator.Persistent);
-            NativeArray<Vector3> potentialTargets = new(enemies.Count, Allocator.Persistent);
-            NativeArray<Vector3> outcomeTargets = new(unitControllers.Count, Allocator.Persistent);
-            NativeArray<float> outcomeTragetDistances = new(unitControllers.Count, Allocator.Persistent);
-            NativeArray<float> outcomeTragetAngles = new(unitControllers.Count, Allocator.Persistent);
-
-            for (int i = 0; i < unitControllers.Count; i++)
+            var job = new TargetDataProvider
             {
-                unitsLocations[i] = unitControllers[i].transform.position;
-                unitsForwardVectors[i] = unitControllers[i].transform.forward;
-            }
-
-            for (int i = 0; i < enemies.Count; i++)
-            {
-                potentialTargets[i] = enemies[i].transform.position;
-            }
-
-            var job = new TargetProvider
-            {
-                unitsLocations = unitsLocations,
-                unitsForwardVectors = unitsForwardVectors,
-                potentialTargets = potentialTargets,
-                outcomeTargets = outcomeTargets,
-                outcomeTragetDistances = outcomeTragetDistances,
-                outcomeTragetAngles = outcomeTragetAngles,
+                enemies = enemies,
+                allies = allies,
+                outcomeTargets = targetData,
             };
 
-            JobHandle handle = job.Schedule(unitControllers.Count, 1);
+            JobHandle handle = job.Schedule(allies.Length, 1);
             handle.Complete();
 
             for (int i = 0; i < unitControllers.Count; i++)
             {
                 if (unitControllers[i].gameObject.activeSelf)
-                    unitControllers[i].SetTargetData(outcomeTargets[i], outcomeTragetDistances[i], outcomeTragetAngles[i]);
+                    unitControllers[i].SetTargetData(targetData[i]);
             }
 
-            unitsLocations.Dispose();
-            unitsForwardVectors.Dispose();
-            potentialTargets.Dispose();
-            outcomeTargets.Dispose();
-            outcomeTragetDistances.Dispose();
-            outcomeTragetAngles.Dispose();
+            enemies.Dispose();
+            allies.Dispose();
+            targetData.Dispose();
 
             yield return interval;
         }
@@ -219,9 +232,7 @@ public class TaskForceController : MonoBehaviour
         else if (side == TaskForceSide.Enemy)
             targetMask = LayerMask.GetMask("Allies");
 
-
         onStateChanged.AddListener(OnStateChanged);
-
         initialized = true;
     }
 
@@ -342,10 +353,40 @@ public class TaskForceController : MonoBehaviour
         commander = unitControllers[index];
     }
 
+    private void GetTargetProviderJob(out JobHandle handle, out NativeArray<UnitData> alliesToDispose, out NativeArray<UnitData> enemiesToDispose, out NativeArray<AiController.TargetDataLite> outTargetData)
+    {
+        disposeJobData = true;
+        
+        NativeArray<UnitData> enemies = target.CreateUnitsDataSnapshot();
+        NativeArray<UnitData> allies = CreateUnitsDataSnapshot();
+        NativeArray<AiController.TargetDataLite> targetData = new(allies.Length, Allocator.Persistent);
+
+        var job = new TargetDataProvider
+        {
+            enemies = enemies,
+            allies = allies,
+            outcomeTargets = targetData,
+        };
+
+        enemiesToDispose = enemies;
+        alliesToDispose = allies;
+        outTargetData = targetData;
+
+        handle = job.Schedule(allies.Length, 1);
+    }
+
     private void Update()
     {
         if (commander == null)
             return;
+
+        disposeJobData = false;
+        bool assignJobData = false;
+        if (target && targetCalculations == TargetCalculations.Update)
+        {
+            GetTargetProviderJob(out job, out allies, out enemies, out targetData);
+            assignJobData = true;
+        }
 
         GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
 
@@ -373,6 +414,8 @@ public class TaskForceController : MonoBehaviour
                 break;
 
             case TaskForceState.Combat:
+                if (target == null)
+                    SetIdleState();
                 break;
 
             case TaskForceState.Moving:
@@ -381,6 +424,21 @@ public class TaskForceController : MonoBehaviour
 
             case TaskForceState.Retreat:
                 break;
+        }
+
+        if (target && targetCalculations == TargetCalculations.Update)
+            job.Complete();
+
+        if (assignJobData)
+        {
+            for (int i = 0; i < unitControllers.Count; i++)
+            {
+                unitControllers[i].SetTargetData(targetData[i]);
+            }
+
+            enemies.Dispose();
+            allies.Dispose();
+            targetData.Dispose();
         }
     }
 
@@ -522,8 +580,12 @@ public class TaskForceController : MonoBehaviour
         if (target == null)
             return;
 
+        this.target = target;
+
         CurrentState = TaskForceState.Combat;
-        StartCoroutine(RefreshTargets(target));
+
+        if (targetCalculations == TargetCalculations.Coroutine)
+            StartCoroutine(RefreshTargets(target));
     }
 
     public void Disengage(Vector3 escapePoint)
@@ -580,5 +642,17 @@ public class TaskForceController : MonoBehaviour
         onSizeChanged?.Invoke(unitControllers.Count);
         onStrengthChanged?.Invoke(strength);
         reinforcements.DestroyTaskForce();
+    }
+
+    private void OnDestroy()
+    {
+        if (allies.IsCreated)
+            allies.Dispose();
+
+        if (enemies.IsCreated)
+            enemies.Dispose();
+
+        if (targetData.IsCreated)
+            targetData.Dispose();
     }
 }

@@ -5291,7 +5291,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   unitPrefab: {fileID: 1884448166627179468, guid: df8e832971f29394abee61a9c91fb1d3, type: 3}
-  unitsToSpawn: 1000
+  unitsToSpawn: 2000
 --- !u!4 &1713200679
 Transform:
   m_ObjectHideFlags: 0
@@ -5927,6 +5927,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5c034adc2dd2672498a58965eff9c44b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  currentTrackedActive: 0
+  currentTrackedAll: 0
+  maxTrackedActive: 0
+  maxTrackedAll: 0
+  registeredEver: 0
 --- !u!4 &2053185481
 Transform:
   m_ObjectHideFlags: 0

@@ -16,10 +16,75 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour
 {
+    public struct TargetDataLite
+    {
+        public Vector3 position { get; private set; }
+        public Quaternion rotation { get; private set; }
+        public Vector3 forward { get; private set; }
+        public float distance { get; private set; }
+        public float angle { get; private set; }
+
+        public TargetDataLite(Vector3 position, Quaternion rotation, Vector3 forward, float distance, float angle)
+        {
+            this.position = position;
+            this.rotation = rotation;
+            this.forward = forward;
+            this.distance = distance;
+            this.angle = angle;
+        }
+    }
+
+    public struct TargetData
+    {
+        public float dataTimeStamp { get; private set; }
+        public AiController targetController { get; private set; }
+        public Vector3 pastPosition { get; private set; }
+        public Vector3 position { get; private set; }
+        public float distance { get; private set; }
+        public float angle { get; private set; }
+        public float relativeVelocity { get; private set; }
+
+        public void UpdateData(Vector3 position, float distance, float angle)
+        {
+            this.position = position;
+            this.distance = distance;
+            this.angle = angle;
+        }
+
+        public bool TryLockTarget()
+        {
+            Ray ray = new Ray(new Vector3(position.x, -1, position.z), Vector3.up);
+            RaycastHit hit;
+
+            if (Physics.Raycast(ray, out hit))
+            {
+                targetController = hit.collider.gameObject.GetComponent<AiController>();
+                return true;
+            }
+
+            else
+                return false;
+        }
+
+        public float CalculateTargetRelativeVelocity(NavMeshAgent agent)
+        {
+            if (targetController)
+            {
+                Vector3 velocityVector = agent.velocity - targetController.Agent.velocity;
+                return velocityVector.magnitude;
+            }
+
+            return -1;
+        }
+    }
+
+    private TargetData target = new();
+    public TargetData Target { get => target; }
+
     private LayerMask hostileProjectileMask;
     private GameManager gameManager;
 
-    private AiController target;
+    //private AiController target;
     private TaskForceController unitTaskForce;
     private GameObject projectileContainer;
 
@@ -27,11 +92,6 @@ public abstract class AiController : MonoBehaviour
     private int health;
     private float volume;
 
-    private Vector3 closestTargetPastPosition;
-    private Vector3 closestTargetPosition;
-    private float targetAngle;
-    private float targetRelativeVelocity;
-    private float targetDistance;
     private float tempStoppingDistance;
 
     public enum UnitState { Idle, Moving, Combat, Retreat }
@@ -63,13 +123,7 @@ public abstract class AiController : MonoBehaviour
     public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
     public UnitValues Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }
-    public AiController Target { get => target; }
     public float Volume {  get => volume; }
-    public Vector3 ClosestTargetPosition { get => closestTargetPosition; }
-    public Vector3 ClosestTargetPastPosition { get => closestTargetPastPosition; }
-    public float TargetDistance { get => targetDistance; }
-    public float TargetAngle { get => targetAngle; }
-    public float TargetRelativeVelocity { get => targetRelativeVelocity; }
     public UnitState CurrentState { get => currentState; }
     public UnitSide Side { get => side; }
     public GameObject ProjectileContainer { get => projectileContainer; }
@@ -199,10 +253,20 @@ public abstract class AiController : MonoBehaviour
     {
         if (disabled) return;
 
-        closestTargetPastPosition = closestTargetPosition;
-        closestTargetPosition = pos;
-        targetDistance = distance;
-        targetAngle = angle;
+        //target.pastPosition = target.position;
+        target.UpdateData(pos, distance, angle);
+        OnTargetPositionChanged();
+
+        //if (targetDistance > Values.attackDistance)
+        //    TryLockTarget();
+    }
+
+    public void SetTargetData(TargetDataLite data)
+    {
+        if (disabled) return;
+
+        //target.pastPosition = target.position;
+        target.UpdateData(data.position, data.distance, data.angle);
         OnTargetPositionChanged();
 
         //if (targetDistance > Values.attackDistance)
@@ -213,32 +277,6 @@ public abstract class AiController : MonoBehaviour
     {
         currentState = newState;
         onStateChanged?.Invoke(currentState);
-    }
-
-    /// <summary>
-    /// Namierza cel (AiController) na podstawie pozycji closestTargetPosition, jeœli to mo¿liwe
-    /// </summary>
-    protected bool TryLockTarget()
-    {
-        Ray ray = new Ray(new Vector3(closestTargetPosition.x, -1, closestTargetPosition.z), Vector3.up);
-        RaycastHit hit;
-
-        if (Physics.Raycast(ray, out hit))
-        {
-            if (debug)
-                Debug.DrawRay(ray.origin, ray.direction + new Vector3(0, 10, 0), Color.green, 1);
-
-            target = hit.collider.gameObject.GetComponent<AiController>();
-            CalculateTargetRelativeVelocity();
-            return true;
-        }
-        else
-        {
-            if (debug)
-                Debug.DrawRay(ray.origin, ray.direction + new Vector3(0, 10, 0), Color.red, 1);
-
-            return false;
-        }
     }
 
     protected AiController GetFacingEnemy(float maxDistance)
@@ -255,25 +293,10 @@ public abstract class AiController : MonoBehaviour
         return null;
     }
 
-    protected void ResetTarget()
-    {
-        target = null;
-    }
-
     protected void ResetDestination()
     {
         agent.destination = transform.position;
         //agent.speed = unitValues.unitSpeed;
-    }
-
-    private void CalculateTargetRelativeVelocity()
-    {
-        if (target)
-        {
-            Vector3 velocityVector = Agent.velocity - Target.Agent.velocity;
-            targetRelativeVelocity = velocityVector.magnitude;
-        }
-
     }
 
     public virtual void SetIdleState()
@@ -281,7 +304,7 @@ public abstract class AiController : MonoBehaviour
         if (disabled) return;
 
         ResetDestination();
-        ResetTarget();
+        //ResetTarget();
         SetState(UnitState.Idle);
     }
 
@@ -334,9 +357,9 @@ public abstract class AiController : MonoBehaviour
             if (Agent.remainingDistance <= Values.attackDistance)
                 return Values.attackDistance;
 
-            else if (Target)
+            else if (target.targetController)
             {
-                tempStoppingDistance = targetRelativeVelocity + Values.attackDistance;
+                tempStoppingDistance = target.relativeVelocity + Values.attackDistance;
                 return tempStoppingDistance;
             }
             else

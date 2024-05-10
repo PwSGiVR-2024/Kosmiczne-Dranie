@@ -15,7 +15,7 @@ public class DualWeaponUnitController : AiController
 
     private void RotateToTarget()
     {
-        Vector3 direction = ClosestTargetPosition - transform.position;
+        Vector3 direction = Target.position - transform.position;
         direction.y = 0f;
         direction.Normalize();
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
@@ -33,11 +33,11 @@ public class DualWeaponUnitController : AiController
 
     protected override void CombatState()
     {
-        if (TargetDistance <= Values.attackDistance)
+        if (Target.distance <= Values.attackDistance)
         {
             RotateToTarget();
 
-            if (GameUtils.CalculateForwardAngle(transform, ClosestTargetPosition) <= weapon_1.Values.angleError)
+            if (GameUtils.CalculateForwardAngle(transform, Target.position) <= weapon_1.Values.angleError)
             {
                 weapon_1.FireProjectile();
                 weapon_2.FireProjectile();
@@ -59,7 +59,7 @@ public class DualWeaponUnitController : AiController
     protected override void OnTargetPositionChanged()
     {
         SetCombatState();
-        Agent.SetDestination(ClosestTargetPosition);
+        Agent.SetDestination(Target.position);
     }
 
     public override void SetCombatState()

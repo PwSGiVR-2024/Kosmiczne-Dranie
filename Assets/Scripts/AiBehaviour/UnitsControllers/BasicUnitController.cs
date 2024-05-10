@@ -9,7 +9,7 @@ public class BasicUnitController : AiController
 
     private void RotateToTarget()
     {
-        Vector3 direction = ClosestTargetPosition - transform.position;
+        Vector3 direction = Target.position - transform.position;
         direction.y = 0f;
         direction.Normalize();
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
@@ -23,11 +23,11 @@ public class BasicUnitController : AiController
 
     protected override void CombatState()
     {
-        if (TargetDistance <= Values.attackDistance)
+        if (Target.distance <= Values.attackDistance)
         {
             RotateToTarget();
 
-            if (TargetAngle <= weapon_1.Values.angleError)
+            if (Target.angle <= weapon_1.Values.angleError)
                 weapon_1.FireProjectile();
         }
     }
@@ -47,8 +47,8 @@ public class BasicUnitController : AiController
     {
         SetCombatState();
 
-        if (TargetDistance > Values.attackDistance)
-            Agent.SetDestination(ClosestTargetPosition);
+        if (Target.distance > Values.attackDistance)
+            Agent.SetDestination(Target.position);
     }
 
     public override void SetCombatState()
