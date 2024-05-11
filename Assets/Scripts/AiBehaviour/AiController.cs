@@ -43,12 +43,14 @@ public abstract class AiController : MonoBehaviour
         public float distance { get; private set; }
         public float angle { get; private set; }
         public float relativeVelocity { get; private set; }
+        public Vector3 forward { get; private set; }
 
-        public void UpdateData(Vector3 position, float distance, float angle)
+        public void UpdateData(Vector3 position, float distance, float angle, Vector3 forward)
         {
             this.position = position;
             this.distance = distance;
             this.angle = angle;
+            this.forward = forward;
         }
 
         public bool TryLockTarget()
@@ -249,12 +251,12 @@ public abstract class AiController : MonoBehaviour
 
     }
 
-    public void SetTargetData(Vector3 pos, float distance, float angle)
+    public void SetTargetData(Vector3 pos, float distance, float angle, Vector3 forward)
     {
         if (disabled) return;
 
         //target.pastPosition = target.position;
-        target.UpdateData(pos, distance, angle);
+        target.UpdateData(pos, distance, angle, forward);
         OnTargetPositionChanged();
 
         //if (targetDistance > Values.attackDistance)
@@ -266,7 +268,7 @@ public abstract class AiController : MonoBehaviour
         if (disabled) return;
 
         //target.pastPosition = target.position;
-        target.UpdateData(data.position, data.distance, data.angle);
+        target.UpdateData(data.position, data.distance, data.angle, data.forward);
         OnTargetPositionChanged();
 
         //if (targetDistance > Values.attackDistance)

@@ -29,10 +29,12 @@ public class TaskForceController : MonoBehaviour
     private bool counterRunning = false;
     private readonly float waitingForSeconds = 1.0f;
 
-    private bool disposeJobData = false;
-    private JobHandle job;
-    private NativeArray<UnitData> allies;
-    private NativeArray<UnitData> enemies;
+    private JobHandle targetProviderJobHandle;
+    [ReadOnly]
+    private NativeArray<UnitData> jobAllies;
+    [ReadOnly]
+    private NativeArray<UnitData> jobEnemies;
+    [ReadOnly]
     private NativeArray<AiController.TargetDataLite> targetData;
     //
     
@@ -180,40 +182,6 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    private IEnumerator RefreshTargets(TaskForceController target)
-    {
-        WaitForSeconds interval = new(coroutineRefreshRate);
-
-        while (target != null)
-        {
-            NativeArray<UnitData> enemies = target.CreateUnitsDataSnapshot();
-            NativeArray<UnitData> allies = CreateUnitsDataSnapshot();
-            NativeArray<AiController.TargetDataLite> targetData = new(allies.Length, Allocator.Persistent);
-
-            var job = new TargetDataProvider
-            {
-                enemies = enemies,
-                allies = allies,
-                outcomeTargets = targetData,
-            };
-
-            JobHandle handle = job.Schedule(allies.Length, 1);
-            handle.Complete();
-
-            for (int i = 0; i < unitControllers.Count; i++)
-            {
-                if (unitControllers[i].gameObject.activeSelf)
-                    unitControllers[i].SetTargetData(targetData[i]);
-            }
-
-            enemies.Dispose();
-            allies.Dispose();
-            targetData.Dispose();
-
-            yield return interval;
-        }
-    }
-
     public void Init(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameManager gameManager, TaskForceSide side)
     {
         if (initialized)
@@ -353,45 +321,49 @@ public class TaskForceController : MonoBehaviour
         commander = unitControllers[index];
     }
 
-    private void GetTargetProviderJob(out JobHandle handle, out NativeArray<UnitData> alliesToDispose, out NativeArray<UnitData> enemiesToDispose, out NativeArray<AiController.TargetDataLite> outTargetData)
+    private bool TryGetTargetProviderJob(ref JobHandle handle)
     {
-        disposeJobData = true;
-        
-        NativeArray<UnitData> enemies = target.CreateUnitsDataSnapshot();
-        NativeArray<UnitData> allies = CreateUnitsDataSnapshot();
-        NativeArray<AiController.TargetDataLite> targetData = new(allies.Length, Allocator.Persistent);
+        if (Units.Count == 0 || target.Units.Count == 0)
+            return false;
+
+        jobEnemies = target.CreateUnitsDataSnapshot();
+        jobAllies = CreateUnitsDataSnapshot();
+        targetData = new(jobAllies.Length, Allocator.Persistent);
 
         var job = new TargetDataProvider
         {
-            enemies = enemies,
-            allies = allies,
+            enemies = jobEnemies,
+            allies = jobAllies,
             outcomeTargets = targetData,
         };
 
-        enemiesToDispose = enemies;
-        alliesToDispose = allies;
-        outTargetData = targetData;
-
-        handle = job.Schedule(allies.Length, 1);
+        handle = job.Schedule(jobAllies.Length, 64);
+        return true;
     }
 
     private void Update()
     {
-        if (commander == null)
-            return;
-
-        disposeJobData = false;
-        bool assignJobData = false;
-        if (target && targetCalculations == TargetCalculations.Update)
+        switch (CurrentState)
         {
-            GetTargetProviderJob(out job, out allies, out enemies, out targetData);
-            assignJobData = true;
+            case TaskForceState.Combat:
+                if (targetCalculations == TargetCalculations.Update)
+                    if (targetProviderJobHandle.IsCompleted)
+                        TryGetTargetProviderJob(ref targetProviderJobHandle);
+
+                if (target == null)
+                    SetIdleState();
+                break;
+
+            case TaskForceState.Idle:
+                break;
+
+            case TaskForceState.Moving:
+                MovingState();
+                break;
+
+            case TaskForceState.Retreat:
+                break;
         }
-
-        GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
-
-        icon.transform.LookAt(Camera.main.transform, Vector3.up);
-        icon.transform.position = commander.transform.position + iconOffset;
 
         switch (currentBehaviour)
         {
@@ -406,39 +378,6 @@ public class TaskForceController : MonoBehaviour
             case TaskForceBehaviour.Evasive:
                 EvasiveBehaviour();
                 break;
-        }
-
-        switch (CurrentState)
-        {
-            case TaskForceState.Idle:
-                break;
-
-            case TaskForceState.Combat:
-                if (target == null)
-                    SetIdleState();
-                break;
-
-            case TaskForceState.Moving:
-                MovingState();
-                break;
-
-            case TaskForceState.Retreat:
-                break;
-        }
-
-        if (target && targetCalculations == TargetCalculations.Update)
-            job.Complete();
-
-        if (assignJobData)
-        {
-            for (int i = 0; i < unitControllers.Count; i++)
-            {
-                unitControllers[i].SetTargetData(targetData[i]);
-            }
-
-            enemies.Dispose();
-            allies.Dispose();
-            targetData.Dispose();
         }
     }
 
@@ -585,7 +524,8 @@ public class TaskForceController : MonoBehaviour
         CurrentState = TaskForceState.Combat;
 
         if (targetCalculations == TargetCalculations.Coroutine)
-            StartCoroutine(RefreshTargets(target));
+            //StartCoroutine(RefreshTargets(target));
+            StartCoroutine(RefreshTargetDataInInterval());
     }
 
     public void Disengage(Vector3 escapePoint)
@@ -646,13 +586,64 @@ public class TaskForceController : MonoBehaviour
 
     private void OnDestroy()
     {
-        if (allies.IsCreated)
-            allies.Dispose();
+        targetProviderJobHandle.Complete();
 
-        if (enemies.IsCreated)
-            enemies.Dispose();
+        if (jobAllies.IsCreated)
+            jobAllies.Dispose();
+
+        if (jobEnemies.IsCreated)
+            jobEnemies.Dispose();
 
         if (targetData.IsCreated)
             targetData.Dispose();
+    }
+
+    private IEnumerator RefreshTargetDataInInterval()
+    {
+        WaitForSeconds interval = new(coroutineRefreshRate);
+
+        while (target)
+        {
+            if (targetProviderJobHandle.IsCompleted)
+                TryGetTargetProviderJob(ref targetProviderJobHandle);
+
+            yield return interval;
+        }
+    }
+
+    private void LateUpdate()
+    {
+        if (commander)
+        {
+            GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
+
+            icon.transform.LookAt(Camera.main.transform, Vector3.up);
+            icon.transform.position = commander.transform.position + iconOffset;
+        }
+
+        if (targetData.IsCreated)
+        {
+            // temporary solution
+            // making sure targetData[i] corresponds to unitControllers[i]
+            // lazy, but otherwise needs additional synchronizing which can introduce overhead
+            // if false, some units can keep outdated targetData or lag behind
+            // in large scale this problem can be negligible
+            // in small scale TargetProvider is generally fast enough
+            // side effect: can improve frame generation time
+            // WILL INTRODUCE MEMORY LEAKS
+            if (unitControllers.Count != targetData.Length)
+                return;
+
+            targetProviderJobHandle.Complete();
+
+            for (int i = 0; i < unitControllers.Count; i++)
+            {
+                unitControllers[i].SetTargetData(targetData[i]);
+            }
+
+            jobEnemies.Dispose();
+            jobAllies.Dispose();
+            targetData.Dispose();
+        }
     }
 }

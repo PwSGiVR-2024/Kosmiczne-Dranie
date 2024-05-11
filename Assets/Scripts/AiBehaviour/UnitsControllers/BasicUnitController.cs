@@ -6,9 +6,14 @@ using static UnityEngine.GraphicsBuffer;
 public class BasicUnitController : AiController
 {
     [SerializeField] private WeaponController weapon_1;
+    [SerializeField] private Vector3 targetPos;
+    [SerializeField] private float targetDistance;
 
     private void RotateToTarget()
     {
+        if (Target.angle == 0)
+            return;
+
         Vector3 direction = Target.position - transform.position;
         direction.y = 0f;
         direction.Normalize();
@@ -48,7 +53,13 @@ public class BasicUnitController : AiController
         SetCombatState();
 
         if (Target.distance > Values.attackDistance)
+        {
+            Agent.isStopped = false;
             Agent.SetDestination(Target.position);
+        }
+           
+        else
+            Agent.isStopped = true;
     }
 
     public override void SetCombatState()
@@ -73,5 +84,18 @@ public class BasicUnitController : AiController
     protected override void RetreatState()
     {
         throw new System.NotImplementedException();
+    }
+
+    protected override void UpdateOperations()
+    {
+        base.UpdateOperations();
+
+        targetPos = Target.position;
+        targetDistance = Target.distance;
+
+        if (debug)
+        {
+            Debug.DrawRay(targetPos, Vector3.up + new Vector3(0, 5, 0), Color.green, Time.deltaTime);
+        }
     }
 }

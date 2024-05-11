@@ -85,19 +85,17 @@ public class ProjectileTransformer : MonoBehaviour
             workload[i].Complete();
         }
 
-        foreach (var array in arraysToDispose)
+        for (int i = 0; i < arraysToDispose.Count; i++)
         {
-            array.Dispose();
+            arraysToDispose.Pop().Dispose();
         }
-
-        arraysToDispose.Clear();
     }
 
     private void OnDestroy()
     {
-        foreach (var array in arraysToDispose)
+        for (int i = 0; i < arraysToDispose.Count; i++)
         {
-            array.Dispose();
+            arraysToDispose.Pop().Dispose();
         }
     }
 }

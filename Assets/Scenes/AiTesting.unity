@@ -5291,7 +5291,7 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls: []
   unitPrefab: {fileID: 1884448166627179468, guid: df8e832971f29394abee61a9c91fb1d3, type: 3}
-  unitsToSpawn: 2000
+  unitsToSpawn: 1000
 --- !u!4 &1713200679
 Transform:
   m_ObjectHideFlags: 0
