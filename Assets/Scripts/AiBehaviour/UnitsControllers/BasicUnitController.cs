@@ -69,11 +69,15 @@ public class BasicUnitController : AiController
     public override void SetIdleState()
     {
         base.SetIdleState();
+
+        Agent.isStopped = false;
     }
 
     public override void SetMovingState(Vector3 pos)
     {
         base.SetMovingState(pos);
+
+        Agent.isStopped = false;
     }
 
     protected override void BeforeDeactivation()

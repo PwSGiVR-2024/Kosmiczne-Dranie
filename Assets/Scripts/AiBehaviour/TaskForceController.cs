@@ -539,7 +539,7 @@ public class TaskForceController : MonoBehaviour
         }
 
         if (commander != null)
-            commander.GetComponent<AiController>().SetRetreatState(escapePoint);
+            commander.SetRetreatState(escapePoint);
     }
 
     public void SetDestination(Vector3 destination)
@@ -548,12 +548,11 @@ public class TaskForceController : MonoBehaviour
 
         foreach (var controller in unitControllers)
         {
-            if (controller != null)
-                controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
         }
 
         if (commander != null)
-            commander.GetComponent<AiController>().SetMovingState(destination);
+            commander.SetMovingState(destination);
     }
 
     public void SetIdleState()
@@ -631,15 +630,16 @@ public class TaskForceController : MonoBehaviour
             // in small scale TargetProvider is generally fast enough
             // side effect: can improve frame generation time
             // WILL INTRODUCE MEMORY LEAKS
-            if (unitControllers.Count != targetData.Length)
-                return;
+            //if (unitControllers.Count != targetData.Length)
+            //    return;
 
             targetProviderJobHandle.Complete();
 
-            for (int i = 0; i < unitControllers.Count; i++)
-            {
-                unitControllers[i].SetTargetData(targetData[i]);
-            }
+            if (unitControllers.Count == targetData.Length)
+                for (int i = 0; i < unitControllers.Count; i++)
+                {
+                    unitControllers[i].SetTargetData(targetData[i]);
+                }
 
             jobEnemies.Dispose();
             jobAllies.Dispose();
