@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using static AiController;
+using static UnityEngine.GraphicsBuffer;
 using static UnityEngine.Rendering.DebugUI;
 
 public class WeaponController: MonoBehaviour
@@ -100,5 +101,13 @@ public class WeaponController: MonoBehaviour
 
         angle = angleToTarget;
         return false;
+    }
+
+    public void RotateWeaponAtPosition(Vector3 position)
+    {
+        Vector3 direction = position - transform.position;
+        direction.Normalize();
+        Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 5f * Time.deltaTime);
     }
 }

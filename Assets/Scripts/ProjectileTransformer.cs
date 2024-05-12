@@ -1,7 +1,9 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Jobs;
+using Unity.Jobs.LowLevel.Unsafe;
 using UnityEngine;
 using UnityEngine.Jobs;
 using static ProjectileTracker;
@@ -23,6 +25,7 @@ public class ProjectileTransformer : MonoBehaviour
     // projSpeedTimeDelta = projectileSpeed * Time.deltaTime (same value for every projectile from array in a single frame)
     // projPositions = projectiles forward vectors in the frame
     // projForwardVectors = projectiles positions in the frame
+    [BurstCompile(FloatPrecision.Low, FloatMode.Fast)]
     struct TransformCalculator : IJobParallelForTransform
     {
         public float projSpeedTimeDelta;

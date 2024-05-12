@@ -10,14 +10,14 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a50f5f9c56896754180f3dbf022ad838, type: 3}
-  m_Name: allrounder
+  m_Name: cruiser
   m_EditorClassIdentifier: 
-  prefabName: Ally
-  spotDistance: 150
-  health: 200
+  prefabName: 
+  spotDistance: 200
+  health: 4000
   xp: 0
-  attackDistance: 200
-  unitSpeed: 60
-  acceleration: 30
-  angularSpeed: 180
-  description: all-rounder
+  attackDistance: 450
+  unitSpeed: 40
+  acceleration: 15
+  angularSpeed: 90
+  description: 

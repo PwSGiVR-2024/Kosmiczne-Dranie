@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using System.Diagnostics;
+using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
@@ -146,6 +147,7 @@ public class TaskForceController : MonoBehaviour
         return data;
     }
 
+    [BurstCompile(FloatPrecision.Low, FloatMode.Fast)]
     struct TargetDataProvider : IJobParallelFor
     {
         [ReadOnly]
@@ -489,29 +491,50 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-
+    //HashSet<TaskForceController> enemyTaskForces = new();
     private bool SpotForTargets(out TaskForceController target)
     {
-        if (CurrentState == TaskForceState.Combat || commander == null)
+        if (commander == null)
         {
             target = null;
             return false;
         }
 
-        int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, targetCollider, targetMask);
-        if (count > 0)
-        {
-            TaskForceController enemyTaskForce = targetCollider[0].gameObject.GetComponent<AiController>().UnitTaskForce;
-            target = enemyTaskForce;
-            return true;
-        }
+        //int count = Physics.OverlapSphereNonAlloc(commander.transform.position, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, targetCollider, targetMask);
 
-        else
+        //if (count > 0)
+        //{
+        //    TaskForceController enemyTaskForce = targetCollider[0].gameObject.GetComponent<AiController>().UnitTaskForce;
+        //    target = enemyTaskForce;
+        //    return true;
+        //}
+
+        //else
+        //{
+        //    target = null;
+        //    return false;
+        //}
+
+        Collider[] targets = Physics.OverlapSphere(commander.transform.position, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, targetMask);
+
+        if (targets.Length == 0)
         {
             target = null;
             return false;
         }
-            
+
+        int index = 0;
+        float distance = float.PositiveInfinity;
+        for (int i = 0; i < targets.Length; i++)
+        {
+            float newDistance = Vector3.Distance(targets[i].transform.position, commander.transform.position);
+
+            if (newDistance < distance)
+                index = i;
+        }
+
+        target = targets[index].GetComponent<AiController>().UnitTaskForce;
+        return true;
     }
 
     public void EngageTaskForce(TaskForceController target)

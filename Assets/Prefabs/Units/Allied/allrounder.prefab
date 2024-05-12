@@ -110,6 +110,8 @@ MonoBehaviour:
       m_Calls: []
   ownSpeed: 0
   weapon_1: {fileID: 962394634880685701}
+  targetPos: {x: 0, y: 0, z: 0}
+  targetDistance: 0
 --- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
