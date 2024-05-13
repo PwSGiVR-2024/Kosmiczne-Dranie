@@ -4,8 +4,8 @@ using UnityEngine;
 using UnityEngine.Events;
 using TMPro;
 
-[CreateAssetMenu(fileName ="New ResourceOutpost",menuName ="ResourceOutpost")]
-public class ResourceHolder : ScriptableObject
+//[CreateAssetMenu(fileName ="New ResourceOutpost",menuName ="ResourceOutpost")]
+public class ResourceHolder : MonoBehaviour
 {
     public int crystals;
     public int metals;
@@ -17,5 +17,6 @@ public class ResourceHolder : ScriptableObject
     {
         
     }
+    
 
 }

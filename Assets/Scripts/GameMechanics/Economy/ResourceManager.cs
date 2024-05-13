@@ -8,15 +8,11 @@ using TMPro;
 
 public class ResourceManager : MonoBehaviour
 {
-    public int money;
-    public int crystals;
-    public int metals;
-    public int scrap;
-    public int rareMaterials;
+
     public int redFactionAffiliation;//Frakcje todo na potem albo nie
     public int blueFactionAffiliation;//Frakcje todo na potem albo nie
     public TMP_Text ResourceText;
-    List<ResourceHolder> holders;
+    public List<ResourceHolder> holders;
 
     // oddzielne profile ¿eby zachowaæ porz¹dek
     ResourceProfile playerProfile;
@@ -24,14 +20,15 @@ public class ResourceManager : MonoBehaviour
 
     void Start()
     {
-        /*foreach (var holder in holders)
+        foreach (var holder in holders)
         {
             holder.onCaptured.AddListener((side) => UpdateResource(side, holder));
-        }*/
+        }
+
     }
     private void FixedUpdate()
     {
-        ResourceCount();
+        ResourceCounter();
     }
 
     private void UpdateResource(Outpost.OutpostSide side, ResourceHolder holder)
@@ -49,7 +46,7 @@ public class ResourceManager : MonoBehaviour
             playerProfile.AddResource(holder);
         }
     }
-    private void ResourceCount()
+    private void ResourceCounter()
     {
         ResourceText.text = "Space Credits:" + money + " Crystals:" + crystals + " Metals:" + metals + " Scrap:" + scrap + " RareMaterials:" + rareMaterials;
     }

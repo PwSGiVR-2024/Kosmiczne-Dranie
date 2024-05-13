@@ -1,3 +1,4 @@
+using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -18,6 +19,12 @@ public class Outpost : MonoBehaviour
         {
             holder.onCaptured.Invoke(side);
         }
+        Collider[] colliders=Physics.OverlapSphere(transform.position, range,LayerMask.GetMask("Resources"));
+        for (int i=0;i<colliders.Length;i++)
+        {
+            colliders[i].GetComponent<ResourceHolder>().onCaptured.Invoke(side);
+        }
+        
     }
 
     // musi znaleŸæ wsystkie holdery w range

@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1918876369271580627}
   - component: {fileID: 645919149357938216}
   - component: {fileID: 8800178573030612678}
-  - component: {fileID: 2915173169156331830}
+  - component: {fileID: 6351554261511384895}
   m_Layer: 7
   m_Name: basicBase
   m_TagString: Ally
@@ -79,37 +79,19 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 4, y: 2, z: 4}
   m_Center: {x: 0, y: 0, z: 0}
---- !u!114 &2915173169156331830
+--- !u!114 &6351554261511384895
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1884448166627179468}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6acfcaab9616a974680601afa37ba8d6, type: 3}
+  m_Script: {fileID: 11500000, guid: d216506afa5ff264fa81baf9167e8e8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  disabled: 0
-  debug: 0
-  logCurrentState: 0
-  childModel: {fileID: 8875880617870411380}
-  unitValues: {fileID: 11400000, guid: ee062f304e3bfca4c814ac170181e9d8, type: 2}
-  agent: {fileID: 645919149357938216}
-  currentState: 0
-  side: 0
-  onUnitNeutralized:
-    m_PersistentCalls:
-      m_Calls: []
-  onUnitEngaged:
-    m_PersistentCalls:
-      m_Calls: []
-  onStateChanged:
-    m_PersistentCalls:
-      m_Calls: []
-  ownSpeed: 0
-  weapon_1: {fileID: 962394634880685701}
+  range: 100
 --- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
@@ -163,7 +145,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 6c65837df5eb7264a8937b69f91b177e, type: 2}
+  - {fileID: 2100000, guid: 0e67643a3cf174843b0ce1bfd4d5ded7, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
