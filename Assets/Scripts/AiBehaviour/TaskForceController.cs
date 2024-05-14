@@ -7,6 +7,7 @@ using Unity.Burst;
 using Unity.Collections;
 using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
+using Unity.Mathematics;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
@@ -116,9 +117,9 @@ public class TaskForceController : MonoBehaviour
 
     public struct UnitData
     {
-        public Vector3 position { get; private set; }
+        public float3 position { get; private set; }
         public Quaternion rotation { get; private set; }
-        public Vector3 forward { get; private set; }
+        public float3 forward { get; private set; }
 
         public UnitData(Vector3 position, Quaternion rotation, Vector3 forward)
         {
@@ -166,7 +167,8 @@ public class TaskForceController : MonoBehaviour
 
             for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
             {
-                newDistance = Vector3.Distance(allies[allyIndex].position, enemies[enemyIndex].position);
+                //newDistance = Vector3.Distance(allies[allyIndex].position, enemies[enemyIndex].position);
+                newDistance = math.distance(allies[allyIndex].position, enemies[enemyIndex].position);
 
                 if (newDistance < distance)
                 {
@@ -175,12 +177,18 @@ public class TaskForceController : MonoBehaviour
                 }
             }
 
+
+            float angleRadians = math.acos(math.dot(allies[allyIndex].forward, math.normalize(enemies[closestEnemy].position - allies[allyIndex].position)));
+            float angleDegrees = math.degrees(angleRadians);
+
             outcomeTargets[allyIndex] = new AiController.TargetDataLite(
                 position: enemies[closestEnemy].position,
                 rotation: enemies[closestEnemy].rotation,
                 forward: enemies[closestEnemy].forward,
                 distance: distance,
-                angle: Vector3.Angle(allies[allyIndex].forward, enemies[closestEnemy].position - allies[allyIndex].position));
+                //angle: Vector3.Angle(allies[allyIndex].forward, enemies[closestEnemy].position - allies[allyIndex].position)
+                angle: angleDegrees
+                );
         }
     }
 

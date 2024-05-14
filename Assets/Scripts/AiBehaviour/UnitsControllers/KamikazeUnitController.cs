@@ -30,8 +30,14 @@ public class KamikazeUnitController : AiController
 
         if (Target.distance <= 5)
         {
-            Projectile projectile = weapon_1.FireProjectile();
-            projectile.transform.position = Target.position;
+            //Projectile projectile = weapon_1.FireProjectile();
+            //projectile.transform.position = Target.position;
+            if(Target.TryLockTarget(out AiController controller))
+            {
+                controller.Damage(400, this);
+                this.Damage(1000, controller);
+            }
+                
         }
     }
 

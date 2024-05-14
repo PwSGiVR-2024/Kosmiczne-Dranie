@@ -53,7 +53,7 @@ public abstract class AiController : MonoBehaviour
             this.forward = forward;
         }
 
-        public bool TryLockTarget()
+        public bool TryLockTarget(out AiController controller)
         {
             Ray ray = new Ray(new Vector3(position.x, -1, position.z), Vector3.up);
             RaycastHit hit;
@@ -61,11 +61,12 @@ public abstract class AiController : MonoBehaviour
             if (Physics.Raycast(ray, out hit))
             {
                 targetController = hit.collider.gameObject.GetComponent<AiController>();
+                controller = targetController;
                 return true;
             }
 
-            else
-                return false;
+            controller = targetController;
+            return false;
         }
 
         public float CalculateTargetRelativeVelocity(NavMeshAgent agent)
