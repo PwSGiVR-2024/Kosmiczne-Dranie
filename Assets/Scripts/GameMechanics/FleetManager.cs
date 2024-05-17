@@ -79,13 +79,13 @@ public class FleetManager : MonoBehaviour
         TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
         taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
 
-        if (taskForce.Side == TaskForceSide.Ally)
+        if (taskForce.Side == Affiliation.Blue)
         {
             allyTaskForceList.Add(taskForce);
             taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
             allyTaskForceCount++;
         }
-        else if (taskForce.Side == TaskForceSide.Enemy)
+        else if (taskForce.Side == Affiliation.Red)
         {
             enemyTaskForceList.Add(taskForce);
             taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
@@ -101,10 +101,10 @@ public class FleetManager : MonoBehaviour
 
         //Destroy(taskForce.icon);
 
-        if (taskForce.Side == TaskForceSide.Ally)
+        if (taskForce.Side == Affiliation.Blue)
             allyTaskForceList.Remove(taskForce);
 
-        else if (taskForce.Side == TaskForceSide.Enemy)
+        else if (taskForce.Side == Affiliation.Red)
             enemyTaskForceList.Remove(taskForce);
 
         //Destroy(taskForce);

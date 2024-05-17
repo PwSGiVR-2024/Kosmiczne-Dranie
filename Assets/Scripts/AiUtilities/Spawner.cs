@@ -29,7 +29,7 @@ public class Spawner : MonoBehaviour
     public int unitsToSpawn = 0;
 
 
-    private TaskForceController CreateTaskForce(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager, TaskForceSide side)
+    private TaskForceController CreateTaskForce(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager, Affiliation side)
     {
         TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
         instance.Init(name, maxSize, icon, iconOffset, gameManager, side);
@@ -40,7 +40,7 @@ public class Spawner : MonoBehaviour
 
 
 
-    private AiController CreateUnit(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer, UnitSide side)
+    private AiController CreateUnit(string name, GameObject prefab, TaskForceController taskForce, Vector3 pos, GameObject projectileContainer, GameObject allyContainer, Affiliation side)
     {
         GameObject instance = Instantiate(prefab, pos, Quaternion.identity, allyContainer.transform);
         instance.name = name;
@@ -53,7 +53,7 @@ public class Spawner : MonoBehaviour
 
     private AiController SpawnAlly(GameObject prefab, Vector3 pos, TaskForceController taskForce)
     {
-        AiController unit = CreateUnit("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer, UnitSide.Ally);
+        AiController unit = CreateUnit("Ally_" + allyCount, prefab, taskForce, pos, allyProjectileContainer, allyContainer, Affiliation.Blue);
 
         onAllySpawned?.Invoke(unit.gameObject);
         allyCount++;
@@ -63,21 +63,21 @@ public class Spawner : MonoBehaviour
 
     private AiController SpawnEnemy(GameObject prefab, Vector3 pos, TaskForceController taskForce)
     {
-        AiController unit = CreateUnit("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer, UnitSide.Enemy);
+        AiController unit = CreateUnit("Enemy_" + enemyCount, prefab, taskForce, pos, enemyProjectileContainer, enemyContainer, Affiliation.Red);
         onAllySpawned?.Invoke(unit.gameObject);
         enemyCount++;
 
         return unit;
     }
 
-    private TaskForceController SpawnAllyTaskForce(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
+    private TaskForceController SpawnBlueTaskForce(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
     {
         if (pos == null || unitPrefab == null || unitsToSpawn < 1 || iconPrefab == null || renderingCanvas == null || unitPrefab.CompareTag("Enemy") || !unitPrefab.CompareTag("Ally"))
             return null;
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, allyTaskForceContainer, gameManager, TaskForceSide.Ally);
+        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, allyTaskForceContainer, gameManager, Affiliation.Blue);
 
         AiController commander = SpawnAlly(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);
@@ -102,14 +102,14 @@ public class Spawner : MonoBehaviour
         return taskForce;
     }
 
-    private TaskForceController SpawnEnemyTaskForce(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
+    private TaskForceController SpawnRedTaskForce(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
     {
         if (pos == null || unitPrefab == null || unitsToSpawn < 1 || iconPrefab == null || renderingCanvas == null || unitPrefab.CompareTag("Ally") || !unitPrefab.CompareTag("Enemy"))
             return null;
 
         GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
 
-        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, enemyTaskForceContainer, gameManager, TaskForceSide.Enemy);
+        TaskForceController taskForce = CreateTaskForce(name, unitsToSpawn, icon, iconOffset, enemyTaskForceContainer, gameManager, Affiliation.Red);
 
         AiController commander = SpawnEnemy(unitPrefab, pos, taskForce);
         taskForce.AddUnit(commander);
@@ -137,10 +137,10 @@ public class Spawner : MonoBehaviour
     public TaskForceController SpawnTaskForce(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
     {
         if (unitPrefab.CompareTag("Enemy"))
-            return SpawnEnemyTaskForce(pos, name, iconPrefab, renderingCanvas, iconOffset);
+            return SpawnRedTaskForce(pos, name, iconPrefab, renderingCanvas, iconOffset);
 
         else if (unitPrefab.CompareTag("Ally"))
-            return SpawnAllyTaskForce(pos, name, iconPrefab, renderingCanvas, iconOffset);
+            return SpawnBlueTaskForce(pos, name, iconPrefab, renderingCanvas, iconOffset);
 
         else return null;
     }

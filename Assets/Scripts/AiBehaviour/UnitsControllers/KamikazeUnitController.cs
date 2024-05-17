@@ -8,7 +8,7 @@ public class KamikazeUnitController : AiController
 
     protected override float StoppingDistanceFormula()
     {
-        if (CurrentState == UnitState.Combat)
+        if (CurrentState == State.Combat)
             return 0;
 
         else

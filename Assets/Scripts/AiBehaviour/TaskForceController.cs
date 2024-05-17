@@ -19,11 +19,6 @@ using Debug = UnityEngine.Debug;
 
 public class TaskForceController : MonoBehaviour
 {
-    public enum TaskForceSide { Ally, Enemy, Neutral }
-    public enum TaskForceState { Idle, Moving, Combat, Retreat }
-    public enum TaskForceBehaviour { Passive, Aggresive, Evasive }
-    public enum TaskForceOrder { None, Engage, Disengage, Move, Patrol, Defend }
-
     // helper attributes
     private bool initialized = false;
 
@@ -33,11 +28,11 @@ public class TaskForceController : MonoBehaviour
 
     private JobHandle targetProviderJobHandle;
     [ReadOnly]
-    private NativeArray<UnitData> jobAllies;
+    private NativeArray<JobUnitData> jobAllies;
     [ReadOnly]
-    private NativeArray<UnitData> jobEnemies;
+    private NativeArray<JobUnitData> jobEnemies;
     [ReadOnly]
-    private NativeArray<AiController.TargetDataLite> targetData;
+    private NativeArray<TargetDataLite> targetData;
     //
     
     private enum TargetCalculations { Update, Coroutine }
@@ -70,21 +65,21 @@ public class TaskForceController : MonoBehaviour
     [SerializeField] private float travelAcceleration;
 
     [Header("States:")]
-    [SerializeField] private TaskForceSide side = TaskForceSide.Neutral;
-    [SerializeField] private TaskForceState currentState = TaskForceState.Idle;
+    [SerializeField] private Affiliation side = Affiliation.Green;
+    [SerializeField] private State currentState = State.Idle;
     [SerializeField] private TaskForceBehaviour currentBehaviour = TaskForceBehaviour.Aggresive;
     [SerializeField] private TaskForceOrder currentOrder = TaskForceOrder.None;
 
     [Header("Events:")]
     public UnityEvent<int> onSizeChanged = new();
     public UnityEvent<float> onStrengthChanged = new();
-    public UnityEvent<TaskForceState> onStateChanged = new();
+    public UnityEvent<State> onStateChanged = new();
     public UnityEvent<TaskForceBehaviour> onBehaviourChanged = new();
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
 
-    public TaskForceSide Side { get => side; }
-    public TaskForceState CurrentState {
+    public Affiliation Side { get => side; }
+    public State CurrentState {
         get => currentState;
         set {
             currentState = value;
@@ -115,84 +110,19 @@ public class TaskForceController : MonoBehaviour
     public float Strength { get => strength; }
     public TaskForceController Target { get => target; }
 
-    public struct UnitData
+    public NativeArray<JobUnitData> CreateUnitsDataSnapshot()
     {
-        public float3 position { get; private set; }
-        public Quaternion rotation { get; private set; }
-        public float3 forward { get; private set; }
-
-        public UnitData(Vector3 position, Quaternion rotation, Vector3 forward)
-        {
-            this.position = position;
-            this.rotation = rotation;
-            this.forward = forward;
-        }
-
-        public void Update(Vector3 position, Quaternion rotation, Vector3 forward)
-        {
-            this.position = position;
-            this.rotation = rotation;
-            this.forward = forward;
-        }
-    }
-
-    public NativeArray<UnitData> CreateUnitsDataSnapshot()
-    {
-        NativeArray<UnitData> data = new(Units.Count, Allocator.Persistent);
+        NativeArray<JobUnitData> data = new(Units.Count, Allocator.Persistent);
 
         for (int i = 0; i < data.Length; i++)
         {
-            data[i] = new UnitData(unitControllers[i].transform.position, unitControllers[i].transform.rotation, unitControllers[i].transform.forward);
+            data[i] = new JobUnitData(unitControllers[i].transform.position, unitControllers[i].transform.rotation, unitControllers[i].transform.forward);
         }
 
         return data;
     }
 
-    [BurstCompile(FloatPrecision.Low, FloatMode.Fast)]
-    struct TargetDataProvider : IJobParallelFor
-    {
-        [ReadOnly]
-        public NativeArray<UnitData> enemies;
-
-        [ReadOnly]
-        public NativeArray<UnitData> allies;
-
-        public NativeArray<AiController.TargetDataLite> outcomeTargets;
-
-        public void Execute(int allyIndex)
-        {
-            float distance = float.PositiveInfinity;
-            float newDistance;
-            int closestEnemy = 0;
-
-            for (int enemyIndex = 0; enemyIndex < enemies.Length; enemyIndex++)
-            {
-                //newDistance = Vector3.Distance(allies[allyIndex].position, enemies[enemyIndex].position);
-                newDistance = math.distance(allies[allyIndex].position, enemies[enemyIndex].position);
-
-                if (newDistance < distance)
-                {
-                    distance = newDistance;
-                    closestEnemy = enemyIndex;
-                }
-            }
-
-
-            float angleRadians = math.acos(math.dot(allies[allyIndex].forward, math.normalize(enemies[closestEnemy].position - allies[allyIndex].position)));
-            float angleDegrees = math.degrees(angleRadians);
-
-            outcomeTargets[allyIndex] = new AiController.TargetDataLite(
-                position: enemies[closestEnemy].position,
-                rotation: enemies[closestEnemy].rotation,
-                forward: enemies[closestEnemy].forward,
-                distance: distance,
-                //angle: Vector3.Angle(allies[allyIndex].forward, enemies[closestEnemy].position - allies[allyIndex].position)
-                angle: angleDegrees
-                );
-        }
-    }
-
-    public void Init(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameManager gameManager, TaskForceSide side)
+    public void Init(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameManager gameManager, Affiliation side)
     {
         if (initialized)
             return;
@@ -204,10 +134,10 @@ public class TaskForceController : MonoBehaviour
         this.gameManager = gameManager;
         this.side = side;
 
-        if (side == TaskForceSide.Ally)
+        if (side == Affiliation.Blue)
             targetMask = LayerMask.GetMask("Enemies");
 
-        else if (side == TaskForceSide.Enemy)
+        else if (side == Affiliation.Red)
             targetMask = LayerMask.GetMask("Allies");
 
         onStateChanged.AddListener(OnStateChanged);
@@ -355,7 +285,7 @@ public class TaskForceController : MonoBehaviour
     {
         switch (CurrentState)
         {
-            case TaskForceState.Combat:
+            case State.Combat:
                 if (targetCalculations == TargetCalculations.Update)
                     if (targetProviderJobHandle.IsCompleted)
                         TryGetTargetProviderJob(ref targetProviderJobHandle);
@@ -364,14 +294,14 @@ public class TaskForceController : MonoBehaviour
                     SetIdleState();
                 break;
 
-            case TaskForceState.Idle:
+            case State.Idle:
                 break;
 
-            case TaskForceState.Moving:
+            case State.Moving:
                 MovingState();
                 break;
 
-            case TaskForceState.Retreat:
+            case State.Retreat:
                 break;
         }
 
@@ -425,7 +355,7 @@ public class TaskForceController : MonoBehaviour
 
                 if (waitingForSeconds <= secondsAfterStop)
                 {
-                    CurrentState = TaskForceState.Idle;
+                    CurrentState = State.Idle;
                     counterRunning = false;
                     yield break;
                 }
@@ -441,23 +371,23 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    private void OnStateChanged(TaskForceState state)
+    private void OnStateChanged(State state)
     {
         switch (state)
         {
-            case TaskForceState.Idle:
+            case State.Idle:
                 OnIdleChange();
                 break;
 
-            case TaskForceState.Moving:
+            case State.Moving:
                 OnMovingChange();
                 break;
 
-            case TaskForceState.Combat:
+            case State.Combat:
                 OnCombatChange();
                 break;
 
-            case TaskForceState.Retreat:
+            case State.Retreat:
                 OnRetreatChange();
                 break;
         }
@@ -552,7 +482,7 @@ public class TaskForceController : MonoBehaviour
 
         this.target = target;
 
-        CurrentState = TaskForceState.Combat;
+        CurrentState = State.Combat;
 
         if (targetCalculations == TargetCalculations.Coroutine)
             //StartCoroutine(RefreshTargets(target));
@@ -561,7 +491,7 @@ public class TaskForceController : MonoBehaviour
 
     public void Disengage(Vector3 escapePoint)
     {
-        CurrentState = TaskForceState.Retreat;
+        CurrentState = State.Retreat;
 
         foreach (var controller in unitControllers)
         {
@@ -575,7 +505,7 @@ public class TaskForceController : MonoBehaviour
 
     public void SetDestination(Vector3 destination)
     {
-        CurrentState = TaskForceState.Moving;
+        CurrentState = State.Moving;
 
         foreach (var controller in unitControllers)
         {
@@ -588,7 +518,7 @@ public class TaskForceController : MonoBehaviour
 
     public void SetIdleState()
     {
-        CurrentState = TaskForceState.Idle;
+        CurrentState = State.Idle;
 
         foreach (var unit in unitControllers)
         {

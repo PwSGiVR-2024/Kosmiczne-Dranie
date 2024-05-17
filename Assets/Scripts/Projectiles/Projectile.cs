@@ -9,6 +9,7 @@ using UnityEngine.Jobs;
 using static UnityEditor.Experimental.GraphView.GraphView;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
+using Unity.Mathematics;
 
 // ka¿dy pocisk posiada ten komponent
 // klasa definiuje zachowanie pocisku i wszytskie jego atrybuty
@@ -18,14 +19,14 @@ public class Projectile : MonoBehaviour
     public event Action<Projectile> OnProjectileDisable;
     public event Action<Projectile> OnProjectileDestroy;
 
-    private AiController.UnitSide side;
+    private Affiliation side;
     private AiController shotBy;
     private WeaponValues values;
     private float timeTillDeactivation;
 
     public WeaponValues Values { get => values; }
     public AiController ShotBy { get => shotBy; }
-    public AiController.UnitSide Side { get => side; }
+    public Affiliation Side { get => side; }
 
     //private LayerMask projectileMask;
     //private LayerMask alliesMask;
@@ -54,13 +55,13 @@ public class Projectile : MonoBehaviour
         //enemiesMask = LayerMask.GetMask("Enemies");
         //sceneMask = LayerMask.GetMask("Scene");
 
-        if (side == AiController.UnitSide.Ally)
+        if (side == Affiliation.Blue)
         {
             gameObject.layer = LayerMask.NameToLayer("AllyProjectiles");
             targetMask = LayerMask.GetMask("Enemies", "Scene");
         }
 
-        else if (side == AiController.UnitSide.Enemy)
+        else if (side == Affiliation.Red)
         {
             gameObject.layer = LayerMask.NameToLayer("EnemyProjectiles");
             targetMask = LayerMask.GetMask("Allies", "Scene");
@@ -79,8 +80,8 @@ public class Projectile : MonoBehaviour
             return;
         }
 
-        //Vector3 newPosition = transform.position + transform.forward * values.projectileSpeed * Time.deltaTime;
-        //transform.position = newPosition;
+        Vector3 newPosition = transform.position + transform.forward * values.projectileSpeed * Time.deltaTime;
+        transform.position = newPosition;
 
         timeTillDeactivation -= Time.deltaTime;
     }
