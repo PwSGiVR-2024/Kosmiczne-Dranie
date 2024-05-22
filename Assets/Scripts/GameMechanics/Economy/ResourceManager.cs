@@ -1,53 +1,34 @@
-using System.Collections;
 using System.Collections.Generic;
-using System.Resources;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using UnityEngine.UIElements;
 using TMPro;
 
 public class ResourceManager : MonoBehaviour
 {
-
-    public int redFactionAffiliation;//Frakcje todo na potem albo nie
-    public int blueFactionAffiliation;//Frakcje todo na potem albo nie
-    public TMP_Text ResourceText;
-    public List<ResourceHolder> holders;
-
-    // oddzielne profile ¿eby zachowaæ porz¹dek
-    ResourceProfile playerProfile;
-    ResourceProfile enemyProfile;
+    public int crystals;
+    public int metals;
+    public int scrap;
+    public int rareMaterials;
+    public int money;
+    public TMP_Text resourceText;
 
     void Start()
     {
-        foreach (var holder in holders)
-        {
-            holder.onCaptured.AddListener((side) => UpdateResource(side, holder));
-        }
-
-    }
-    private void FixedUpdate()
-    {
-        ResourceCounter();
+        UpdateResourceText();
     }
 
-    private void UpdateResource(Outpost.OutpostSide side, ResourceHolder holder)
+    public void AddResources(int[] resources)
     {
-        if (side == Outpost.OutpostSide.Enemy)
-        {
-            playerProfile.RemoveResource(holder);
-            enemyProfile.AddResource(holder);
-        }
-            
+        crystals += resources[0];
+        metals += resources[1];
+        scrap += resources[2];
+        rareMaterials += resources[3];
+        money += resources[0] + resources[1] + resources[2] + resources[3]/10;
 
-        else if (side == Outpost.OutpostSide.Player)
-        {
-            enemyProfile.RemoveResource(holder);
-            playerProfile.AddResource(holder);
-        }
+        UpdateResourceText();
     }
-    private void ResourceCounter()
+
+    private void UpdateResourceText()
     {
-        ResourceText.text = "Space Credits:" + money + " Crystals:" + crystals + " Metals:" + metals + " Scrap:" + scrap + " RareMaterials:" + rareMaterials;
+        resourceText.text = $"Space Credits: {money} Crystals: {crystals} Metals: {metals} Scrap: {scrap} Rare Materials: {rareMaterials}";
     }
 }

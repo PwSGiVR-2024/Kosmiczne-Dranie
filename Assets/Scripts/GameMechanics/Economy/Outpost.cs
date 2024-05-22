@@ -1,4 +1,3 @@
-using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -6,30 +5,41 @@ using UnityEngine;
 public class Outpost : MonoBehaviour
 {
     public enum OutpostSide { Enemy, Player }
+    public OutpostSide side;
     public int range = 100;
-    private OutpostSide side;
+    private ResourceManager resourceManager;
+    private List<int[]> resourcesToCapture = new List<int[]>();
 
-    // kiedy outpost zostanie zainstancjonowany, szuka wszystkich zasobów w pobli¿u
-    // w znalezionych holderach, wywo³uje event
     void Start()
     {
-        List<ResourceHolder> capturedHolders = FindAllHolders();
-
-        foreach (var holder in capturedHolders)
-        {
-            holder.onCaptured.Invoke(side);
-        }
-        Collider[] colliders=Physics.OverlapSphere(transform.position, range,LayerMask.GetMask("Resources"));
-        for (int i=0;i<colliders.Length;i++)
-        {
-            colliders[i].GetComponent<ResourceHolder>().onCaptured.Invoke(side);
-        }
-        
+        resourceManager = FindObjectOfType<ResourceManager>();
+        StartCoroutine(CaptureResourcesRoutine());
     }
 
-    // musi znaleŸæ wsystkie holdery w range
-    List<ResourceHolder> FindAllHolders()
+    IEnumerator CaptureResourcesRoutine()
     {
-        return new List<ResourceHolder>();
+        while (true)
+        {
+            yield return new WaitForSeconds(60); // Czekaj minutê
+
+            foreach (var resources in resourcesToCapture)
+            {
+                resourceManager.AddResources(resources);
+            }
+
+            resourcesToCapture.Clear();
+        }
+    }
+
+    void OnTriggerEnter(Collider other)
+    {
+        if (other.CompareTag("ResourceZone"))
+        {
+            Zone zone = other.GetComponent<Zone>();
+            if (zone != null)
+            {
+                resourcesToCapture.Add(zone.GetResources());
+            }
+        }
     }
 }
