@@ -471,8 +471,17 @@ public class TaskForceController : MonoBehaviour
                 index = i;
         }
 
-        target = targets[index].GetComponent<AiController>().UnitTaskForce;
-        return true;
+        if (targets[index].TryGetComponent(out AiController controller))
+        {
+            target = controller.UnitTaskForce;
+            return true;
+        }
+        
+        else
+        {
+            target = null;
+            return false;
+        }
     }
 
     public void EngageTaskForce(TaskForceController target)
