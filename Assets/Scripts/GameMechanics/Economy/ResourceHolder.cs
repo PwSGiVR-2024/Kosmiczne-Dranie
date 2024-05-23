@@ -12,7 +12,7 @@ public class ResourceHolder : MonoBehaviour
     public int scrap;
     public int rareMaterials;
 
-    public UnityEvent<Outpost.OutpostSide> onCaptured = new();
+    public UnityEvent<Affiliation> onCaptured = new();
     public void Start()
     {
         

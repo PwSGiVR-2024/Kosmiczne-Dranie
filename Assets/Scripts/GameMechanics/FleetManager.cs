@@ -44,14 +44,14 @@ public class FleetManager : MonoBehaviour
         // input manager rejestruje rózne wejœcia, na podstawie których fleetManager mo¿e podejmowaæ ró¿ne akcje
         // ale potrzebne s¹ wrappery na metody, bo eventy przenosz¹ RaycastHit, a metody nie potrzebuj¹ takiego parametru (zazwyczaj)
         // albo potrzebuj¹ dodatkowych parametrów
-        inputManager.onPlaneLeftClickCtrl.AddListener(ActionSpawnTaskForce);
+        inputManager.onPlaneLeftClickCtrl.AddListener(ActionSpawnEntity);
         inputManager.onPlaneRightClick.AddListener(ActionSetTaskForceDestinationMultiple);
     }
 
     // wrappery na metody
-    private void ActionSpawnTaskForce(RaycastHit hit)
+    private void ActionSpawnEntity(RaycastHit hit)
     {
-        SpawnTaskForce(hit.point);
+        SpawnEntity(hit.point);
     }
 
     private void ActionSetTaskForceDestinationMultiple(RaycastHit hit)
@@ -74,8 +74,15 @@ public class FleetManager : MonoBehaviour
 
 
     // spawner instancjonuje taskForca i jednostki. Listy fleetManagera s¹ updateowane
-    public void SpawnTaskForce(Vector3 position)
+    public void SpawnEntity(Vector3 position)
     {
+        if (spawner.spawnOutpost)
+        {
+            spawner.SpawnOutpost(position, "outpost", iconPrefab, worldSpaceCanvas, iconOffset);
+            return;
+        }
+            
+
         TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
         taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
 

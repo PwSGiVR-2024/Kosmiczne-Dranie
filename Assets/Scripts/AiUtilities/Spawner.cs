@@ -16,6 +16,7 @@ public class Spawner : MonoBehaviour
     public GameObject allyProjectileContainer;
     public GameObject allyTaskForceContainer;
     public GameObject enemyTaskForceContainer;
+    public GameObject blueOutpostsContainer;
 
     public UnityEvent<GameObject> onAllySpawned = new();
     public UnityEvent<GameObject> onEnemySpawned = new();
@@ -26,7 +27,12 @@ public class Spawner : MonoBehaviour
     private int enemyCount = 1;
 
     public GameObject unitPrefab;
+    public GameObject outpostPrefab;
     public int unitsToSpawn = 0;
+    public bool spawnOutpost = false;
+
+
+
 
 
     private TaskForceController CreateTaskForce(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameObject container, GameManager gameManager, Affiliation side)
@@ -155,4 +161,36 @@ public class Spawner : MonoBehaviour
     {
         unitsToSpawn = count;
     }
+
+    public void SetOutpostToSpawn(GameObject prefab)
+    {
+        spawnOutpost = true;
+        outpostPrefab = prefab;
+    }
+
+    public Outpost SpawnOutpost(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
+    {
+        spawnOutpost = false;
+
+        if (outpostPrefab.CompareTag("Ally"))
+            return SpawnBlueOutpost(pos, name, iconPrefab, renderingCanvas, iconOffset);
+
+        else
+            return null;
+    }
+
+    private Outpost SpawnBlueOutpost(Vector3 pos, string name, GameObject iconPrefab, Canvas renderingCanvas, Vector3 iconOffset)
+    {
+        GameObject icon = Instantiate(iconPrefab, renderingCanvas.transform); // ikona jest kopiowana, a canvas jest ustawiany jako parent bo musi byæ
+
+        Outpost outpost = Instantiate(outpostPrefab, pos, Quaternion.identity, blueOutpostsContainer.transform).GetComponent<Outpost>();
+
+        outpost.gameObject.name = name;
+
+        outpost.Init(icon, iconOffset, gameManager, Affiliation.Blue);
+
+        return outpost;
+    }
+
+
 }
