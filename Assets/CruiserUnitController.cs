@@ -8,6 +8,7 @@ public class CruiserUnitController : AiController
     [SerializeField] private WeaponController weapon_2;
     [SerializeField] private WeaponController weapon_3;
     [SerializeField] private WeaponController weapon_4;
+    [SerializeField] private int health;
 
     protected override void AdditionalInit()
     {
@@ -82,7 +83,7 @@ public class CruiserUnitController : AiController
     protected override void UpdateOperations()
     {
         base.UpdateOperations();
-
+        health = Health;
 
     }
 

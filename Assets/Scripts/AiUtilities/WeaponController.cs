@@ -28,8 +28,6 @@ public class WeaponController: MonoBehaviour
 
         pool = new(poolSize, this);
 
-        ProjectileTracker.RegisterWeapon(this);
-
         StartCoroutine(AttackCooldown());
     }
 
