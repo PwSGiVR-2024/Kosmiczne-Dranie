@@ -129,7 +129,10 @@ public class Projectile : MonoBehaviour
                 return true;
 
             // Enemies or Allies layer
-            hit.collider.GetComponent<AiController>().Damage(this);
+            // assuming every script from the layer has the interface
+            IInteractable interactable = hit.collider.GetComponent<MonoBehaviour>() as IInteractable;
+            interactable.Damage(this);
+
             return true;
         }
 

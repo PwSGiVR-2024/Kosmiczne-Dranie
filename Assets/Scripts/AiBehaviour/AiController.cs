@@ -14,7 +14,7 @@ using static UnityEditor.PlayerSettings;
 // wiele jedostek wchodzi w sk³ad TaskForceController
 
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
-public abstract class AiController : MonoBehaviour
+public abstract class AiController : MonoBehaviour, IInteractable
 {
     private TargetData target = new();
     public TargetData Target { get => target; }
@@ -134,54 +134,6 @@ public abstract class AiController : MonoBehaviour
                 RetreatState();
                 break;
         }
-    }
-
-    public void Damage(Projectile projectile)
-    {
-        health -= projectile.Values.projectileDamage;
-
-        if (currentState != State.Combat)
-            onUnitEngaged.Invoke(projectile.ShotBy?.UnitTaskForce);
-
-        if (health <= 0)
-        {
-            //pool.SetProjectilesToDestroy();
-
-            //foreach (Projectile proj in projectiles)
-            //{
-            //    if (proj != null)
-            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
-            //}
-            BeforeDeactivation();
-            gameObject.SetActive(false);
-            onUnitNeutralized?.Invoke(this);
-            gameManager.AddToExterminationCamp(gameObject);
-        }
-
-    }
-
-    public void Damage(int value, AiController attacker)
-    {
-        health -= value;
-
-        if (currentState != State.Combat)
-            onUnitEngaged.Invoke(attacker.UnitTaskForce);
-
-        if (health <= 0)
-        {
-            //pool.SetProjectilesToDestroy();
-
-            //foreach (Projectile proj in projectiles)
-            //{
-            //    if (proj != null)
-            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
-            //}
-            BeforeDeactivation();
-            gameObject.SetActive(false);
-            onUnitNeutralized?.Invoke(this);
-            gameManager.AddToExterminationCamp(gameObject);
-        }
-
     }
 
     public void SetTargetData(Vector3 pos, float distance, float angle, Vector3 forward)
@@ -315,6 +267,54 @@ public abstract class AiController : MonoBehaviour
     protected abstract void OnTargetPositionChanged();
 
     protected abstract void BeforeDeactivation();
+
+    public void Damage(Projectile projectile)
+    {
+        health -= projectile.Values.projectileDamage;
+
+        if (currentState != State.Combat)
+            onUnitEngaged.Invoke(projectile.ShotBy?.UnitTaskForce);
+
+        if (health <= 0)
+        {
+            //pool.SetProjectilesToDestroy();
+
+            //foreach (Projectile proj in projectiles)
+            //{
+            //    if (proj != null)
+            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
+            //}
+            BeforeDeactivation();
+            gameObject.SetActive(false);
+            onUnitNeutralized?.Invoke(this);
+            gameManager.AddToExterminationCamp(gameObject);
+        }
+
+    }
+
+    public void Damage(int value, AiController attacker)
+    {
+        health -= value;
+
+        if (currentState != State.Combat)
+            onUnitEngaged.Invoke(attacker.UnitTaskForce);
+
+        if (health <= 0)
+        {
+            //pool.SetProjectilesToDestroy();
+
+            //foreach (Projectile proj in projectiles)
+            //{
+            //    if (proj != null)
+            //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
+            //}
+            BeforeDeactivation();
+            gameObject.SetActive(false);
+            onUnitNeutralized?.Invoke(this);
+            gameManager.AddToExterminationCamp(gameObject);
+        }
+
+    }
 
     //protected virtual void OnTriggerEnter(Collider collider)
     //{

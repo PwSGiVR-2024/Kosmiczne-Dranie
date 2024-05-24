@@ -3,8 +3,9 @@ using System.Collections.Generic;
 using System.ComponentModel.Design;
 using UnityEngine;
 
-public class Outpost : MonoBehaviour
+public class Outpost : MonoBehaviour, IInteractable
 {
+    public int health = 100000;
     public GameManager gameManager;
     public GameObject icon;
     public Affiliation OutpostAffiliation;
@@ -56,5 +57,28 @@ public class Outpost : MonoBehaviour
                 resourcesToCapture.Add(zone.GetResources());
             }
         }
+    }
+
+    public void Damage(Projectile projectile)
+    {
+        health -= projectile.Values.projectileDamage;
+
+        if (health <= 0)
+        {
+            Destroy(icon);
+            Destroy(gameObject);
+        }
+    }
+
+    public void Damage(int value, AiController attacker)
+    {
+        health -= value;
+
+        if (health <= 0)
+        {
+            Destroy(icon);
+            Destroy(gameObject);
+        }
+            
     }
 }

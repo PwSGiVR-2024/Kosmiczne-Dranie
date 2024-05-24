@@ -47,7 +47,7 @@ public class TaskForceController : MonoBehaviour
     [SerializeField] private Vector3 iconOffset;
 
     [Header("Main attributes:")]
-    [SerializeField] private TaskForceController target;
+    [SerializeField] private MonoBehaviour currentTarget;
     [SerializeField] private AiController commander;
     [SerializeField] private string taskForceName;
     [SerializeField] private float spotDistance;
@@ -108,7 +108,7 @@ public class TaskForceController : MonoBehaviour
     public AiController Commander { get =>  commander; }
     public List<AiController> Units { get => unitControllers; }
     public float Strength { get => strength; }
-    public TaskForceController Target { get => target; }
+    public MonoBehaviour Target { get => currentTarget; }
 
     public NativeArray<JobUnitData> CreateUnitsDataSnapshot()
     {
@@ -156,7 +156,7 @@ public class TaskForceController : MonoBehaviour
             commander = unit;
 
         unit.onUnitNeutralized.AddListener(RemoveUnitFromTaskForce);
-        unit.onUnitEngaged.AddListener((attacker) => EngageTaskForce(attacker));
+        unit.onUnitEngaged.AddListener((attacker) => Engage(attacker));
     }
 
     private void SetNewTravelSpeed()
@@ -263,12 +263,31 @@ public class TaskForceController : MonoBehaviour
 
     private bool TryGetTargetProviderJob(ref JobHandle handle)
     {
-        if (Units.Count == 0 || target.Units.Count == 0)
+        if (!targetProviderJobHandle.IsCompleted)
             return false;
 
-        jobEnemies = target.CreateUnitsDataSnapshot();
+        if (currentTarget == null || Units.Count == 0)
+        {
+            SetIdleState();
+            return false;
+        }
+
         jobAllies = CreateUnitsDataSnapshot();
         targetData = new(jobAllies.Length, Allocator.Persistent);
+
+        if (currentTarget is TaskForceController controller)
+        {
+            if (controller.Units.Count == 0)
+                return false;
+
+            jobEnemies = controller.CreateUnitsDataSnapshot();
+        }
+
+        else if (currentTarget is Outpost)
+        {
+            jobEnemies = new NativeArray<JobUnitData>(1, Allocator.Persistent);
+            jobEnemies[0] = new JobUnitData(currentTarget.transform.position, currentTarget.transform.rotation, currentTarget.transform.forward);
+        }
 
         var job = new TargetDataProvider
         {
@@ -281,17 +300,18 @@ public class TaskForceController : MonoBehaviour
         return true;
     }
 
+    private bool TrySetTarget()
+    {
+        return false;
+    }
+
     private void Update()
     {
         switch (CurrentState)
         {
             case State.Combat:
                 if (targetCalculations == TargetCalculations.Update)
-                    if (targetProviderJobHandle.IsCompleted)
-                        TryGetTargetProviderJob(ref targetProviderJobHandle);
-
-                if (target == null)
-                    SetIdleState();
+                    TryGetTargetProviderJob(ref targetProviderJobHandle);
                 break;
 
             case State.Idle:
@@ -323,8 +343,8 @@ public class TaskForceController : MonoBehaviour
 
     private void AggresiveBehaviour()
     {
-        if (SpotForTargets(out TaskForceController target))
-            EngageTaskForce(target);
+        if (TrySpotTarget(out MonoBehaviour target))
+            Engage(target);
     }
 
     private void EvasiveBehaviour()
@@ -429,8 +449,9 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    //HashSet<TaskForceController> enemyTaskForces = new();
-    private bool SpotForTargets(out TaskForceController target)
+    // important assumption:
+    // every gameObject from targetMask must have mono script with IInteractable implemented
+    private bool TrySpotTarget(out MonoBehaviour target)
     {
         if (commander == null)
         {
@@ -461,19 +482,24 @@ public class TaskForceController : MonoBehaviour
             return false;
         }
 
-        int index = 0;
+        int closestIndex = 0;
         float distance = float.PositiveInfinity;
         for (int i = 0; i < targets.Length; i++)
         {
             float newDistance = Vector3.Distance(targets[i].transform.position, commander.transform.position);
 
             if (newDistance < distance)
-                index = i;
+                closestIndex = i;
         }
 
-        if (targets[index].TryGetComponent(out AiController controller))
+        if (targets[closestIndex].TryGetComponent(out MonoBehaviour mono))
         {
-            target = controller.UnitTaskForce;
+            if (mono is AiController controller)
+                target = controller.UnitTaskForce;
+
+            else
+                target = mono;
+
             return true;
         }
         
@@ -484,17 +510,16 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    public void EngageTaskForce(TaskForceController target)
+    public void Engage(MonoBehaviour target)
     {
         if (target == null)
             return;
 
-        this.target = target;
+        currentTarget = target;
 
         CurrentState = State.Combat;
 
         if (targetCalculations == TargetCalculations.Coroutine)
-            //StartCoroutine(RefreshTargets(target));
             StartCoroutine(RefreshTargetDataInInterval());
     }
 
@@ -571,7 +596,7 @@ public class TaskForceController : MonoBehaviour
     {
         WaitForSeconds interval = new(coroutineRefreshRate);
 
-        while (target)
+        while (currentTarget)
         {
             if (targetProviderJobHandle.IsCompleted)
                 TryGetTargetProviderJob(ref targetProviderJobHandle);
