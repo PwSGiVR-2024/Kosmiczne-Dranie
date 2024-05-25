@@ -2,24 +2,33 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
 using UnityEngine;
+using UnityEngine.Events;
+using static UnityEditor.PlayerSettings;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
     public LayerMask healMask;
     public int health = 100000;
     public GameManager gameManager;
-    public GameObject icon;
-    public Affiliation OutpostAffiliation;
+    //public GameObject icon;
+    public Affiliation Affiliation;
     public int range = 100;
     private ResourceManager resourceManager;
     private List<int[]> resourcesToCapture = new List<int[]>();
+    public UnityEvent onOutpostDestroy = new();
 
-    public void Init(GameObject icon, Vector3 iconOffset, GameManager gameManager, Affiliation affiliation)
+    public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager)
     {
-        this.icon = icon;
-        icon.transform.position = transform.position + iconOffset;
+        Outpost outpost = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Outpost>();
+        outpost.Init(gameManager, affiliation);
+
+        return outpost;
+    }
+
+    private void Init(GameManager gameManager, Affiliation affiliation)
+    {
         this.gameManager = gameManager;
-        OutpostAffiliation = affiliation;
+        Affiliation = affiliation;
 
         if (affiliation == Affiliation.Blue)
             healMask = LayerMask.GetMask("Allies");
@@ -27,10 +36,10 @@ public class Outpost : MonoBehaviour, IInteractable
         else if (affiliation == Affiliation.Red)
             healMask = LayerMask.GetMask("Enemies");
     }
+
     private void Update()
     {
         GameUtils.DrawCircle(gameObject, range, transform);
-        icon.transform.LookAt(Camera.main.transform, Vector3.up);
     }
 
     void Start()
@@ -72,10 +81,7 @@ public class Outpost : MonoBehaviour, IInteractable
         health -= projectile.Values.projectileDamage;
 
         if (health <= 0)
-        {
-            Destroy(icon);
             Destroy(gameObject);
-        }
     }
 
     public void Damage(int value, AiController attacker)
@@ -83,10 +89,7 @@ public class Outpost : MonoBehaviour, IInteractable
         health -= value;
 
         if (health <= 0)
-        {
-            Destroy(icon);
             Destroy(gameObject);
-        }
             
     }
 
@@ -116,5 +119,10 @@ public class Outpost : MonoBehaviour, IInteractable
 
             yield return interval;
         }
+    }
+
+    private void OnDestroy()
+    {
+        onOutpostDestroy.Invoke();
     }
 }

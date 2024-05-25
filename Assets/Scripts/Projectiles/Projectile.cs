@@ -46,7 +46,7 @@ public class Projectile : MonoBehaviour
         values = weapon.Values;
         shotBy = weapon.Unit;
 
-        side = shotBy.Side;
+        side = shotBy.Affiliation;
         timeTillDeactivation = values.projectileLifeSpan;
         transform.SetParent(shotBy.ProjectileContainer.transform);
 

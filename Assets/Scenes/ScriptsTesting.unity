@@ -3149,6 +3149,37 @@ MonoBehaviour:
   m_Center: {x: 0.010093331, y: 0.040204376, z: -0.04291427}
   m_Area: 1
   m_AffectedAgents: ffffffff
+--- !u!1 &1148014244
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1148014245}
+  m_Layer: 0
+  m_Name: RedOutpostsContainer
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1148014245
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1148014244}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 147.37119, y: 167.58011, z: -151.65842}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1176880405
 GameObject:
   m_ObjectHideFlags: 0
@@ -3479,7 +3510,6 @@ GameObject:
   - component: {fileID: 1426129218}
   - component: {fileID: 1426129217}
   - component: {fileID: 1426129216}
-  - component: {fileID: 1426129215}
   m_Layer: 5
   m_Name: WorldSpaceCanvas
   m_TagString: Untagged
@@ -3487,22 +3517,6 @@ GameObject:
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!114 &1426129215
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1426129214}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: f6ebd8be0a901c844af49799996f25e9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  fleetManager: {fileID: 2020270631}
-  iconOffset: {x: 0, y: 20, z: 0}
-  allyTaskForceList: []
-  enemyTaskForceList: []
 --- !u!114 &1426129216
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3793,7 +3807,7 @@ GameObject:
   - component: {fileID: 1668784700}
   m_Layer: 0
   m_Name: GameManager
-  m_TagString: Untagged
+  m_TagString: GameManager
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -3810,6 +3824,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59dd5ddbf276fc48aafbd99d93bbdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  worldSpaceCanvas: {fileID: 1426129218}
+  screenSpaceCanvas: {fileID: 793203628}
   logExterminationChamber: 0
 --- !u!4 &1668784701
 Transform:
@@ -3855,13 +3871,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2316237f2bd404aa98865ea6b28af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  basicHUDVariant: {fileID: 11400000, guid: 2a2ead99b60a02b42b0bff644f581c52, type: 2}
   gameManager: {fileID: 1668784700}
-  enemyContainer: {fileID: 1981450944}
-  allyContainer: {fileID: 1444810936}
-  enemyProjectileContainer: {fileID: 582657839}
-  allyProjectileContainer: {fileID: 450434118}
-  allyTaskForceContainer: {fileID: 1544278192}
-  enemyTaskForceContainer: {fileID: 438082947}
+  redUnitsContainer: {fileID: 1981450944}
+  redProjectileContainer: {fileID: 582657839}
+  redTaskForceContainer: {fileID: 438082947}
+  redOutpostsContainer: {fileID: 1148014244}
+  blueUnitsContainer: {fileID: 1444810936}
+  blueProjectileContainer: {fileID: 450434118}
+  blueTaskForceContainer: {fileID: 1544278192}
   blueOutpostsContainer: {fileID: 661302778}
   onAllySpawned:
     m_PersistentCalls:
@@ -3875,10 +3893,12 @@ MonoBehaviour:
   onEnemyTaskForceSpawned:
     m_PersistentCalls:
       m_Calls: []
-  unitPrefab: {fileID: 1884448166627179468, guid: df8e832971f29394abee61a9c91fb1d3, type: 3}
+  unitPrefab: {fileID: 0}
   outpostPrefab: {fileID: 0}
   unitsToSpawn: 100
   spawnOutpost: 0
+  outpostNames: {fileID: 11400000, guid: 7fd9a9a0804363f45a8b8bac2e74697b, type: 2}
+  taskForceNames: {fileID: 11400000, guid: 0d8b1afe47bc985468c6685c35511f53, type: 2}
 --- !u!4 &1713200679
 Transform:
   m_ObjectHideFlags: 0
@@ -4337,20 +4357,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0d7aa6437e147842891cf6ac4cdd48b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  taskForceNames: {fileID: 11400000, guid: 0d8b1afe47bc985468c6685c35511f53, type: 2}
-  outpostNames: {fileID: 11400000, guid: 7fd9a9a0804363f45a8b8bac2e74697b, type: 2}
-  debug: 0
-  targetFrameRate: 0
+  devMode: 1
   spawner: {fileID: 1713200678}
   inputManager: {fileID: 1203598361}
-  worldSpaceCanvas: {fileID: 1426129218}
-  iconPrefab: {fileID: 9173054345054333190, guid: efb0348c3ed9ce14894f69d56fe3c2c3, type: 3}
-  iconOffset: {x: 0, y: 20, z: 0}
-  unitToSpawn: 0
-  unitsToSpawn: 0
-  taskForceName: 
-  allyTaskForceList: []
-  enemyTaskForceList: []
+  allyTaskForces: []
+  allyOutposts: []
   fleetPanelController: {fileID: 597166125}
 --- !u!4 &2020270632
 Transform:
@@ -4530,3 +4541,4 @@ SceneRoots:
   - {fileID: 1886128466}
   - {fileID: 1892403052}
   - {fileID: 661302779}
+  - {fileID: 1148014245}

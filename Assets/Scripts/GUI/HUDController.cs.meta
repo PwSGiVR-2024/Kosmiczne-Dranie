@@ -1,0 +1,15 @@
+fileFormatVersion: 2
+guid: ca94ac8ce52a2b3469e7e9c94f8e1e82
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - canvas: {instanceID: 0}
+  - owner: {instanceID: 0}
+  - icon: {instanceID: 0}
+  - iconPrefab: {fileID: 9173054345054333190, guid: efb0348c3ed9ce14894f69d56fe3c2c3, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

@@ -4,6 +4,9 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public Canvas worldSpaceCanvas;
+    public Canvas screenSpaceCanvas;
+
     public bool logExterminationChamber = false;
 
     private Stack<GameObject> exterminationCamp = new();

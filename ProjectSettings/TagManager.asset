@@ -8,6 +8,7 @@ TagManager:
   - Ally
   - Projectile
   - ResourceZone
+  - GameManager
   layers:
   - Default
   - TransparentFX

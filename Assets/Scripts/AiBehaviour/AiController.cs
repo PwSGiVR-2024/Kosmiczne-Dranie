@@ -1,6 +1,7 @@
 using System;
 using System.Collections;
 using TMPro;
+using Unity.Entities;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.AI;
@@ -44,7 +45,7 @@ public abstract class AiController : MonoBehaviour, IInteractable
 
     [Header("States:")]
     [SerializeField] private State currentState = State.Idle;
-    [SerializeField] private Affiliation side;
+    [SerializeField] private Affiliation affiliation;
 
     [Header("Events:")]
     public UnityEvent<AiController> onUnitNeutralized = new();
@@ -64,7 +65,7 @@ public abstract class AiController : MonoBehaviour, IInteractable
     public NavMeshAgent Agent { get => agent; }
     public float Volume {  get => volume; }
     public State CurrentState { get => currentState; }
-    public Affiliation Side { get => side; }
+    public Affiliation Affiliation { get => affiliation; }
     public GameObject ProjectileContainer { get => projectileContainer; }
     public GameManager GameManager { get => gameManager; }
 
@@ -73,12 +74,21 @@ public abstract class AiController : MonoBehaviour, IInteractable
 
     protected abstract void AdditionalInit();
 
-    public void Init(Affiliation side, TaskForceController taskForce, GameObject projectileContainer)
+    public static AiController Create(Vector3 pos, GameObject prefab, TaskForceController taskForce, GameObject projectileContainer, Affiliation affiliation)
+    {
+        AiController instance = Instantiate(prefab, pos, Quaternion.identity).GetComponent<AiController>();
+        instance.gameObject.name = instance.Values.prefabName;
+        instance.Init(affiliation, taskForce, projectileContainer);
+
+        return instance;
+    }
+
+    private void Init(Affiliation affiliation, TaskForceController taskForce, GameObject projectileContainer)
     {
         if (initialized)
             return;
 
-        this.side = side;
+        this.affiliation = affiliation;
         unitTaskForce = taskForce;
         this.projectileContainer = projectileContainer;
 
@@ -98,10 +108,10 @@ public abstract class AiController : MonoBehaviour, IInteractable
 
         gameManager = taskForce.gameManager;
 
-        if (side == Affiliation.Blue)
+        if (affiliation == Affiliation.Blue)
             hostileProjectileMask = LayerMask.GetMask("EnemyProjectiles");
 
-        else if (side == Affiliation.Red)
+        else if (affiliation == Affiliation.Red)
             hostileProjectileMask = LayerMask.GetMask("AllyProjectiles");
 
         AdditionalInit();

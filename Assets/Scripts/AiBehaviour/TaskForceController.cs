@@ -42,9 +42,9 @@ public class TaskForceController : MonoBehaviour
     [SerializeField] private bool debug = false;
     [SerializeField] [Range(0.01f, 5.0f)] private float coroutineRefreshRate = 0.1f;
 
-    [Header("Display info:")]
-    [SerializeField] private GameObject icon;
-    [SerializeField] private Vector3 iconOffset;
+    //[Header("Display info:")]
+    //[SerializeField] private GameObject icon;
+    //[SerializeField] private Vector3 iconOffset;
 
     [Header("Main attributes:")]
     [SerializeField] private MonoBehaviour currentTarget;
@@ -65,7 +65,7 @@ public class TaskForceController : MonoBehaviour
     [SerializeField] private float travelAcceleration;
 
     [Header("States:")]
-    [SerializeField] private Affiliation side = Affiliation.Green;
+    [SerializeField] private Affiliation affiliation = Affiliation.Green;
     [SerializeField] private State currentState = State.Idle;
     [SerializeField] private TaskForceBehaviour currentBehaviour = TaskForceBehaviour.Aggresive;
     [SerializeField] private TaskForceOrder currentOrder = TaskForceOrder.None;
@@ -79,7 +79,7 @@ public class TaskForceController : MonoBehaviour
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
 
-    public Affiliation Side { get => side; }
+    public Affiliation Affiliation { get => affiliation; }
     public State CurrentState {
         get => currentState;
         set {
@@ -131,26 +131,27 @@ public class TaskForceController : MonoBehaviour
         return data;
     }
 
-    public void Init(string name, int maxSize, GameObject icon, Vector3 iconOffset, GameManager gameManager, Affiliation side)
+    public static TaskForceController Create(string name, int maxSize, GameManager gameManager, Affiliation affiliation)
     {
-        if (initialized)
-            return;
+        TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
 
-        gameObject.name = name;
-        this.maxSize = maxSize;
-        this.icon = icon;
-        this.iconOffset = iconOffset;
-        this.gameManager = gameManager;
-        this.side = side;
+        instance.gameObject.name = name;
+        instance.maxSize = maxSize;
+        instance.gameManager = gameManager;
+        instance.affiliation = affiliation;
 
-        if (side == Affiliation.Blue)
+        return instance;
+    }
+
+    private void Start()
+    {
+        onStateChanged.AddListener(OnStateChanged);
+
+        if (affiliation == Affiliation.Blue)
             targetMask = LayerMask.GetMask("Enemies");
 
-        else if (side == Affiliation.Red)
+        else if (affiliation == Affiliation.Red)
             targetMask = LayerMask.GetMask("Allies");
-
-        onStateChanged.AddListener(OnStateChanged);
-        initialized = true;
     }
 
     public void AddUnit(AiController unit)
@@ -256,7 +257,7 @@ public class TaskForceController : MonoBehaviour
     {
         StopAllCoroutines();
         onTaskForceDestroyed?.Invoke(this);
-        Destroy(icon);
+        //Destroy(icon);
         Destroy(gameObject);
     }
 
@@ -624,23 +625,12 @@ public class TaskForceController : MonoBehaviour
         {
             GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
 
-            icon.transform.LookAt(Camera.main.transform, Vector3.up);
-            icon.transform.position = commander.transform.position + iconOffset;
+            //icon.transform.LookAt(Camera.main.transform, Vector3.up);
+            //icon.transform.position = commander.transform.position + iconOffset;
         }
 
         if (targetData.IsCreated)
         {
-            // temporary solution
-            // making sure targetData[i] corresponds to unitControllers[i]
-            // lazy, but otherwise needs additional synchronizing which can introduce overhead
-            // if false, some units can keep outdated targetData or lag behind
-            // in large scale this problem can be negligible
-            // in small scale TargetProvider is generally fast enough
-            // side effect: can improve frame generation time
-            // WILL INTRODUCE MEMORY LEAKS
-            //if (unitControllers.Count != targetData.Length)
-            //    return;
-
             targetProviderJobHandle.Complete();
 
             if (unitControllers.Count == targetData.Length)
