@@ -49,10 +49,10 @@ public class TaskForceController : MonoBehaviour
     [Header("Main attributes:")]
     [SerializeField] private MonoBehaviour currentTarget;
     [SerializeField] private AiController commander;
-    [SerializeField] private string taskForceName;
     [SerializeField] private float spotDistance;
     [SerializeField] private int maxSize;
     [SerializeField] private float strength;
+    [SerializeField] private int power;
     [SerializeField] private List<AiController> unitControllers = new();
 
     [Header("Misc attributes:")]
@@ -73,6 +73,7 @@ public class TaskForceController : MonoBehaviour
     [Header("Events:")]
     public UnityEvent<int> onSizeChanged = new();
     public UnityEvent<float> onStrengthChanged = new();
+    public UnityEvent<int> onPowerChanged = new();
     public UnityEvent<State> onStateChanged = new();
     public UnityEvent<TaskForceBehaviour> onBehaviourChanged = new();
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
@@ -103,8 +104,16 @@ public class TaskForceController : MonoBehaviour
             onOrderChanged.Invoke(value);
         }
     }
+    public int Power
+    {
+        get => power;
+        set
+        {
+            power = value;
+            onPowerChanged.Invoke(value);
+        }
+    }
 
-    public string TaskForceName { get => taskForceName; }
     public AiController Commander { get =>  commander; }
     public List<AiController> Units { get => unitControllers; }
     public float Strength { get => strength; }
@@ -127,7 +136,7 @@ public class TaskForceController : MonoBehaviour
         if (initialized)
             return;
 
-        taskForceName = name;
+        gameObject.name = name;
         this.maxSize = maxSize;
         this.icon = icon;
         this.iconOffset = iconOffset;
@@ -151,6 +160,8 @@ public class TaskForceController : MonoBehaviour
 
         SetNewSpotDistance();
         SetNewTravelSpeed();
+
+        Power += unit.Values.power;
 
         if (unitControllers.Count == 1)
             commander = unit;
@@ -217,6 +228,8 @@ public class TaskForceController : MonoBehaviour
     private void RemoveUnitFromTaskForce(AiController unit)
     {
         unitControllers.Remove(unit);
+
+        Power -= unit.Values.power;
 
         if (unitControllers.Count == 0)
             DestroyTaskForce();

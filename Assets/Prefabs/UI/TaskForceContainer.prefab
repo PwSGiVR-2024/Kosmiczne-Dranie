@@ -65,7 +65,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: 300
+  m_text: 0
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
   m_sharedMaterial: {fileID: 2180264, guid: 8f586378b4e144a9851e7b34d9b748ee, type: 2}
@@ -1282,6 +1282,7 @@ MonoBehaviour:
   combatColor: {r: 1, g: 0.4433962, b: 0.4433962, a: 1}
   movingColor: {r: 1, g: 0.9701722, b: 0.42830187, a: 1}
   retreatColor: {r: 0.3584906, g: 0.3584906, b: 0.3584906, a: 1}
+  taskForce: {fileID: 0}
   taskForceName: {fileID: 8629255847449492187}
   size: {fileID: 1261938937096560423}
   strength: {fileID: 984728140642666411}

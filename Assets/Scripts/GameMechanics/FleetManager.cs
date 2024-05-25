@@ -11,6 +11,9 @@ using static TaskForceController;
 // posiada na razie czêœæ zadañ spawnera (np. prefaby jednostek), ale to siê zmieni
 public class FleetManager : MonoBehaviour
 {
+    public TaskForceNames taskForceNames;
+    public OutpostNames outpostNames;
+
     public bool debug = false;
     public int targetFrameRate = 0;
 
@@ -19,11 +22,6 @@ public class FleetManager : MonoBehaviour
     public Canvas worldSpaceCanvas; // canvas, na którym bêd¹ renderowane ikony ka¿dego taskForca
     public GameObject iconPrefab; // prefab ikony
     public Vector3 iconOffset = new(0, 20, 0); // offset ikony, ¿eby by³a renderowana trochê wy¿ej
-
-    public enum UnitType { Allrounder,Sniper, Tank, Potato, Kamikaze, Enemy };
-    public UnitType unitToSpawn = UnitType.Allrounder;
-    public int unitsToSpawn = 0;
-    public string taskForceName;
 
     private int allyTaskForceCount = 0;
     private int enemyTaskForceCount = 0;
@@ -78,12 +76,11 @@ public class FleetManager : MonoBehaviour
     {
         if (spawner.spawnOutpost)
         {
-            spawner.SpawnOutpost(position, "outpost", iconPrefab, worldSpaceCanvas, iconOffset);
+            spawner.SpawnOutpost(position, outpostNames.GetRandomName(), iconPrefab, worldSpaceCanvas, iconOffset);
             return;
         }
-            
 
-        TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceName, iconPrefab, worldSpaceCanvas, iconOffset);
+        TaskForceController taskForce = spawner.SpawnTaskForce(position, taskForceNames.GetRandomName(), iconPrefab, worldSpaceCanvas, iconOffset);
         taskForce.onTaskForceDestroyed.AddListener(RemoveTaskForce);
 
         if (taskForce.Side == Affiliation.Blue)

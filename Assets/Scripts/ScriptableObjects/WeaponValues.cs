@@ -2,7 +2,7 @@ using UnityEngine;
 
 // kontener przechowuj¹cy wartoœci broni, której dotyczy
 
-[CreateAssetMenu(fileName = "WeaponValues", menuName = "ScriptableObjects/Weapon", order = 1)]
+[CreateAssetMenu(fileName = "WeaponValues", menuName = "Scriptable Objects/Weapon", order = 1)]
 public class WeaponValues : ScriptableObject
 {
     public string prefabName;

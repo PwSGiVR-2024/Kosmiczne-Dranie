@@ -54,7 +54,11 @@ public abstract class AiController : MonoBehaviour, IInteractable
     /// <summary>
     /// Current health of this unit
     /// </summary>
-    public int Health { get => health; }
+    public int Health
+    {
+        get => health;
+        set => health = value;
+    }
     public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
     public UnitValues Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }

@@ -21,3 +21,4 @@ MonoBehaviour:
   acceleration: 30
   angularSpeed: 180
   description: all-rounder
+  power: 5

@@ -1902,9 +1902,6 @@ MonoBehaviour:
   spawner: {fileID: 1713200678}
   taskForceList: {fileID: 206291147}
   buttonMerge: {fileID: 1176880407}
-  dropdownUnitType: {fileID: 0}
-  inputUnitCount: {fileID: 0}
-  inputTaskForceName: {fileID: 0}
   allElements: []
   selectedTaskForceContainers: []
   selectedTaskForces: []
@@ -4340,6 +4337,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a0d7aa6437e147842891cf6ac4cdd48b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  taskForceNames: {fileID: 11400000, guid: 0d8b1afe47bc985468c6685c35511f53, type: 2}
+  outpostNames: {fileID: 11400000, guid: 7fd9a9a0804363f45a8b8bac2e74697b, type: 2}
   debug: 0
   targetFrameRate: 0
   spawner: {fileID: 1713200678}

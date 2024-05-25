@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -40,14 +41,39 @@ public class TaskForceContainer : MonoBehaviour
     {
         taskForce = tf;
 
-        taskForceName.text = taskForce.TaskForceName;
+        taskForceName.text = taskForce.gameObject.name;
         size.text = taskForce.Units.Count.ToString();
-        strength.text = taskForce.Strength * 100 + "%";
+        strength.text = 100 + "%";
+        power.text = taskForce.Power.ToString();
+        status.text = "Idle";
 
         taskForce.onTaskForceDestroyed.AddListener(RemoveSelf); // taskForce posiada eventy sygnalizuj¹ce zmianê jakichœ atrybutów/parametrów. Element UI powinien to odzwierciedlaæ
         taskForce.onSizeChanged.AddListener(UpdateSize);
         taskForce.onStrengthChanged.AddListener(UpdateStrength);
+        taskForce.onPowerChanged.AddListener((newPower) => power.text = newPower.ToString());
+        taskForce.onStateChanged.AddListener(UpdateState);
+    }
 
+    private void UpdateState(State state)
+    {
+        switch (state)
+        {
+            case State.Idle:
+                status.text = "Idle";
+                break;
+
+            case State.Combat:
+                status.text = "Combat";
+                break;
+
+            case State.Retreat:
+                status.text = "Retreat";
+                break;
+
+            case State.Moving:
+                status.text = "Moving";
+                break;
+        }
     }
 
     // Selekcja elementu poprzez button (prafab jest jednoczeœnie buttonem, trzeba przypisaæ ToggleSelect() do buttona w inspektorze)

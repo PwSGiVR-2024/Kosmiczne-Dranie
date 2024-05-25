@@ -3,7 +3,7 @@ using UnityEngine;
 // kontener przechowuj¹cy wartoœci danej jednostki
 // ka¿dy TYP jednostki posada oddzieln¹ instancjê
 
-[CreateAssetMenu(fileName = "UnitValues", menuName = "ScriptableObjects/Unit", order = 1)]
+[CreateAssetMenu(fileName = "UnitValues", menuName = "Scriptable Objects/Unit", order = 1)]
 public class UnitValues : ScriptableObject
 {
     public string prefabName;
@@ -16,4 +16,6 @@ public class UnitValues : ScriptableObject
     public float acceleration;
     public float angularSpeed;
     public string description;
+
+    public int power;
 }

@@ -5,6 +5,7 @@ using UnityEngine;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
+    public LayerMask healMask;
     public int health = 100000;
     public GameManager gameManager;
     public GameObject icon;
@@ -19,6 +20,12 @@ public class Outpost : MonoBehaviour, IInteractable
         icon.transform.position = transform.position + iconOffset;
         this.gameManager = gameManager;
         OutpostAffiliation = affiliation;
+
+        if (affiliation == Affiliation.Blue)
+            healMask = LayerMask.GetMask("Allies");
+
+        else if (affiliation == Affiliation.Red)
+            healMask = LayerMask.GetMask("Enemies");
     }
     private void Update()
     {
@@ -30,6 +37,7 @@ public class Outpost : MonoBehaviour, IInteractable
     {
         resourceManager = FindObjectOfType<ResourceManager>();
         StartCoroutine(CaptureResourcesRoutine());
+        StartCoroutine(HealUnits());
     }
 
     IEnumerator CaptureResourcesRoutine()
@@ -80,5 +88,33 @@ public class Outpost : MonoBehaviour, IInteractable
             Destroy(gameObject);
         }
             
+    }
+
+    private IEnumerator HealUnits()
+    {
+        WaitForSeconds interval = new(1);
+        Collider[] colliders;
+
+        while (true)
+        {
+            colliders = Physics.OverlapSphere(transform.position, range, healMask);
+
+            foreach (Collider collider in colliders)
+            {
+                if (collider.TryGetComponent(out AiController unit) && unit.UnitTaskForce.Commander == unit) // checks if this unit is a commander
+                {
+                    foreach (AiController member in unit.UnitTaskForce.Units)
+                    {
+                        if (member.Health < member.Values.health)
+                            member.Health += (int)(member.Values.health * 0.1f);
+
+                        if (member.Health > member.Values.health)
+                            member.Health = member.Values.health;
+                    }
+                }
+            }
+
+            yield return interval;
+        }
     }
 }

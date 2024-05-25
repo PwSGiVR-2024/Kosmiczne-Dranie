@@ -22,9 +22,6 @@ public class FleetPanelController : MonoBehaviour
     public ScrollableList taskForceList; // customowy skrypt
 
     public Button buttonMerge;
-    public TMP_Dropdown dropdownUnitType;
-    public TMP_InputField inputUnitCount;
-    public TMP_InputField inputTaskForceName;
 
     public List<TaskForceContainer> allElements = new(); // lista wszystkich elementów scroll listy
     public List<TaskForceContainer> selectedTaskForceContainers = new(); // lista wybranych elementów w scroll liœcie
@@ -33,14 +30,7 @@ public class FleetPanelController : MonoBehaviour
     void Start()
     {
         input.OnStateChange.AddListener(ChangeCurrentState); // zmiana stanu na podstawie inputManagera
-
-        //elementy ui
         buttonMerge.onClick.AddListener(MergeWrapper);
-        //dropdownUnitType.onValueChanged.AddListener(SetUnitType);
-       // inputUnitCount.onValidateInput += ValidateCountInput; // walidacja ¿eby akceptowaæ tylko cyfry
-        //inputUnitCount.onValueChanged.AddListener(SetUnitCount);
-       // inputTaskForceName.onValueChanged.AddListener(SetTaskForceName);
-
         spawner.onAllyTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
     }
 
@@ -57,50 +47,6 @@ public class FleetPanelController : MonoBehaviour
             return '\0'; // Return null character to prevent invalid input
         }
         return addedChar;
-    }
-
-    // dropdown odwo³uje siê do elementów po id (0, 1, ...)
-    public void SetUnitType(int type)
-    {
-        switch (type)
-        {
-            case 0:
-                fleetManager.unitToSpawn = UnitType.Allrounder;
-                break;
-            case 1:
-                fleetManager.unitToSpawn = UnitType.Sniper;
-                break;
-            case 2:
-                fleetManager.unitToSpawn = UnitType.Tank;
-                break;
-            case 3:
-                fleetManager.unitToSpawn = UnitType.Potato;
-                break;
-            case 4:
-                fleetManager.unitToSpawn = UnitType.Kamikaze;
-                break;
-
-            case 5:
-                fleetManager.unitToSpawn = UnitType.Enemy;
-                break;
-        }
-    }
-
-    // input field akceptuje domyœlnie string wiêc trzeba siê tym zaj¹æ
-    private void SetUnitCount(string countString)
-    {
-        if (countString.Length == 0)
-        {
-            fleetManager.unitsToSpawn = 0;
-            return;
-        }
-            
-        fleetManager.unitsToSpawn = int.Parse(countString);
-    }
-
-    private void SetTaskForceName(string name)
-    {
-        fleetManager.taskForceName = name;
     }
 
     public void AddTaskForceToList(TaskForceController taskForce)
