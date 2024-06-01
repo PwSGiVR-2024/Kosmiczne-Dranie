@@ -32,7 +32,7 @@ public class ProjectilePool
         for (int i = 0; i < size; i++)
         {
             projectiles[i] = Projectile.Create(weapon);
-            //projectiles[i].gameObject.SetActive(false);
+            projectiles[i].gameObject.SetActive(false);
         }
     }
 

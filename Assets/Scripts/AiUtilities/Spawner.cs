@@ -90,7 +90,7 @@ public class Spawner : MonoBehaviour
         taskForce.transform.SetParent(redTaskForceContainer.transform);
         taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
 
-        AiController commander = AiController.Create(pos, unitPrefab, taskForce, blueProjectileContainer, Affiliation.Red);
+        AiController commander = AiController.Create(pos, unitPrefab, taskForce, redProjectileContainer, Affiliation.Red);
         commander.transform.SetParent(redUnitsContainer.transform, true);
         commander.gameObject.name += redUnitsCount;
         taskForce.AddUnit(commander);
@@ -108,7 +108,7 @@ public class Spawner : MonoBehaviour
 
         for (int i = 1; i < unitsToSpawn; i++)
         {
-            AiController member = AiController.Create(GameUtils.RandomPlanePositionCircle(pos, range), unitPrefab, taskForce, blueProjectileContainer, Affiliation.Red);
+            AiController member = AiController.Create(GameUtils.RandomPlanePositionCircle(pos, range), unitPrefab, taskForce, redProjectileContainer, Affiliation.Red);
             member.transform.SetParent(redUnitsContainer.transform, true);
             member.gameObject.name += redUnitsCount;
             taskForce.AddUnit(member);

@@ -19,8 +19,14 @@ public class WeaponController: MonoBehaviour
     public ProjectilePool Pool { get => pool; }
     public AiController Unit { get => unit; }
 
+    // debug
+    [SerializeField] private Projectile[] projectilePool;
+
     public void Init(AiController unit)
     {
+        if (!isActiveAndEnabled)
+            return;
+
         this.unit = unit;
         unit.onUnitNeutralized.AddListener((_) => pool.Clean());
 
@@ -28,16 +34,11 @@ public class WeaponController: MonoBehaviour
 
         pool = new(poolSize, this);
 
+        //debug
+        projectilePool = pool.Projectiles;
+
         StartCoroutine(AttackCooldown());
     }
-
-    //private Projectile SpawnProjectile()
-    //{
-    //    GameObject instance = Instantiate(values.projectile, transform.position, SetProjectileRotation());
-    //    Projectile projectile = instance.GetComponent<Projectile>();
-    //    projectile.Init(this);
-    //    return projectile;
-    //}
 
     private void SetProjectilePosition(Projectile projectile)
     {
@@ -76,10 +77,22 @@ public class WeaponController: MonoBehaviour
     {
         if (onCooldown)
             return null;
-        
-        cooldownRemaining = values.attackCooldown;
-        onCooldown = true;
-        return PutProjectile();
+
+        Projectile proj = PutProjectile();
+
+        if (proj is GuidedProjectile guidedProj)
+        {
+            cooldownRemaining = values.attackCooldown;
+            onCooldown = true;
+            return guidedProj;
+        }
+
+        else
+        {
+            cooldownRemaining = values.attackCooldown;
+            onCooldown = true;
+            return proj;
+        }
     }
 
     public bool CheckIfFacingTarget(Vector3 targetPos)

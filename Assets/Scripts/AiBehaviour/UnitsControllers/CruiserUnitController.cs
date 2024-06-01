@@ -10,12 +10,19 @@ public class CruiserUnitController : AiController
     [SerializeField] private WeaponController weapon_4;
     [SerializeField] private int health;
 
+    [SerializeField] private AiController targetCtrl;
+    [SerializeField] private LayerMask maskCtrl;
+    [SerializeField] private int bitMask;
+
     protected override void AdditionalInit()
     {
         weapon_1.Init(this);
         weapon_2.Init(this);
         weapon_3.Init(this);
         weapon_4.Init(this);
+
+        maskCtrl = Target.targetLayer;
+        bitMask = Target.targetLayer;
     }
 
     protected override void BeforeDeactivation()
@@ -27,20 +34,23 @@ public class CruiserUnitController : AiController
     {
         if (Target.distance <= Values.attackDistance)
         {
-            if (weapon_2.CheckIfFacingTarget(Target.position))
+            if (weapon_2.isActiveAndEnabled && weapon_2.CheckIfFacingTarget(Target.position))
                 weapon_2.FireProjectile();
 
-            if (weapon_3.CheckIfFacingTarget(Target.position))
+            if (weapon_3.isActiveAndEnabled && weapon_3.CheckIfFacingTarget(Target.position))
                 weapon_3.FireProjectile();
 
-            if (weapon_4.CheckIfFacingTarget(Target.position))
+            if (weapon_4.isActiveAndEnabled && weapon_4.CheckIfFacingTarget(Target.position))
                 weapon_4.FireProjectile();
         }
 
         if (Target.distance <= Values.attackDistance * 0.5f)
         {
-            if (weapon_1.CheckIfFacingTarget(Target.position))
+            if (weapon_1.isActiveAndEnabled && weapon_1.CheckIfFacingTarget(Target.position))
+            {
                 weapon_1.FireProjectile();
+            }
+                
         }
 
     }
@@ -84,7 +94,7 @@ public class CruiserUnitController : AiController
     {
         base.UpdateOperations();
         health = Health;
-
+        Target.TryLockTarget(out targetCtrl);
     }
 
     public override void SetCombatState()

@@ -3893,9 +3893,9 @@ MonoBehaviour:
   onEnemyTaskForceSpawned:
     m_PersistentCalls:
       m_Calls: []
-  unitPrefab: {fileID: 0}
+  unitPrefab: {fileID: 8926111476536506263, guid: 2afd7bc2d60711a46b204155565e5b21, type: 3}
   outpostPrefab: {fileID: 0}
-  unitsToSpawn: 100
+  unitsToSpawn: 1
   spawnOutpost: 0
   outpostNames: {fileID: 11400000, guid: 7fd9a9a0804363f45a8b8bac2e74697b, type: 2}
   taskForceNames: {fileID: 11400000, guid: 0d8b1afe47bc985468c6685c35511f53, type: 2}

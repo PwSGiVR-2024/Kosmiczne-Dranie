@@ -17,7 +17,7 @@ using static UnityEditor.PlayerSettings;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour, IInteractable
 {
-    private TargetData target = new();
+    private TargetData target;
     public TargetData Target { get => target; }
 
     private LayerMask hostileProjectileMask;
@@ -109,10 +109,18 @@ public abstract class AiController : MonoBehaviour, IInteractable
         gameManager = taskForce.gameManager;
 
         if (affiliation == Affiliation.Blue)
+        {
             hostileProjectileMask = LayerMask.GetMask("EnemyProjectiles");
+            // target = new TargetData(LayerMask.GetMask("Enemies"));
+            target = new TargetData(6);
+        }
 
         else if (affiliation == Affiliation.Red)
+        {
             hostileProjectileMask = LayerMask.GetMask("AllyProjectiles");
+            //target = new TargetData(LayerMask.GetMask("Allies"));
+            target = new TargetData(7);
+        }
 
         AdditionalInit();
 
@@ -258,7 +266,8 @@ public abstract class AiController : MonoBehaviour, IInteractable
             if (Agent.remainingDistance <= Values.attackDistance)
                 return Values.attackDistance;
 
-            else if (target.targetController)
+            // coœ tu nie gra ale nie pamiêtam co
+            else if (target.TryLockTarget())
             {
                 tempStoppingDistance = target.relativeVelocity + Values.attackDistance;
                 return tempStoppingDistance;
