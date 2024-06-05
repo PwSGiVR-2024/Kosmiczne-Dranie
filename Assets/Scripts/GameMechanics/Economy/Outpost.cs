@@ -13,10 +13,12 @@ public class Outpost : MonoBehaviour, IInteractable
     //public GameObject icon;
     public Affiliation Affiliation;
     public int range = 100;
-    private ResourceManager resourceManager;
     private List<int[]> resourcesToCapture = new List<int[]>();
     public UnityEvent onOutpostDestroy = new();
-
+    public UnityEvent<Zone> onZoneCaptured = new();
+    public UnityEvent<Zone> onZoneRelease = new();
+    public List<Zone> zones;
+    
     public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager)
     {
         Outpost outpost = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Outpost>();
@@ -41,39 +43,21 @@ public class Outpost : MonoBehaviour, IInteractable
     {
         GameUtils.DrawCircle(gameObject, range, transform);
     }
-
+    public void GatherResources()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, range, LayerMask.GetMask("Resource"));
+        foreach (Collider col in colliders)
+        {
+            Zone zone = col.GetComponent<Zone>();
+            onZoneCaptured.Invoke(zone);
+            zones.Add(zone);
+        }
+        Debug.Log(colliders.Length);
+    }
     void Start()
     {
-        resourceManager = FindObjectOfType<ResourceManager>();
-        StartCoroutine(CaptureResourcesRoutine());
+        GatherResources();
         StartCoroutine(HealUnits());
-    }
-
-    IEnumerator CaptureResourcesRoutine()
-    {
-        while (true)
-        {
-            yield return new WaitForSeconds(60); // Czekaj minutê
-
-            foreach (var resources in resourcesToCapture)
-            {
-                resourceManager.AddResources(resources);
-            }
-
-            resourcesToCapture.Clear();
-        }
-    }
-
-    void OnTriggerEnter(Collider other)
-    {
-        if (other.CompareTag("ResourceZone"))
-        {
-            Zone zone = other.GetComponent<Zone>();
-            if (zone != null)
-            {
-                resourcesToCapture.Add(zone.GetResources());
-            }
-        }
     }
 
     public void Damage(Projectile projectile)
@@ -123,6 +107,10 @@ public class Outpost : MonoBehaviour, IInteractable
 
     private void OnDestroy()
     {
+        foreach (Zone zone in zones)
+        {
+            onZoneRelease.Invoke(zone);
+        }
         onOutpostDestroy.Invoke();
     }
 }

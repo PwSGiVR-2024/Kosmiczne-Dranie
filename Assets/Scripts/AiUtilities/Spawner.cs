@@ -32,6 +32,8 @@ public class Spawner : MonoBehaviour
     public UnityEvent<AiController> onEnemySpawned = new();
     public UnityEvent<TaskForceController> onAllyTaskForceSpawned = new();
     public UnityEvent<TaskForceController> onEnemyTaskForceSpawned = new();
+    public UnityEvent<Outpost> onAllyOutpostSpawned = new();
+    public UnityEvent<Outpost> onEnemyOutpostSpawned = new();
 
     public GameObject unitPrefab;
     public GameObject outpostPrefab;
@@ -127,6 +129,8 @@ public class Spawner : MonoBehaviour
         outpost.gameObject.name = name + blueOutpostsCount;
         outpost.transform.SetParent(blueOutpostsContainer.transform, true);
         outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
+        
+        onAllyOutpostSpawned?.Invoke(outpost);
 
         return outpost;
     }
@@ -137,6 +141,8 @@ public class Spawner : MonoBehaviour
         outpost.gameObject.name = name + redOutpostsCount;
         outpost.transform.SetParent(redOutpostsContainer.transform, true);
         outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
+
+        onEnemyOutpostSpawned?.Invoke(outpost);
 
         return outpost;
     }

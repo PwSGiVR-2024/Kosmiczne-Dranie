@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.07231705, g: 0.050671093, b: 0.034150615, a: 1}
+  m_IndirectSpecularColor: {r: 0.07231701, g: 0.05067106, b: 0.034150574, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3893,6 +3893,12 @@ MonoBehaviour:
   onEnemyTaskForceSpawned:
     m_PersistentCalls:
       m_Calls: []
+  onAllyOutpostSpawned:
+    m_PersistentCalls:
+      m_Calls: []
+  onEnemyOutpostSpawned:
+    m_PersistentCalls:
+      m_Calls: []
   unitPrefab: {fileID: 8926111476536506263, guid: 2afd7bc2d60711a46b204155565e5b21, type: 3}
   outpostPrefab: {fileID: 0}
   unitsToSpawn: 1
@@ -3990,56 +3996,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1781041452}
   m_CullTransparentMesh: 1
---- !u!1 &1886128464
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 1886128466}
-  - component: {fileID: 1886128467}
-  m_Layer: 0
-  m_Name: ResourceMenager
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &1886128466
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886128464}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 424.44888, y: 321.55325, z: -529.36176}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &1886128467
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1886128464}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9071ef7f819a4ca43b18d8c34ccf7066, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  crystals: 0
-  metals: 0
-  scrap: 0
-  rareMaterials: 0
-  money: 0
-  resourceText: {fileID: 1351773547}
 --- !u!1 &1892403050
 GameObject:
   m_ObjectHideFlags: 0
@@ -4070,8 +4026,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zonePrefab: {fileID: 6501224146213618713, guid: 4b614ba3cfed1604598ab82c6ba26a00, type: 3}
-  minValue: 1
-  maxValue: 100
+  metalValue: 0
+  crystalValue: 0
+  playerTotalMetal: 0
+  playerTotalCrystal: 0
+  spawner: {fileID: 1713200678}
+  resourceText: {fileID: 1351773547}
+  money: 0
 --- !u!4 &1892403052
 Transform:
   m_ObjectHideFlags: 0
@@ -4538,7 +4499,6 @@ SceneRoots:
   - {fileID: 1544278193}
   - {fileID: 438082948}
   - {fileID: 1668784701}
-  - {fileID: 1886128466}
   - {fileID: 1892403052}
   - {fileID: 661302779}
   - {fileID: 1148014245}

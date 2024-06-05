@@ -16,6 +16,8 @@ public class UnitValues : ScriptableObject
     public float acceleration;
     public float angularSpeed;
     public string description;
+    public int crystalPrice;
+    public int metalPrice;
 
     public int power;
 }

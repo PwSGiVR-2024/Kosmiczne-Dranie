@@ -1,24 +1,34 @@
 using UnityEngine;
+using UnityEngine.Events;
+using UnityEngine.XR;
 
 public class Zone : MonoBehaviour
 {
-    public int[] resources = new int[4];
+    public enum ResourceType { Crystals, Metals }
+    public ResourceType zoneResource;
+    public int value;
+    public UnityEvent<Zone> onCapture = new();
+    
 
-    void Start()
+    
+    public void Init()
     {
-        for (int i = 0; i < resources.Length; i++)
+        int randomInt;
+        value = Random.Range(50, 200);
+        randomInt = Random.Range(0,2);
+        //to jest g³upie nie patrz na chwile tylko
+        if (randomInt==0)
         {
-            resources[i] = Random.Range(1, 101); // Inicjalizacja zasobów losowymi wartoœciami
+            zoneResource = ResourceType.Crystals;
         }
-    }
-
-    public int[] GetResources()
-    {
-        return resources;
+        else if (randomInt==1)
+        {
+            zoneResource = ResourceType.Metals;
+        }
     }
 }
 
-public class ZoneSpawner : MonoBehaviour
+/*public class ZoneSpawner : MonoBehaviour
 {
     public GameObject ZonePrefab;
     public int numberOfZones = 10;
@@ -37,4 +47,4 @@ public class ZoneSpawner : MonoBehaviour
             Instantiate(ZonePrefab, spawnPosition, Quaternion.identity);
         }
     }
-}
+}*/
