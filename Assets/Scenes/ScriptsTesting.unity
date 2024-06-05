@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.07231701, g: 0.05067106, b: 0.034150574, a: 1}
+  m_IndirectSpecularColor: {r: 0.07231705, g: 0.050671093, b: 0.034150615, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -3871,7 +3871,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4b2316237f2bd404aa98865ea6b28af0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  basicHUDVariant: {fileID: 11400000, guid: 2a2ead99b60a02b42b0bff644f581c52, type: 2}
+  allyHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
+  enemyHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
   gameManager: {fileID: 1668784700}
   redUnitsContainer: {fileID: 1981450944}
   redProjectileContainer: {fileID: 582657839}

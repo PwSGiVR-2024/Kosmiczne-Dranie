@@ -9,6 +9,7 @@ TagManager:
   - Projectile
   - ResourceZone
   - GameManager
+  - TaskForceHUD
   layers:
   - Default
   - TransparentFX

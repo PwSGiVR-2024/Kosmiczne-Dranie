@@ -21,7 +21,7 @@ public abstract class Projectile : MonoBehaviour
     private AiController shotBy;
     private WeaponValues values;
     private float timeTillDeactivation;
-    private LayerMask targetMask;
+    protected LayerMask targetMask;
 
     public WeaponValues Values { get => values; }
     public AiController ShotBy { get => shotBy; }

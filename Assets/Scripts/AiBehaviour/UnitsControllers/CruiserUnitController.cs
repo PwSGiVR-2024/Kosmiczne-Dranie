@@ -8,6 +8,7 @@ public class CruiserUnitController : AiController
     [SerializeField] private WeaponController weapon_2;
     [SerializeField] private WeaponController weapon_3;
     [SerializeField] private WeaponController weapon_4;
+    [SerializeField] private WeaponController weapon_5;
     [SerializeField] private int health;
 
     [SerializeField] private AiController targetCtrl;
@@ -16,10 +17,11 @@ public class CruiserUnitController : AiController
 
     protected override void AdditionalInit()
     {
-        weapon_1.Init(this);
-        weapon_2.Init(this);
-        weapon_3.Init(this);
-        weapon_4.Init(this);
+        if (weapon_1) weapon_1.Init(this);
+        if (weapon_2) weapon_2.Init(this);
+        if (weapon_3) weapon_3.Init(this);
+        if (weapon_4) weapon_4.Init(this);
+        if (weapon_5) weapon_5.Init(this);
 
         maskCtrl = Target.targetLayer;
         bitMask = Target.targetLayer;
@@ -34,25 +36,32 @@ public class CruiserUnitController : AiController
     {
         if (Target.distance <= Values.attackDistance)
         {
-            if (weapon_2.isActiveAndEnabled && weapon_2.CheckIfFacingTarget(Target.position))
+            if (weapon_2 && weapon_2.isActiveAndEnabled && weapon_2.CheckIfFacingTarget(Target.position))
                 weapon_2.FireProjectile();
 
-            if (weapon_3.isActiveAndEnabled && weapon_3.CheckIfFacingTarget(Target.position))
+            if (weapon_3 && weapon_3.isActiveAndEnabled && weapon_3.CheckIfFacingTarget(Target.position))
                 weapon_3.FireProjectile();
 
-            if (weapon_4.isActiveAndEnabled && weapon_4.CheckIfFacingTarget(Target.position))
+            if (weapon_4 && weapon_4.isActiveAndEnabled && weapon_4.CheckIfFacingTarget(Target.position))
                 weapon_4.FireProjectile();
         }
 
         if (Target.distance <= Values.attackDistance * 0.5f)
         {
-            if (weapon_1.isActiveAndEnabled && weapon_1.CheckIfFacingTarget(Target.position))
+            if (weapon_1 && weapon_1 && weapon_1.CheckIfFacingTarget(Target.position))
             {
                 weapon_1.FireProjectile();
             }
                 
         }
 
+        if (Target.distance <= Values.attackDistance * 2f)
+        {
+            if (weapon_5 && weapon_5.isActiveAndEnabled && weapon_5.CheckIfFacingTarget(Target.position))
+            {
+                weapon_5.FireProjectile();
+            }
+        }
     }
 
     protected override void IdleState()
@@ -70,10 +79,11 @@ public class CruiserUnitController : AiController
     {
         SetCombatState();
 
-        weapon_1.RotateWeaponAtPosition(Target.position);
-        weapon_2.RotateWeaponAtPosition(Target.position);
-        weapon_3.RotateWeaponAtPosition(Target.position);
-        weapon_4.RotateWeaponAtPosition(Target.position);
+        if (weapon_1) weapon_1.RotateWeaponAtPosition(Target.position);
+        if (weapon_2) weapon_2.RotateWeaponAtPosition(Target.position);
+        if (weapon_3) weapon_3.RotateWeaponAtPosition(Target.position);
+        if (weapon_4) weapon_4.RotateWeaponAtPosition(Target.position);
+        if (weapon_5) weapon_5.RotateWeaponAtPosition(Target.position);
 
         if (Target.distance > Values.attackDistance)
         {

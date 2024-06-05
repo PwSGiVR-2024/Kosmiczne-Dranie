@@ -1,14 +1,14 @@
 using System.Collections;
 using UnityEngine;
 using UnityEngine.Events;
-using static AiController;
-using static TaskForceController;
 
 
 // klasa odpowiada za instancjonowanie ka¿dej jednostki oraz Task Forca w œwiecie gry
 public class Spawner : MonoBehaviour
 {
-    public TaskForceHUD basicHUDVariant;
+    //public TaskForceHUDScriptable basicHUDVariant;
+    public GameObject allyHUD;
+    public GameObject enemyHUD;
 
     public GameManager gameManager;
 
@@ -50,7 +50,8 @@ public class Spawner : MonoBehaviour
 
         TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, gameManager, Affiliation.Blue);
         taskForce.transform.SetParent(blueTaskForceContainer.transform);
-        taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
+        // taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
+        
 
         AiController commander = AiController.Create(pos, unitPrefab, taskForce, blueProjectileContainer, Affiliation.Blue);
         commander.transform.SetParent(blueUnitsContainer.transform, true);
@@ -80,6 +81,7 @@ public class Spawner : MonoBehaviour
 
         onAllyTaskForceSpawned?.Invoke(taskForce);
 
+        TaskForceHUD.Create(taskForce, allyHUD, gameManager);
         return taskForce;
     }
 
@@ -90,7 +92,8 @@ public class Spawner : MonoBehaviour
 
         TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, gameManager, Affiliation.Red);
         taskForce.transform.SetParent(redTaskForceContainer.transform);
-        taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
+        //taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
+        
 
         AiController commander = AiController.Create(pos, unitPrefab, taskForce, redProjectileContainer, Affiliation.Red);
         commander.transform.SetParent(redUnitsContainer.transform, true);
@@ -120,6 +123,7 @@ public class Spawner : MonoBehaviour
 
         onEnemyTaskForceSpawned?.Invoke(taskForce);
 
+        TaskForceHUD.Create(taskForce, enemyHUD, gameManager);
         return taskForce;
     }
 
@@ -128,8 +132,9 @@ public class Spawner : MonoBehaviour
         Outpost outpost = Outpost.Create(pos, outpostPrefab, Affiliation.Blue, gameManager).GetComponent<Outpost>();
         outpost.gameObject.name = name + blueOutpostsCount;
         outpost.transform.SetParent(blueOutpostsContainer.transform, true);
-        outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
-        
+        //outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
+        TaskForceHUD.Create(outpost, allyHUD, gameManager);
+
         onAllyOutpostSpawned?.Invoke(outpost);
 
         return outpost;
@@ -140,7 +145,8 @@ public class Spawner : MonoBehaviour
         Outpost outpost = Outpost.Create(pos, outpostPrefab, Affiliation.Red, gameManager).GetComponent<Outpost>();
         outpost.gameObject.name = name + redOutpostsCount;
         outpost.transform.SetParent(redOutpostsContainer.transform, true);
-        outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
+        //outpost.gameObject.AddComponent<HUDController>().Init(outpost, basicHUDVariant, gameManager);
+        TaskForceHUD.Create(outpost, enemyHUD, gameManager);
 
         onEnemyOutpostSpawned?.Invoke(outpost);
 

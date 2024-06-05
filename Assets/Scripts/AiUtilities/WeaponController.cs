@@ -78,19 +78,18 @@ public class WeaponController: MonoBehaviour
         if (onCooldown)
             return null;
 
+        cooldownRemaining = values.attackCooldown;
+        onCooldown = true;
+
         Projectile proj = PutProjectile();
 
         if (proj is GuidedProjectile guidedProj)
         {
-            cooldownRemaining = values.attackCooldown;
-            onCooldown = true;
             return guidedProj;
         }
 
         else
         {
-            cooldownRemaining = values.attackCooldown;
-            onCooldown = true;
             return proj;
         }
     }

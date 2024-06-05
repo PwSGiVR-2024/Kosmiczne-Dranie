@@ -8,7 +8,21 @@ using static UnityEditor.PlayerSettings;
 public class Outpost : MonoBehaviour, IInteractable
 {
     public LayerMask healMask;
-    public int health = 100000;
+
+    private int health;
+
+    public int Health
+    {
+        get => health;
+
+        set {
+            health = value;
+            onHealthChanged.Invoke(health);
+        }
+    }
+
+    public int maxHealth;
+
     public GameManager gameManager;
     //public GameObject icon;
     public Affiliation Affiliation;
@@ -19,6 +33,8 @@ public class Outpost : MonoBehaviour, IInteractable
     public UnityEvent<Zone> onZoneRelease = new();
     public List<Zone> zones;
     
+    public UnityEvent<int> onHealthChanged = new();
+
     public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager)
     {
         Outpost outpost = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Outpost>();
@@ -37,6 +53,10 @@ public class Outpost : MonoBehaviour, IInteractable
 
         else if (affiliation == Affiliation.Red)
             healMask = LayerMask.GetMask("Enemies");
+
+        // temporary
+        Health = 10000;
+        maxHealth = 10000;
     }
 
     private void Update()
