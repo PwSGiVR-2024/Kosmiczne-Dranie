@@ -18,7 +18,14 @@ public class ZoneManager : MonoBehaviour
     public int playerTotalCrystal = 0;
     public Spawner spawner;
     public TMP_Text resourceText;
-    public int money;
+    public int playerTotalMoney;
+    public int totalMaintenance = 0;
+    public int moneyValue = 0;
+
+    public int PlayerMetal { get => playerTotalMetal; set => playerTotalMetal = value; }
+    public int PlayerCrystal { get => playerTotalCrystal; set => playerTotalCrystal = value; }
+    public int PlayerMoney { get => playerTotalMoney; set => playerTotalMoney = value; }
+    public int PlayerMaintenance { get => totalMaintenance; set => totalMaintenance = value; }
 
     void Start()
     {
@@ -33,8 +40,6 @@ public class ZoneManager : MonoBehaviour
     {
         outpost.onZoneCaptured.AddListener(GatherResources);
         outpost.onZoneRelease.AddListener(UngatherResources);
-
-
     }
 
     private void Update()
@@ -43,6 +48,8 @@ public class ZoneManager : MonoBehaviour
     }
     void UngatherResources(Zone zone)
     {
+        zone.captured = false;
+
         switch (zone.zoneResource)
         {
             case Zone.ResourceType.Crystals:
@@ -54,9 +61,15 @@ public class ZoneManager : MonoBehaviour
                 break;
         }
 
+        moneyValue -= (int)(zone.value * 0.1f);
     }
     void GatherResources(Zone zone)
     {
+        if (zone.captured)
+            return;
+
+        zone.captured = true;
+
         switch (zone.zoneResource)
         {
             case Zone.ResourceType.Crystals:
@@ -68,6 +81,7 @@ public class ZoneManager : MonoBehaviour
             break;
         }
 
+        moneyValue += (int)(zone.value * 0.1f);
     }
     IEnumerator ResourceCalculator()
     {
@@ -76,7 +90,8 @@ public class ZoneManager : MonoBehaviour
         {
             playerTotalCrystal += crystalValue;
             playerTotalMetal += metalValue;
-            money += crystalValue + metalValue / 10;
+            playerTotalMoney += moneyValue;
+            playerTotalMoney -= totalMaintenance;
             yield return interval;
         }
     }
@@ -97,7 +112,7 @@ public class ZoneManager : MonoBehaviour
     }
     private void UpdateResourceText()
     {
-        resourceText.text = $"Space Credits: {money} Crystals: {playerTotalCrystal} Metals: {playerTotalMetal}";
+        resourceText.text = $"Space Credits: {playerTotalMoney} Crystals: {playerTotalCrystal} Metals: {playerTotalMetal}";
     }
 }
 

@@ -10,6 +10,7 @@ using static UnityEditor.Experimental.GraphView.GraphView;
 using UnityEngine.UI;
 using UnityEngine.UIElements;
 using Unity.Mathematics;
+using Unity.Burst.CompilerServices;
 
 public abstract class Projectile : MonoBehaviour
 {
@@ -21,7 +22,8 @@ public abstract class Projectile : MonoBehaviour
     private AiController shotBy;
     private WeaponValues values;
     private float timeTillDeactivation;
-    protected LayerMask targetMask;
+    public LayerMask damageMask;
+    public LayerMask hitMask;
 
     public WeaponValues Values { get => values; }
     public AiController ShotBy { get => shotBy; }
@@ -46,13 +48,16 @@ public abstract class Projectile : MonoBehaviour
         if (affiliation == Affiliation.Blue)
         {
             gameObject.layer = LayerMask.NameToLayer("AllyProjectiles");
-            targetMask = LayerMask.GetMask("Enemies", "Scene");
+            damageMask = LayerMask.GetMask("Enemies", "EnemyOutposts", "EnemyHeadquarters");
+            hitMask = LayerMask.GetMask("Scene", "Allies", "AllyOutposts", "PlayerHeadquarters");
         }
 
         else if (affiliation == Affiliation.Red)
         {
             gameObject.layer = LayerMask.NameToLayer("EnemyProjectiles");
-            targetMask = LayerMask.GetMask("Allies", "Scene");
+            damageMask = LayerMask.GetMask("Allies", "AllyOutposts", "PlayerHeadquarters");
+            hitMask = LayerMask.GetMask("Scene", "Allies", "AllyOutposts", "PlayerHeadquarters");
+
         }
     }
 
@@ -70,13 +75,13 @@ public abstract class Projectile : MonoBehaviour
 
     protected virtual bool TryProcessHit()
     {
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 1, targetMask))
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, 1, hitMask))
         {
             gameObject.SetActive(false);
 
-            // Enemies or Allies layer
+            // every layer from target mask except scene layer (static objects)
             // assuming every script from the layer has the interface
-            if ((hit.collider.gameObject.layer == 6) || (hit.collider.gameObject.layer == 7))
+            if (CheckIfHitDamageMask(hit))
             {
                 IInteractable interactable = hit.collider.GetComponent<MonoBehaviour>() as IInteractable;
                 interactable.Damage(this);
@@ -99,9 +104,13 @@ public abstract class Projectile : MonoBehaviour
         timeTillDeactivation = Values.projectileLifeSpan;
         OnProjectileDisable?.Invoke();
     }
-
     protected virtual void OnDestroy()
     {
         OnProjectileDestroy?.Invoke();
+    }
+
+    protected bool CheckIfHitDamageMask(RaycastHit hit)
+    {
+        return (damageMask.value & (1 << hit.collider.gameObject.layer)) != 0;
     }
 }

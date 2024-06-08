@@ -18,6 +18,8 @@ public class UnitValues : ScriptableObject
     public string description;
     public int crystalPrice;
     public int metalPrice;
+    public int maintenancePrice;
+    public int upgradePrice;
 
     public int power;
 }

@@ -48,14 +48,14 @@ public class CruiserUnitController : AiController
 
         if (Target.distance <= Values.attackDistance * 0.5f)
         {
-            if (weapon_1 && weapon_1 && weapon_1.CheckIfFacingTarget(Target.position))
+            if (weapon_1 && weapon_1.isActiveAndEnabled && weapon_1.CheckIfFacingTarget(Target.position))
             {
                 weapon_1.FireProjectile();
             }
-                
         }
 
-        if (Target.distance <= Values.attackDistance * 2f)
+        Debug.Log(Target.distance);
+        if (Target.distance < Values.attackDistance)
         {
             if (weapon_5 && weapon_5.isActiveAndEnabled && weapon_5.CheckIfFacingTarget(Target.position))
             {

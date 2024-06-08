@@ -20,11 +20,11 @@ public class LaserProjectile : Projectile
     {
         if (hitObject) return false;
 
-        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, ShotBy.Values.attackDistance, targetMask))
+        if (Physics.Raycast(transform.position, transform.forward, out RaycastHit hit, float.PositiveInfinity, damageMask))
         {
-            // Enemies or Allies layer
+            // every layer from target mask except scene layer (static objects)
             // assuming every script from the layer has the interface
-            if ((hit.collider.gameObject.layer == 6) || (hit.collider.gameObject.layer == 7))
+            if (CheckIfHitDamageMask(hit))
             {
                 IInteractable interactable = hit.collider.GetComponent<MonoBehaviour>() as IInteractable;
                 interactable.Damage(this);
@@ -48,7 +48,7 @@ public class LaserProjectile : Projectile
         newScale.y = distance / sprite.bounds.size.y;
         sprite.transform.localScale = newScale;
 
-        Debug.DrawRay(midpoint, Vector3.up, Color.red, 1f);
+        //Debug.DrawRay(midpoint, Vector3.up, Color.red, 1f);
     }
 
     protected override void OnDisable()

@@ -10,6 +10,7 @@ using static UnityEngine.Rendering.DebugUI;
 public class WeaponController: MonoBehaviour
 {
     [SerializeField] private WeaponValues values;
+    public bool debug = false;
 
     private ProjectilePool pool;
     private AiController unit;
@@ -73,25 +74,60 @@ public class WeaponController: MonoBehaviour
         }
     }
 
-    public Projectile FireProjectile()
+    public bool FireProjectile(out Projectile projectile)
     {
         if (onCooldown)
-            return null;
-
-        cooldownRemaining = values.attackCooldown;
-        onCooldown = true;
+        {
+            projectile = null;
+            return false;
+        }
 
         Projectile proj = PutProjectile();
 
-        if (proj is GuidedProjectile guidedProj)
+        if (proj)
         {
-            return guidedProj;
+            cooldownRemaining = values.attackCooldown;
+            onCooldown = true;
+
+            if (proj is GuidedProjectile guidedProj)
+            {
+                projectile = guidedProj;
+                return true;
+            }
+
+            else if (proj is KineticProjectile kineticProj)
+            {
+                projectile = kineticProj;
+                return true;
+            }
+
+            else if (proj is LaserProjectile laserProj)
+            {
+                projectile = laserProj;
+                return true;
+            }
         }
 
-        else
+        projectile = null;
+        return false;
+    }
+
+    public bool FireProjectile()
+    {
+        if (onCooldown)
+            return false;
+
+        Projectile proj = PutProjectile();
+        Debug.Log(proj.name);
+
+        if (proj)
         {
-            return proj;
+            cooldownRemaining = values.attackCooldown;
+            onCooldown = true;
+            return true;
         }
+
+        return false;
     }
 
     public bool CheckIfFacingTarget(Vector3 targetPos)

@@ -12,8 +12,8 @@ GameObject:
   - component: {fileID: 645919149357938216}
   - component: {fileID: 8800178573030612678}
   - component: {fileID: 6351554261511384895}
-  m_Layer: 7
-  m_Name: basicBase
+  m_Layer: 12
+  m_Name: basicOutpost
   m_TagString: Ally
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -91,11 +91,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d216506afa5ff264fa81baf9167e8e8e, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10000
-  gameManager: {fileID: 0}
-  icon: {fileID: 0}
-  OutpostAffiliation: 0
-  range: 100
+  values: {fileID: 11400000, guid: 6d42f0c9d80f11741ab74fc9cf60def2, type: 2}
+  isConnected: 0
+  headquarters: {fileID: 0}
+  connections: []
+  currentHealth: 0
+  range: 0
+  onOutpostDestroy:
+    m_PersistentCalls:
+      m_Calls: []
+  onZoneCaptured:
+    m_PersistentCalls:
+      m_Calls: []
+  onZoneRelease:
+    m_PersistentCalls:
+      m_Calls: []
+  zones: []
+  onHealthChanged:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!1 &2097357443315631661
 GameObject:
   m_ObjectHideFlags: 0
@@ -195,7 +209,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!4 &3164804400945712757
 Transform:
   m_ObjectHideFlags: 0
@@ -224,3 +238,5 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   values: {fileID: 11400000, guid: 2dd9574a3edda674fb512e485346aedf, type: 2}
+  debug: 0
+  projectilePool: []

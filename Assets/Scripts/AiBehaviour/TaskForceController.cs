@@ -148,10 +148,10 @@ public class TaskForceController : MonoBehaviour
         onStateChanged.AddListener(OnStateChanged);
 
         if (affiliation == Affiliation.Blue)
-            targetMask = LayerMask.GetMask("Enemies");
+            targetMask = LayerMask.GetMask("Enemies", "EnemyOutposts", "EnemyHeadquarters");
 
         else if (affiliation == Affiliation.Red)
-            targetMask = LayerMask.GetMask("Allies");
+            targetMask = LayerMask.GetMask("Allies", "AllyOutposts", "PlayerHeadquarters");
     }
 
     public void AddUnit(AiController unit)
@@ -298,6 +298,12 @@ public class TaskForceController : MonoBehaviour
         }
 
         else if (currentTarget is Outpost)
+        {
+            jobEnemies = new NativeArray<JobUnitData>(1, Allocator.Persistent);
+            jobEnemies[0] = new JobUnitData(currentTarget.transform.position, currentTarget.transform.rotation, currentTarget.transform.forward);
+        }
+
+        else if (currentTarget is PlayerHeadquarters)
         {
             jobEnemies = new NativeArray<JobUnitData>(1, Allocator.Persistent);
             jobEnemies[0] = new JobUnitData(currentTarget.transform.position, currentTarget.transform.rotation, currentTarget.transform.forward);

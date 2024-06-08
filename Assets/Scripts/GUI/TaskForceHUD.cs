@@ -37,7 +37,7 @@ public class TaskForceHUD : MonoBehaviour
         {
             instance.displayMode = DisplayMode.Outpost;
             instance.owner = outpost;
-            outpost.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, outpost.maxHealth));
+            outpost.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, outpost.values.health));
             outpost.onOutpostDestroy.AddListener(() => Destroy(instance.gameObject));
         }
 

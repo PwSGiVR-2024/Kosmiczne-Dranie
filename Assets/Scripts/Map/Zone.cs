@@ -8,7 +8,7 @@ public class Zone : MonoBehaviour
     public ResourceType zoneResource;
     public int value;
     public UnityEvent<Zone> onCapture = new();
-    
+    public bool captured = false;
 
     
     public void Init()

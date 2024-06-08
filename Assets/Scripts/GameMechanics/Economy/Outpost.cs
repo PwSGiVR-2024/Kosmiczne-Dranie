@@ -1,33 +1,40 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Design;
+using Unity.VisualScripting;
+using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Events;
 using static UnityEditor.PlayerSettings;
+using static UnityEditor.Rendering.CameraUI;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
-    public LayerMask healMask;
+    public OutpostValues values;
+    private LayerMask healMask;
+    public bool isConnected;
+    public PlayerHeadquarters headquarters;
+    public List<Outpost> connections = new();
+    public LayerMask outpostMask;
 
-    private int health;
+    [SerializeField] private int currentHealth;
 
-    public int Health
+    public int CurrentHealth
     {
-        get => health;
+        get => currentHealth;
 
         set {
-            health = value;
-            onHealthChanged.Invoke(health);
+            currentHealth = value;
+            onHealthChanged.Invoke(currentHealth);
         }
     }
 
-    public int maxHealth;
+    // public int maxHealth;
 
-    public GameManager gameManager;
+    private GameManager gameManager;
     //public GameObject icon;
-    public Affiliation Affiliation;
-    public int range = 100;
-    private List<int[]> resourcesToCapture = new List<int[]>();
+    private Affiliation affiliation;
+    public int range;
     public UnityEvent onOutpostDestroy = new();
     public UnityEvent<Zone> onZoneCaptured = new();
     public UnityEvent<Zone> onZoneRelease = new();
@@ -35,28 +42,40 @@ public class Outpost : MonoBehaviour, IInteractable
     
     public UnityEvent<int> onHealthChanged = new();
 
-    public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager)
+    public Affiliation Affiliation
+    {
+        get => affiliation;
+    }
+
+    public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager, PlayerHeadquarters headquarters)
     {
         Outpost outpost = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Outpost>();
-        outpost.Init(gameManager, affiliation);
+        outpost.Init(gameManager, affiliation, headquarters);
 
         return outpost;
     }
 
-    private void Init(GameManager gameManager, Affiliation affiliation)
+    private void Init(GameManager gameManager, Affiliation affiliation, PlayerHeadquarters headquarters)
     {
         this.gameManager = gameManager;
-        Affiliation = affiliation;
+        this.affiliation = affiliation;
+        CurrentHealth = values.health;
+        range = values.range;
+        this.headquarters = headquarters;
 
         if (affiliation == Affiliation.Blue)
+        {
             healMask = LayerMask.GetMask("Allies");
+            outpostMask = LayerMask.GetMask("AllyOutposts");
+        }
 
         else if (affiliation == Affiliation.Red)
+        {
             healMask = LayerMask.GetMask("Enemies");
+            outpostMask = LayerMask.GetMask("EnemyOutposts");
+        }
 
-        // temporary
-        Health = 10000;
-        maxHealth = 10000;
+        
     }
 
     private void Update()
@@ -69,6 +88,10 @@ public class Outpost : MonoBehaviour, IInteractable
         foreach (Collider col in colliders)
         {
             Zone zone = col.GetComponent<Zone>();
+
+            if (zone.captured)
+                continue;
+
             onZoneCaptured.Invoke(zone);
             zones.Add(zone);
         }
@@ -78,21 +101,22 @@ public class Outpost : MonoBehaviour, IInteractable
     {
         GatherResources();
         StartCoroutine(HealUnits());
+        ScanForConnections();
     }
 
     public void Damage(Projectile projectile)
     {
-        health -= projectile.Values.projectileDamage;
+        currentHealth -= projectile.Values.projectileDamage;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
             Destroy(gameObject);
     }
 
     public void Damage(int value, AiController attacker)
     {
-        health -= value;
+        currentHealth -= value;
 
-        if (health <= 0)
+        if (currentHealth <= 0)
             Destroy(gameObject);
             
     }
@@ -104,6 +128,14 @@ public class Outpost : MonoBehaviour, IInteractable
 
         while (true)
         {
+            if (currentHealth < values.health)
+            {
+                currentHealth += (int)(values.health * 0.01f);
+
+                if (currentHealth > values.health)
+                    currentHealth = values.health;
+            }
+
             colliders = Physics.OverlapSphere(transform.position, range, healMask);
 
             foreach (Collider collider in colliders)
@@ -113,7 +145,7 @@ public class Outpost : MonoBehaviour, IInteractable
                     foreach (AiController member in unit.UnitTaskForce.Units)
                     {
                         if (member.Health < member.Values.health)
-                            member.Health += (int)(member.Values.health * 0.1f);
+                            member.Health += (int)(member.Values.health * 0.1f * values.healModifier);
 
                         if (member.Health > member.Values.health)
                             member.Health = member.Values.health;
@@ -131,6 +163,67 @@ public class Outpost : MonoBehaviour, IInteractable
         {
             onZoneRelease.Invoke(zone);
         }
+
         onOutpostDestroy.Invoke();
+    }
+
+    private void ScanForConnections()
+    {
+        Collider[] colliders = Physics.OverlapSphere(transform.position, range, outpostMask);
+
+        foreach (Collider collider in colliders)
+        {
+            Outpost connection = collider.GetComponent<Outpost>();
+
+            if (connection == this)
+                continue;
+
+            AddConnection(connection);
+            connection.AddConnection(this);
+        }
+
+        UpdateConnections();
+    }
+
+    private void UpdateConnections()
+    {
+        GatherResources();
+
+        Debug.Log(gameObject.name + " updating connections");
+        if (Vector3.Distance(transform.position, headquarters.transform.position) <= headquarters.range)
+        {
+            isConnected = true;
+            return;
+        }
+
+        if (connections.Count == 0)
+        {
+            isConnected = false;
+            return;
+        }
+
+        else
+        {
+            bool connected = false;
+            foreach (Outpost outpost in connections)
+            {
+                if (outpost.isConnected)
+                    connected = true;
+            }
+
+            isConnected = connected;
+        }
+    }
+
+    private void AddConnection(Outpost outpost)
+    {
+        connections.Add(outpost);
+        outpost.onOutpostDestroy.AddListener(() => RemoveConnection(outpost));
+    }
+
+    private void RemoveConnection(Outpost outpost)
+    {
+        connections.Remove(outpost);
+        UpdateConnections();
     }
 }

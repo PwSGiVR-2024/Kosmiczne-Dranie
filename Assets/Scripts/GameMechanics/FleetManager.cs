@@ -11,6 +11,7 @@ using static TaskForceController;
 // posiada na razie czêœæ zadañ spawnera (np. prefaby jednostek), ale to siê zmieni
 public class FleetManager : MonoBehaviour
 {
+    public PlayerHeadquarters playerHeadquarters;
     public bool devMode = true;
 
     public Spawner spawner; // skrypt odpowiedzialny za instancjonowanie jednostek
@@ -45,6 +46,7 @@ public class FleetManager : MonoBehaviour
             if (op.Affiliation == Affiliation.Blue)
             {
                 allyOutposts.Add(op);
+                playerHeadquarters.outpostNetwork.Add(op);
                 op.onOutpostDestroy.AddListener(() => allyOutposts.Remove(op));
             }
         }

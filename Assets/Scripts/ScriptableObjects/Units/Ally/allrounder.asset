@@ -21,4 +21,7 @@ MonoBehaviour:
   acceleration: 30
   angularSpeed: 180
   description: all-rounder
+  crystalPrice: 50
+  metalPrice: 200
+  upgradePrice: 0
   power: 10
