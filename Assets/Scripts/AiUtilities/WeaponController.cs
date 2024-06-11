@@ -118,7 +118,6 @@ public class WeaponController: MonoBehaviour
             return false;
 
         Projectile proj = PutProjectile();
-        Debug.Log(proj.name);
 
         if (proj)
         {

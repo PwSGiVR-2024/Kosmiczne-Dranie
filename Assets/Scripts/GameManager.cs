@@ -4,6 +4,11 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public PlayerHeadquarters playerHeadquarters;
+    public ResourceManager resourceManager;
+    public FleetManager fleetManager;
+
+
     public Canvas worldSpaceCanvas;
     public Canvas screenSpaceCanvas;
 

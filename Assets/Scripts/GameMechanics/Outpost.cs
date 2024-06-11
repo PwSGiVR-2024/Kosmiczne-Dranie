@@ -36,9 +36,9 @@ public class Outpost : MonoBehaviour, IInteractable
     private Affiliation affiliation;
     public int range;
     public UnityEvent onOutpostDestroy = new();
-    public UnityEvent<Zone> onZoneCaptured = new();
-    public UnityEvent<Zone> onZoneRelease = new();
-    public List<Zone> zones;
+    public UnityEvent<ResourceZone> onZoneCaptured = new();
+    public UnityEvent<ResourceZone> onZoneRelease = new();
+    public List<ResourceZone> zones;
     
     public UnityEvent<int> onHealthChanged = new();
 
@@ -87,7 +87,7 @@ public class Outpost : MonoBehaviour, IInteractable
         Collider[] colliders = Physics.OverlapSphere(transform.position, range, LayerMask.GetMask("Resource"));
         foreach (Collider col in colliders)
         {
-            Zone zone = col.GetComponent<Zone>();
+            ResourceZone zone = col.GetComponent<ResourceZone>();
 
             if (zone.captured)
                 continue;
@@ -159,7 +159,7 @@ public class Outpost : MonoBehaviour, IInteractable
 
     private void OnDestroy()
     {
-        foreach (Zone zone in zones)
+        foreach (ResourceZone zone in zones)
         {
             onZoneRelease.Invoke(zone);
         }

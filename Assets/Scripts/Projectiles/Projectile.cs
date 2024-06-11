@@ -49,7 +49,7 @@ public abstract class Projectile : MonoBehaviour
         {
             gameObject.layer = LayerMask.NameToLayer("AllyProjectiles");
             damageMask = LayerMask.GetMask("Enemies", "EnemyOutposts", "EnemyHeadquarters");
-            hitMask = LayerMask.GetMask("Scene", "Allies", "AllyOutposts", "PlayerHeadquarters");
+            hitMask = LayerMask.GetMask("Scene", "Enemies", "EnemyOutposts", "EnemyHeadquarters");
         }
 
         else if (affiliation == Affiliation.Red)

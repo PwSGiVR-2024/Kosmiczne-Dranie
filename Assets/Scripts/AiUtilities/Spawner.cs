@@ -14,7 +14,7 @@ public class Spawner : MonoBehaviour
     public GameObject enemyHUD;
 
     public GameManager gameManager;
-    public ZoneManager zoneManager;
+    public ResourceManager resourceManager;
     public PlayerHeadquarters playerHeadquarters;
 
     public GameObject redUnitsContainer; // kontenery ¿eby by³ porz¹dek na scenie. Tylko przechowuj¹ gameObjecty, nic wiêcej nie robi¹
@@ -59,7 +59,7 @@ public class Spawner : MonoBehaviour
         if (pos == null || unitPrefab == null || unitsToSpawn < 1 || unitPrefab.CompareTag("Enemy") || !unitPrefab.CompareTag("Ally"))
             return null;
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, gameManager, Affiliation.Blue);
+        TaskForceController taskForce = TaskForceController.Create(name, gameManager, Affiliation.Blue);
         taskForce.transform.SetParent(blueTaskForceContainer.transform);
         // taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
 
@@ -102,7 +102,7 @@ public class Spawner : MonoBehaviour
         if (unitPrefab == null || unitsToSpawn < 1 || unitPrefab.CompareTag("Ally") || !unitPrefab.CompareTag("Enemy"))
             return null;
 
-        TaskForceController taskForce = TaskForceController.Create(name, unitsToSpawn, gameManager, Affiliation.Red);
+        TaskForceController taskForce = TaskForceController.Create(name, gameManager, Affiliation.Red);
         taskForce.transform.SetParent(redTaskForceContainer.transform);
         //taskForce.gameObject.AddComponent<HUDController>().Init(taskForce, basicHUDVariant, gameManager);
         
@@ -239,13 +239,13 @@ public class Spawner : MonoBehaviour
 
     private bool CheckIfHavingResources(GameObject prefabToSpawn)
     {
-        if (zoneManager.playerTotalMoney <= 0)
+        if (resourceManager.playerTotalMoney <= 0)
             return false;
 
         if (prefabToSpawn.TryGetComponent(out AiController controller))
         {
             UnitValues values = controller.Values;
-            if (values.metalPrice > zoneManager.PlayerCrystal || values.crystalPrice > zoneManager.PlayerMetal)
+            if (values.metalPrice > resourceManager.PlayerCrystal || values.crystalPrice > resourceManager.PlayerMetal)
                 return false;
 
             else return true;
@@ -254,7 +254,7 @@ public class Spawner : MonoBehaviour
         else if (prefabToSpawn.TryGetComponent(out Outpost outpst))
         {
             OutpostValues values = outpst.values;
-            if (values.metalPrice > zoneManager.PlayerCrystal || values.crystalPrice > zoneManager.PlayerMetal)
+            if (values.metalPrice > resourceManager.PlayerCrystal || values.crystalPrice > resourceManager.PlayerMetal)
                 return false;
 
             else return true;
@@ -265,7 +265,7 @@ public class Spawner : MonoBehaviour
 
     private bool CheckIfHavingResources(GameObject prefabToSpawn, int number)
     {
-        if (zoneManager.playerTotalMoney <= 0)
+        if (resourceManager.playerTotalMoney <= 0)
             return false;
 
         if (prefabToSpawn.TryGetComponent(out AiController controller))
@@ -275,7 +275,7 @@ public class Spawner : MonoBehaviour
             int metalTotalPrice = values.metalPrice * number;
             int crystalTotalPrice = values.crystalPrice * number;
 
-            if (crystalTotalPrice > zoneManager.PlayerCrystal || metalTotalPrice > zoneManager.PlayerMetal)
+            if (crystalTotalPrice > resourceManager.PlayerCrystal || metalTotalPrice > resourceManager.PlayerMetal)
                 return false;
 
             else return true;
@@ -288,7 +288,7 @@ public class Spawner : MonoBehaviour
             int metalTotalPrice = values.metalPrice * number;
             int crystalTotalPrice = values.crystalPrice * number;
 
-            if (crystalTotalPrice > zoneManager.PlayerCrystal || metalTotalPrice > zoneManager.PlayerMetal)
+            if (crystalTotalPrice > resourceManager.PlayerCrystal || metalTotalPrice > resourceManager.PlayerMetal)
                 return false;
 
             else return true;
@@ -300,16 +300,16 @@ public class Spawner : MonoBehaviour
     private void RemovePlayerResources(AiController unit)
     {
         UnitValues values = unit.Values;
-        zoneManager.PlayerCrystal -= values.crystalPrice;
-        zoneManager.PlayerMetal -= values.metalPrice;
-        zoneManager.PlayerMaintenance += values.maintenancePrice;
+        resourceManager.PlayerCrystal -= values.crystalPrice;
+        resourceManager.PlayerMetal -= values.metalPrice;
+        resourceManager.PlayerMaintenance += values.maintenancePrice;
     }
 
     private void RemovePlayerResources(Outpost outpost)
     {
         OutpostValues values = outpost.values;
-        zoneManager.PlayerCrystal -= values.crystalPrice;
-        zoneManager.PlayerMetal -= values.metalPrice;
-        zoneManager.PlayerMaintenance += values.maintenancePrice;
+        resourceManager.PlayerCrystal -= values.crystalPrice;
+        resourceManager.PlayerMetal -= values.metalPrice;
+        resourceManager.PlayerMaintenance += values.maintenancePrice;
     }
 }

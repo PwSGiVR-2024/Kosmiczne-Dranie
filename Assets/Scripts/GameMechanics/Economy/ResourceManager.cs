@@ -7,9 +7,9 @@ using TMPro;
 using UnityEngine;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
 
-public class ZoneManager : MonoBehaviour
+public class ResourceManager : MonoBehaviour
 {
-    public GameObject zonePrefab; // Prefab strefy
+    public GameObject resourceZonePrefab; // Prefab strefy
     private int numberOfZones = 200; // Liczba stref
     private Vector2 areaSize = new Vector2(2000, 2000); // Rozmiar obszaru do losowego rozmieszczenia stref
     public int metalValue = 0;
@@ -46,24 +46,24 @@ public class ZoneManager : MonoBehaviour
     {
         UpdateResourceText();
     }
-    void UngatherResources(Zone zone)
+    void UngatherResources(ResourceZone zone)
     {
         zone.captured = false;
 
         switch (zone.zoneResource)
         {
-            case Zone.ResourceType.Crystals:
+            case ResourceZone.ResourceType.Crystals:
                 crystalValue -= zone.value;
                 break;
 
-            case Zone.ResourceType.Metals:
+            case ResourceZone.ResourceType.Metals:
                 metalValue -= zone.value;
                 break;
         }
 
         moneyValue -= (int)(zone.value * 0.1f);
     }
-    void GatherResources(Zone zone)
+    void GatherResources(ResourceZone zone)
     {
         if (zone.captured)
             return;
@@ -72,11 +72,11 @@ public class ZoneManager : MonoBehaviour
 
         switch (zone.zoneResource)
         {
-            case Zone.ResourceType.Crystals:
+            case ResourceZone.ResourceType.Crystals:
                 crystalValue += zone.value;
             break;
 
-            case Zone.ResourceType.Metals:
+            case ResourceZone.ResourceType.Metals:
                 metalValue += zone.value;
             break;
         }
@@ -105,8 +105,8 @@ public class ZoneManager : MonoBehaviour
                 Random.Range(-areaSize.y , areaSize.y )
             );
 
-            GameObject zoneObject = Instantiate(zonePrefab, randomPosition, Quaternion.identity);
-            Zone zone = zoneObject.GetComponent<Zone>();
+            GameObject zoneObject = Instantiate(resourceZonePrefab, randomPosition, Quaternion.identity);
+            ResourceZone zone = zoneObject.GetComponent<ResourceZone>();
             zone.Init();
         }
     }

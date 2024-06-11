@@ -2,12 +2,12 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.XR;
 
-public class Zone : MonoBehaviour
+public class ResourceZone : MonoBehaviour
 {
     public enum ResourceType { Crystals, Metals }
     public ResourceType zoneResource;
     public int value;
-    public UnityEvent<Zone> onCapture = new();
+    public UnityEvent<ResourceZone> onCapture = new();
     public bool captured = false;
 
     

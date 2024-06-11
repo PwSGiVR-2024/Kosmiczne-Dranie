@@ -13,15 +13,16 @@ MonoBehaviour:
   m_Name: cruiser
   m_EditorClassIdentifier: 
   prefabName: 
+  power: 80
+  size: 8
+  description: 
   spotDistance: 200
   health: 4000
-  xp: 0
   attackDistance: 450
   unitSpeed: 40
   acceleration: 15
   angularSpeed: 90
-  description: 
   crystalPrice: 400
   metalPrice: 1000
+  maintenancePrice: 100
   upgradePrice: 0
-  power: 80

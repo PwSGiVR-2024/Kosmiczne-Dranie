@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 
 // kontener przechowuj¹cy wartoœci danej jednostki
@@ -8,18 +9,22 @@ public class UnitValues : ScriptableObject
 {
     public string prefabName;
 
+    [Header("Misc:")]
+    public int power;
+    public int size;
+    public string description;
+
+    [Header("Stats:")]
     public float spotDistance;
     public int health;
-    public int xp;
     public float attackDistance;
     public int unitSpeed;
     public float acceleration;
     public float angularSpeed;
-    public string description;
+
+    [Header("Economy:")]
     public int crystalPrice;
     public int metalPrice;
     public int maintenancePrice;
     public int upgradePrice;
-
-    public int power;
 }

@@ -44,7 +44,7 @@ public class TaskForceContainer : MonoBehaviour
         taskForceName.text = taskForce.gameObject.name;
         size.text = taskForce.Units.Count.ToString();
         strength.text = 100 + "%";
-        power.text = taskForce.Power.ToString();
+        power.text = taskForce.CurrentPower.ToString();
         status.text = "Idle";
 
         taskForce.onTaskForceDestroyed.AddListener(RemoveSelf); // taskForce posiada eventy sygnalizuj¹ce zmianê jakichœ atrybutów/parametrów. Element UI powinien to odzwierciedlaæ

@@ -42,17 +42,16 @@ public class TaskForceController : MonoBehaviour
     [SerializeField] private bool debug = false;
     [SerializeField] [Range(0.01f, 5.0f)] private float coroutineRefreshRate = 0.1f;
 
-    //[Header("Display info:")]
-    //[SerializeField] private GameObject icon;
-    //[SerializeField] private Vector3 iconOffset;
-
     [Header("Main attributes:")]
     [SerializeField] private MonoBehaviour currentTarget;
     [SerializeField] private AiController commander;
     [SerializeField] private float spotDistance;
-    [SerializeField] private int maxSize;
-    [SerializeField] private float strength;
-    [SerializeField] private int power;
+    [SerializeField] private int initialHealth;
+    [SerializeField] private int initialSize;
+    [SerializeField] private int initialPower;
+    [SerializeField] private float currentStrength; // percentage value of currentPower / initialPower
+    [SerializeField] private int currentPower; // cumulative power of every unit
+    [SerializeField] private int currentHealth; // cumulative health of every unit
     [SerializeField] private List<AiController> unitControllers = new();
 
     [Header("Misc attributes:")]
@@ -74,6 +73,7 @@ public class TaskForceController : MonoBehaviour
     public UnityEvent<int> onSizeChanged = new();
     public UnityEvent<float> onStrengthChanged = new();
     public UnityEvent<int> onPowerChanged = new();
+    public UnityEvent<int> onHealthChanged = new();
     public UnityEvent<State> onStateChanged = new();
     public UnityEvent<TaskForceBehaviour> onBehaviourChanged = new();
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
@@ -82,14 +82,14 @@ public class TaskForceController : MonoBehaviour
     public Affiliation Affiliation { get => affiliation; }
     public State CurrentState {
         get => currentState;
-        set {
+        private set {
             currentState = value;
             onStateChanged.Invoke(value);
         }
     }
     public TaskForceBehaviour CurrentBehaviour {
         get => currentBehaviour;
-        set
+        private set
         {
             currentBehaviour = value;
             onBehaviourChanged.Invoke(value);
@@ -98,25 +98,68 @@ public class TaskForceController : MonoBehaviour
     public TaskForceOrder CurrentOrder
     {
         get => currentOrder;
-        set
+        private set
         {
             currentOrder = value;
             onOrderChanged.Invoke(value);
         }
     }
-    public int Power
+    public int CurrentPower
     {
-        get => power;
-        set
+        get => currentPower;
+        private set
         {
-            power = value;
+            currentPower = value;
             onPowerChanged.Invoke(value);
         }
     }
 
+    public float CurrentStrength
+    {
+        get => currentStrength;
+        private set
+        {
+            currentStrength = value;
+            onStrengthChanged.Invoke(value);
+        }
+    }
+
+    public int CurrentHealth
+    {
+        get => currentHealth;
+        private set
+        {
+            currentHealth = value;
+            onHealthChanged.Invoke(value);
+        }
+    }
+
+    public int InitialHealth
+    {
+        get => initialHealth;
+        private set => initialHealth = value;
+    }
+
+    public int InitialPower
+    {
+        get => initialPower;
+        private set => initialPower = value;
+    }
+
+    public int InitialSize
+    {
+        get => initialSize;
+        private set => initialSize = value;
+    }
+
+    public float CurrentSize
+    {
+        get => unitControllers.Count;
+    }
+
     public AiController Commander { get =>  commander; }
     public List<AiController> Units { get => unitControllers; }
-    public float Strength { get => strength; }
+    public float Strength { get => currentStrength; }
     public MonoBehaviour Target { get => currentTarget; }
 
     public NativeArray<JobUnitData> CreateUnitsDataSnapshot()
@@ -131,12 +174,11 @@ public class TaskForceController : MonoBehaviour
         return data;
     }
 
-    public static TaskForceController Create(string name, int maxSize, GameManager gameManager, Affiliation affiliation)
+    public static TaskForceController Create(string name, GameManager gameManager, Affiliation affiliation)
     {
         TaskForceController instance = new GameObject(name).AddComponent<TaskForceController>();
 
         instance.gameObject.name = name;
-        instance.maxSize = maxSize;
         instance.gameManager = gameManager;
         instance.affiliation = affiliation;
 
@@ -154,7 +196,7 @@ public class TaskForceController : MonoBehaviour
             targetMask = LayerMask.GetMask("Allies", "AllyOutposts", "PlayerHeadquarters");
     }
 
-    public void AddUnit(AiController unit)
+    public void AddUnit(AiController unit, bool reinforce=false)
     {
         unit.UnitTaskForce = this;
         unitControllers.Add(unit);
@@ -162,13 +204,68 @@ public class TaskForceController : MonoBehaviour
         SetNewSpotDistance();
         SetNewTravelSpeed();
 
-        Power += unit.Values.power;
+        if (reinforce == false)
+        {
+            InitialSize++;
+            CurrentPower += unit.Values.power;
+            InitialPower += unit.Values.power;
+            CurrentHealth += unit.Values.health;
+            InitialHealth += unit.Values.health;
+        }
+
+        else
+        {
+            if (CurrentPower + unit.Values.power <= InitialPower)
+                CurrentPower += unit.Values.power;
+            else
+            {
+                InitialPower = CurrentPower + unit.Values.power;
+                CurrentPower += unit.Values.power;
+            }
+
+            if (CurrentHealth + unit.Values.health <= CurrentHealth)
+                CurrentHealth += unit.Values.health;
+            else
+            {
+                InitialHealth = CurrentHealth + unit.Values.health;
+                CurrentHealth += unit.Values.health;
+            }
+
+            if (CurrentSize > InitialSize)
+                InitialSize++;
+        }
+
+        UpdateStrength();
 
         if (unitControllers.Count == 1)
             commander = unit;
 
-        unit.onUnitNeutralized.AddListener(RemoveUnitFromTaskForce);
+        unit.onUnitNeutralized.AddListener(RemoveUnit);
         unit.onUnitEngaged.AddListener((attacker) => Engage(attacker));
+
+        onSizeChanged.Invoke(unitControllers.Count);
+    }
+
+    private void RemoveUnit(AiController unit)
+    {
+        unitControllers.Remove(unit);
+
+        CurrentPower -= unit.Values.power;
+        CurrentHealth -= unit.Values.health;
+
+        if (unitControllers.Count == 0)
+            DestroyTaskForce();
+
+        float unitSpotDistance = unit.Values.spotDistance;
+        if (unitSpotDistance == spotDistance)
+            SetNewSpotDistance();
+
+        if (commander == unit)
+            FindNextCommanderRecursive(0);
+
+        UpdateStrength();
+
+        onSizeChanged.Invoke(unitControllers.Count);
     }
 
     private void SetNewTravelSpeed()
@@ -226,31 +323,18 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
-    private void RemoveUnitFromTaskForce(AiController unit)
-    {
-        unitControllers.Remove(unit);
-
-        Power -= unit.Values.power;
-
-        if (unitControllers.Count == 0)
-            DestroyTaskForce();
-
-        float unitSpotDistance = unit.Values.spotDistance;
-        if (unitSpotDistance == spotDistance)
-            SetNewSpotDistance();
-
-        if (commander == unit)
-            FindNextCommanderRecursive(0);
-
-        UpdateStrength();
-
-        onSizeChanged?.Invoke(unitControllers.Count);
-    }
-
     private void UpdateStrength()
     {
-        strength = (float)unitControllers.Count / maxSize;
-        onStrengthChanged?.Invoke(strength);
+        //strength = (float)unitControllers.Count / maxSize;
+        //onStrengthChanged?.Invoke(strength);
+
+        if (currentPower == initialPower)
+            currentStrength = 1.0f;
+
+        else
+            currentStrength = (float)currentPower / initialPower;
+
+        onStrengthChanged?.Invoke(currentStrength);
     }
 
     public void DestroyTaskForce()
@@ -318,11 +402,6 @@ public class TaskForceController : MonoBehaviour
 
         handle = job.Schedule(jobAllies.Length, 64);
         return true;
-    }
-
-    private bool TrySetTarget()
-    {
-        return false;
     }
 
     private void Update()
@@ -587,14 +666,12 @@ public class TaskForceController : MonoBehaviour
 
         foreach (var controller in reinforcements.unitControllers)
         {
-            AddUnit(controller);
+            AddUnit(controller, reinforce: true);
             controller.SetMovingState(GameUtils.RandomPlanePositionCircle(commander.transform.position, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
         }
 
-        maxSize = unitControllers.Count;
-        strength = 1.0f;
         onSizeChanged?.Invoke(unitControllers.Count);
-        onStrengthChanged?.Invoke(strength);
+        onStrengthChanged?.Invoke(currentStrength);
         reinforcements.DestroyTaskForce();
     }
 

@@ -162,7 +162,7 @@ GameObject:
   - component: {fileID: 2236353770394977220}
   - component: {fileID: 1676470205294369264}
   m_Layer: 5
-  m_Name: PowerBar
+  m_Name: StrengthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -312,7 +312,7 @@ GameObject:
   - component: {fileID: 4202878603455985169}
   - component: {fileID: 7604663900482963227}
   m_Layer: 5
-  m_Name: PowerBarBackground
+  m_Name: StrengthBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -432,9 +432,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   owner: {fileID: 0}
   healthBar: {fileID: 7086464228856669646}
+  strengthBar: {fileID: 1676470205294369264}
   offset: {x: 0, y: 20, z: 0}
-  powerBar: {fileID: 1676470205294369264}
-  maxTaskForcePower: 0
   onSelect:
     m_PersistentCalls:
       m_Calls: []

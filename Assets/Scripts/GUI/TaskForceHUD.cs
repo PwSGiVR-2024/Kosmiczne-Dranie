@@ -9,13 +9,11 @@ public class TaskForceHUD : MonoBehaviour
     public MonoBehaviour owner;
 
     public Image healthBar;
-    public Vector3 offset = new(0, 20, 0);
-
-    public Image powerBar;
-    public int maxTaskForcePower;
+    public Image strengthBar;
 
     private enum DisplayMode { TaskForce, Outpost }
     private DisplayMode displayMode;
+    public Vector3 offset = new(0, 20, 0);
 
     public UnityEvent onSelect = new();
 
@@ -27,10 +25,9 @@ public class TaskForceHUD : MonoBehaviour
         {
             instance.displayMode = DisplayMode.TaskForce;
             instance.owner = taskForce;
-            taskForce.onStrengthChanged.AddListener(instance.UpdateHealthBar);
+            taskForce.onStrengthChanged.AddListener(instance.UpdateStrengthBar);
+            taskForce.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, taskForce.InitialHealth));
             taskForce.onTaskForceDestroyed.AddListener((_) => Destroy(instance.gameObject));
-            instance.maxTaskForcePower = taskForce.Power;
-            taskForce.onPowerChanged.AddListener((newPower) => instance.UpdatePowerBar(newPower, instance.maxTaskForcePower));
         }
 
         else if (owner is Outpost outpost)
@@ -82,19 +79,13 @@ public class TaskForceHUD : MonoBehaviour
         transform.position = outpost.transform.position + offset;
     }
 
-    private void UpdateHealthBar(float strength)
-    {
-        healthBar.fillAmount = strength;
-    }
-
     private void UpdateHealthBar(int newHealth, int originalHealth)
     {
-        healthBar.fillAmount = (float)(newHealth / originalHealth);
+        healthBar.fillAmount = (float)newHealth / originalHealth;
     }
 
-    private void UpdatePowerBar(int newPower, int originalPower)
+    private void UpdateStrengthBar(float value)
     {
-        float val = (float)newPower / (float)originalPower;
-        powerBar.fillAmount = val;
+        strengthBar.fillAmount = value;
     }
 }
