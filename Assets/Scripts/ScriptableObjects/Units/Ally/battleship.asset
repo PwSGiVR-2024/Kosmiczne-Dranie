@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a50f5f9c56896754180f3dbf022ad838, type: 3}
-  m_Name: allrounder
+  m_Name: battleship
   m_EditorClassIdentifier: 
-  prefabName: Ally
-  power: 10
-  size: 1
-  description: all-rounder
-  spotDistance: 150
-  health: 200
-  attackDistance: 200
-  unitSpeed: 60
-  acceleration: 30
-  angularSpeed: 180
-  crystalPrice: 50
-  metalPrice: 200
-  maintenancePrice: 10
+  prefabName: 
+  shipClass: 2
+  power: 160
+  description: 
+  spotDistance: 200
+  health: 8000
+  attackDistance: 450
+  unitSpeed: 50
+  acceleration: 15
+  angularSpeed: 60
+  crystalPrice: 200
+  metalPrice: 4000
+  maintenancePrice: 160
   upgradePrice: 0

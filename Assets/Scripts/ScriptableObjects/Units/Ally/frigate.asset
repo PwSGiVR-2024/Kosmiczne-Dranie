@@ -10,19 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: a50f5f9c56896754180f3dbf022ad838, type: 3}
-  m_Name: cruiser
+  m_Name: frigate
   m_EditorClassIdentifier: 
-  prefabName: 
-  shipClass: 2
-  power: 80
-  description: 
-  spotDistance: 200
-  health: 4000
-  attackDistance: 350
-  unitSpeed: 60
-  acceleration: 25
-  angularSpeed: 90
-  crystalPrice: 80
-  metalPrice: 1200
-  maintenancePrice: 80
+  prefabName: Ally
+  shipClass: 0
+  power: 10
+  description: all-rounder
+  spotDistance: 300
+  health: 200
+  attackDistance: 200
+  unitSpeed: 80
+  acceleration: 40
+  angularSpeed: 160
+  crystalPrice: 15
+  metalPrice: 200
+  maintenancePrice: 10
   upgradePrice: 0

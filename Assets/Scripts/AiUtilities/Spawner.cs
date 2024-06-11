@@ -15,7 +15,7 @@ public class Spawner : MonoBehaviour
 
     public GameManager gameManager;
     public ResourceManager resourceManager;
-    public PlayerHeadquarters playerHeadquarters;
+    public Headquarters playerHeadquarters;
 
     public GameObject redUnitsContainer; // kontenery ¿eby by³ porz¹dek na scenie. Tylko przechowuj¹ gameObjecty, nic wiêcej nie robi¹
     public GameObject redProjectileContainer;
@@ -77,7 +77,7 @@ public class Spawner : MonoBehaviour
         {
             range = unitsToSpawn;
             range = Mathf.Sqrt(range);
-            range *= commander.Volume;
+            range *= commander.Values.size;
         }
 
         for (int i = 1; i < unitsToSpawn; i++)
@@ -120,7 +120,7 @@ public class Spawner : MonoBehaviour
         {
             range = unitsToSpawn;
             range = Mathf.Sqrt(range);
-            range *= commander.Volume;
+            range *= commander.Values.size;
         }
 
         for (int i = 1; i < unitsToSpawn; i++)

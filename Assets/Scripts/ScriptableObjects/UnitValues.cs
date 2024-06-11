@@ -10,8 +10,9 @@ public class UnitValues : ScriptableObject
     public string prefabName;
 
     [Header("Misc:")]
-    public int power;
+    public ShipClass shipClass;
     public int size;
+    public int power;
     public string description;
 
     [Header("Stats:")]

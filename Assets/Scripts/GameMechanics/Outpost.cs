@@ -13,7 +13,7 @@ public class Outpost : MonoBehaviour, IInteractable
     public OutpostValues values;
     private LayerMask healMask;
     public bool isConnected;
-    public PlayerHeadquarters headquarters;
+    public Headquarters headquarters;
     public List<Outpost> connections = new();
     public LayerMask outpostMask;
 
@@ -47,7 +47,7 @@ public class Outpost : MonoBehaviour, IInteractable
         get => affiliation;
     }
 
-    public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager, PlayerHeadquarters headquarters)
+    public static Outpost Create(Vector3 pos, GameObject prefab, Affiliation affiliation, GameManager gameManager, Headquarters headquarters)
     {
         Outpost outpost = Instantiate(prefab, pos, Quaternion.identity).GetComponent<Outpost>();
         outpost.Init(gameManager, affiliation, headquarters);
@@ -55,7 +55,7 @@ public class Outpost : MonoBehaviour, IInteractable
         return outpost;
     }
 
-    private void Init(GameManager gameManager, Affiliation affiliation, PlayerHeadquarters headquarters)
+    private void Init(GameManager gameManager, Affiliation affiliation, Headquarters headquarters)
     {
         this.gameManager = gameManager;
         this.affiliation = affiliation;

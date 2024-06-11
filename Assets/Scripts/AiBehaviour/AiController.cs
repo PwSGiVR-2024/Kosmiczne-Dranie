@@ -29,7 +29,6 @@ public abstract class AiController : MonoBehaviour, IInteractable
 
     private bool initialized = false;
     private int health;
-    private float volume;
 
     private float tempStoppingDistance;
 
@@ -63,7 +62,6 @@ public abstract class AiController : MonoBehaviour, IInteractable
     public TaskForceController UnitTaskForce { get => unitTaskForce; set => unitTaskForce = value; }
     public UnitValues Values { get => unitValues; }
     public NavMeshAgent Agent { get => agent; }
-    public float Volume {  get => volume; }
     public State CurrentState { get => currentState; }
     public Affiliation Affiliation { get => affiliation; }
     public GameObject ProjectileContainer { get => projectileContainer; }
@@ -96,15 +94,6 @@ public abstract class AiController : MonoBehaviour, IInteractable
         agent.speed = unitValues.unitSpeed;
         agent.acceleration = unitValues.acceleration;
         agent.angularSpeed = unitValues.angularSpeed;
-
-        Collider col = gameObject.GetComponent<Collider>();
-        float volX = col.bounds.size.x;
-        float volZ = col.bounds.size.z;
-
-        if (volX > volZ)
-            volume = volX;
-        else
-            volume = volZ;
 
         gameManager = taskForce.gameManager;
 

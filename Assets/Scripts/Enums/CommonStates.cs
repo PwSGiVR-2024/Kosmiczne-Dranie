@@ -29,3 +29,11 @@ public enum TaskForceOrder {
     Patrol,
     Defend
 }
+
+public enum ShipClass
+{
+    Frigate,
+    Destroyer,
+    Cruiser,
+    Battleship
+}

@@ -15,8 +15,22 @@ public static class GameUtils
 
     public static Vector3 RandomPlanePositionCircle(Vector3 basePosition, float range)
     {
+        float randomAngle = Random.Range(0f, 360f);
+        float randomDistance = Random.Range(0f, range);
+
+        float angleRad = Mathf.Deg2Rad * randomAngle;
+
+        float x = Mathf.Sin(angleRad) * randomDistance + basePosition.x;
+        float z = Mathf.Cos(angleRad) * randomDistance + basePosition.z;
+        float y = basePosition.y;
+
+        return new Vector3(x, y, z);
+    }
+
+    public static Vector3 RandomPlanePositionCircle(Vector3 basePosition, float min, float max)
+    {
         float randomAngle = Random.Range(0f, 360f); // Angle in degrees (0 to 360)
-        float randomDistance = Random.Range(0f, range); // Distance within the radius
+        float randomDistance = Random.Range(min, max); // Distance within the radius
 
         // Convert angle to radians for calculations
         float angleRad = Mathf.Deg2Rad * randomAngle;

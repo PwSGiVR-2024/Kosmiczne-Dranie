@@ -19,6 +19,16 @@ using Debug = UnityEngine.Debug;
 
 public class TaskForceController : MonoBehaviour
 {
+    //public int frigateCount = 0;
+    //public int destroyerCount = 0;
+    //public int cruiserCount = 0;
+    //public int battleshipCount = 0;
+
+    HashSet<AiController> frigates = new();
+    HashSet<AiController> destroyers = new();
+    HashSet<AiController> cruisers = new();
+    HashSet<AiController> battleships = new();
+
     // helper attributes
     private bool initialized = false;
 
@@ -235,6 +245,25 @@ public class TaskForceController : MonoBehaviour
                 InitialSize++;
         }
 
+        switch (unit.Values.shipClass)
+        {
+            case ShipClass.Frigate:
+                frigates.Add(unit);
+                break;
+
+            case ShipClass.Destroyer:
+                destroyers.Add(unit);
+                break;
+
+            case ShipClass.Cruiser:
+                cruisers.Add(unit);
+                break;
+
+            case ShipClass.Battleship:
+                battleships.Add(unit);
+                break;
+        }
+
         UpdateStrength();
 
         if (unitControllers.Count == 1)
@@ -252,6 +281,25 @@ public class TaskForceController : MonoBehaviour
 
         CurrentPower -= unit.Values.power;
         CurrentHealth -= unit.Values.health;
+
+        switch (unit.Values.shipClass)
+        {
+            case ShipClass.Frigate:
+                frigates.Remove(unit);
+                break;
+
+            case ShipClass.Destroyer:
+                destroyers.Remove(unit);
+                break;
+
+            case ShipClass.Cruiser:
+                cruisers.Remove(unit);
+                break;
+
+            case ShipClass.Battleship:
+                battleships.Remove(unit);
+                break;
+        }
 
         if (unitControllers.Count == 0)
             DestroyTaskForce();
@@ -303,8 +351,6 @@ public class TaskForceController : MonoBehaviour
         if (unitControllers.Count == 0)
             return;
 
-        spotDistance = 0;
-
         if (unitControllers.Count == 1)
         {
             spotDistance = unitControllers[0].Values.spotDistance;
@@ -313,21 +359,22 @@ public class TaskForceController : MonoBehaviour
 
         else
         {
-            float newSpotDistance;
+            float cumulativeSpotDistance = 0;
             foreach (var unit in unitControllers)
             {
-                newSpotDistance = unit.Values.spotDistance;
-                if (newSpotDistance > spotDistance)
-                    spotDistance = newSpotDistance;
+                cumulativeSpotDistance += unit.Values.spotDistance;
             }
+
+            // assuming every given unit has 4, 8, 16, 32 size, for simplification. Actual unit size is controlled by UnitValues.size (AiController.Values)
+            float avarageSize = (float)(frigates.Count * 4 + destroyers.Count * 8 + cruisers.Count * 16 + battleships.Count * 32) / unitControllers.Count;
+
+            float newSpotDistance = (cumulativeSpotDistance / unitControllers.Count) + (float)Math.Sqrt(unitControllers.Count) * avarageSize;
+            spotDistance = newSpotDistance;
         }
     }
 
     private void UpdateStrength()
     {
-        //strength = (float)unitControllers.Count / maxSize;
-        //onStrengthChanged?.Invoke(strength);
-
         if (currentPower == initialPower)
             currentStrength = 1.0f;
 
@@ -387,7 +434,7 @@ public class TaskForceController : MonoBehaviour
             jobEnemies[0] = new JobUnitData(currentTarget.transform.position, currentTarget.transform.rotation, currentTarget.transform.forward);
         }
 
-        else if (currentTarget is PlayerHeadquarters)
+        else if (currentTarget is Headquarters)
         {
             jobEnemies = new NativeArray<JobUnitData>(1, Allocator.Persistent);
             jobEnemies[0] = new JobUnitData(currentTarget.transform.position, currentTarget.transform.rotation, currentTarget.transform.forward);
@@ -573,7 +620,7 @@ public class TaskForceController : MonoBehaviour
         //    return false;
         //}
 
-        Collider[] targets = Physics.OverlapSphere(commander.transform.position, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, targetMask);
+        Collider[] targets = Physics.OverlapSphere(commander.transform.position, spotDistance, targetMask);
 
         if (targets.Length == 0)
         {
@@ -629,7 +676,7 @@ public class TaskForceController : MonoBehaviour
         foreach (var controller in unitControllers)
         {
             if (controller != null)
-                controller.SetRetreatState(GameUtils.RandomPlanePositionCircle(escapePoint, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
+                controller.SetRetreatState(GameUtils.RandomPlanePositionCircle(escapePoint, 0));
         }
 
         if (commander != null)
@@ -640,13 +687,30 @@ public class TaskForceController : MonoBehaviour
     {
         CurrentState = State.Moving;
 
-        foreach (var controller in unitControllers)
+        Vector3 frigatesDestination = GameUtils.RandomPlanePositionCircle(destination, frigates.Count, frigates.Count);
+        Vector3 destroyersDestination = GameUtils.RandomPlanePositionCircle(destination, destroyers.Count, destroyers.Count);
+        Vector3 cruisersDestination = GameUtils.RandomPlanePositionCircle(destination, cruisers.Count, cruisers.Count);
+        Vector3 battleshipsDestination = GameUtils.RandomPlanePositionCircle(destination, battleships.Count, battleships.Count);
+
+        foreach (var controller in frigates)
         {
-            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destination, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(frigatesDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
         }
 
-        if (commander != null)
-            commander.SetMovingState(destination);
+        foreach (var controller in destroyers)
+        {
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destroyersDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+        }
+
+        foreach (var controller in cruisers)
+        {
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(cruisersDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+        }
+
+        foreach (var controller in battleships)
+        {
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(battleshipsDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+        }
     }
 
     public void SetIdleState()
@@ -664,10 +728,11 @@ public class TaskForceController : MonoBehaviour
         if (reinforcements == this || reinforcements == null)
             return;
 
+        reinforcements.SetDestination(commander.transform.position);
+
         foreach (var controller in reinforcements.unitControllers)
         {
             AddUnit(controller, reinforce: true);
-            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(commander.transform.position, Mathf.Sqrt(unitControllers.Count) * commander.Volume));
         }
 
         onSizeChanged?.Invoke(unitControllers.Count);
@@ -706,7 +771,7 @@ public class TaskForceController : MonoBehaviour
     {
         if (commander)
         {
-            GameUtils.DrawCircle(gameObject, spotDistance + (float)Math.Sqrt(unitControllers.Count) * commander.Volume, commander.transform);
+            GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);
 
             //icon.transform.LookAt(Camera.main.transform, Vector3.up);
             //icon.transform.position = commander.transform.position + iconOffset;

@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public PlayerHeadquarters playerHeadquarters;
+    public Headquarters playerHeadquarters;
     public ResourceManager resourceManager;
     public FleetManager fleetManager;
 
