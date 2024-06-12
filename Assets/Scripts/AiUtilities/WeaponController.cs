@@ -153,6 +153,6 @@ public class WeaponController: MonoBehaviour
         Vector3 direction = position - transform.position;
         direction.Normalize();
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
-        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 5f * Time.deltaTime);
+        transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 50f * Time.deltaTime);
     }
 }

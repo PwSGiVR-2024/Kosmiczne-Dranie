@@ -14,6 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   prefabName: 
   shipClass: 2
+  size: 16
   power: 80
   description: 
   spotDistance: 200

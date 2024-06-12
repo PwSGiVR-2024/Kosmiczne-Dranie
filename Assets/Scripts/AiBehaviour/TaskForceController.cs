@@ -699,17 +699,17 @@ public class TaskForceController : MonoBehaviour
 
         foreach (var controller in destroyers)
         {
-            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destroyersDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(destroyersDestination, Mathf.Sqrt(destroyers.Count) * controller.Values.size));
         }
 
         foreach (var controller in cruisers)
         {
-            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(cruisersDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(cruisersDestination, Mathf.Sqrt(cruisers.Count) * controller.Values.size));
         }
 
         foreach (var controller in battleships)
         {
-            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(battleshipsDestination, Mathf.Sqrt(frigates.Count) * controller.Values.size));
+            controller.SetMovingState(GameUtils.RandomPlanePositionCircle(battleshipsDestination, Mathf.Sqrt(battleships.Count) * controller.Values.size));
         }
     }
 

@@ -4,17 +4,13 @@ using UnityEngine;
 
 public class LaserProjectile : Projectile
 {
-    public SpriteRenderer sprite;
     public bool hitObject = false;
-    private Vector3 stashedScale;
+    public LineRenderer lineRenderer;
 
     protected override void Init(WeaponController weapon)
     {
         base.Init(weapon);
-
-        stashedScale = sprite.transform.localScale;
     }
-
 
     protected override bool TryProcessHit()
     {
@@ -30,7 +26,6 @@ public class LaserProjectile : Projectile
                 interactable.Damage(this);
             }
 
-            SetProjectilePosition(transform.position, hit.point);
             hitObject = true;
             return true;
         }
@@ -38,24 +33,21 @@ public class LaserProjectile : Projectile
         return false;
     }
 
-    protected void SetProjectilePosition(Vector3 origin, Vector3 end)
-    {
-        float distance = Vector3.Distance(origin, end);
-        Vector3 midpoint = (origin + end) / 2;
-        transform.position = midpoint;
-
-        Vector3 newScale = sprite.transform.localScale;
-        newScale.y = distance / sprite.bounds.size.y;
-        sprite.transform.localScale = newScale;
-
-        //Debug.DrawRay(midpoint, Vector3.up, Color.red, 1f);
-    }
-
     protected override void OnDisable()
     {
         base.OnDisable();
-
-        sprite.transform.localScale = stashedScale;
         hitObject = false;
+    }
+
+    protected void UpdatePosition()
+    {
+        lineRenderer.SetPosition(0, transform.position);
+        lineRenderer.SetPosition(1, ShotBy.Target.position);
+    }
+
+    protected override void Update()
+    {
+        base.Update();
+        UpdatePosition();
     }
 }
