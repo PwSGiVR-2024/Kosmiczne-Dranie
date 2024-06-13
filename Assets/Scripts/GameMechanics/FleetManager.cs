@@ -77,24 +77,30 @@ public abstract class FleetManager : MonoBehaviour
         cumulativePower -= unit.Values.power;
     }
 
-    public void ProcureTaskForce(GameObject unitPrefab, Vector3 position, int count, string name)
+    public TaskForceController ProcureTaskForce(GameObject unitPrefab, Vector3 position, int count, string name)
     {
         if (resources.CheckIfHavingResources(unitPrefab, count))
         {
             TaskForceController taskForce = spawner.SpawnTaskForce(unitPrefab, position, count, name);
             taskForces.Add(taskForce);
             resources.RemoveResources(unitPrefab, count);
+            return taskForce;
         }
+
+        return null;
     }
 
-    public void ProcureOutpost(GameObject outpostPrefab, Vector3 position, string name)
+    public Outpost ProcureOutpost(GameObject outpostPrefab, Vector3 position, string name)
     {
         if (resources.CheckIfHavingResources(outpostPrefab))
         {
             Outpost outpost = spawner.SpawnOutpost(outpostPrefab, position, name);
             outposts.Add(outpost);
             resources.RemoveResources(outpostPrefab);
+            return outpost;
         }
+
+        return null;
     }
 
     public void SetTaskForceDestinationMultiple(Vector3 destination, List<TaskForceController> forces)

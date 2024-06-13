@@ -23,6 +23,8 @@ public class TaskForceController : MonoBehaviour
     //public int destroyerCount = 0;
     //public int cruiserCount = 0;
     //public int battleshipCount = 0;
+    public Vector3 currentDestination;
+
 
     HashSet<AiController> frigates = new();
     HashSet<AiController> destroyers = new();
@@ -689,7 +691,10 @@ public class TaskForceController : MonoBehaviour
 
     public void SetDestination(Vector3 destination)
     {
+        if (destination == currentDestination) return;
+
         CurrentState = State.Moving;
+        currentDestination = destination;
 
         Vector3 frigatesDestination = GameUtils.RandomPlanePositionCircle(destination, frigates.Count, frigates.Count);
         Vector3 destroyersDestination = GameUtils.RandomPlanePositionCircle(destination, destroyers.Count, destroyers.Count);
