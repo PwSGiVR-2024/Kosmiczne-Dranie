@@ -838,10 +838,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0cf4a580d48f174cb3b268d52e6d550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resources:
-  - {fileID: 233497686}
-  - {fileID: 233497688}
-  - {fileID: 233497687}
   range: 100
   capturing: 0
   captureTime: 5
@@ -854,6 +850,10 @@ MonoBehaviour:
     m_Bits: 0
   currentController: 3
   attacker: 3
+  resources:
+  - {fileID: 233497686}
+  - {fileID: 233497688}
+  - {fileID: 233497687}
   onCaptured:
     m_PersistentCalls:
       m_Calls: []
@@ -3362,10 +3362,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0cf4a580d48f174cb3b268d52e6d550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resources:
-  - {fileID: 819744622}
-  - {fileID: 819744621}
-  - {fileID: 819744620}
   range: 100
   capturing: 0
   captureTime: 5
@@ -3378,6 +3374,10 @@ MonoBehaviour:
     m_Bits: 0
   currentController: 3
   attacker: 3
+  resources:
+  - {fileID: 819744622}
+  - {fileID: 819744621}
+  - {fileID: 819744620}
   onCaptured:
     m_PersistentCalls:
       m_Calls: []
@@ -4513,6 +4513,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gatherInterval: 3
   allResources: []
+  currentResources: []
   totalMetal: 9999999
   totalCrystal: 9999999
   totalCredits: 9999999
@@ -5203,10 +5204,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e0cf4a580d48f174cb3b268d52e6d550, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  resources:
-  - {fileID: 1642202884}
-  - {fileID: 1642202883}
-  - {fileID: 1642202882}
   range: 100
   capturing: 0
   captureTime: 5
@@ -5219,6 +5216,10 @@ MonoBehaviour:
     m_Bits: 0
   currentController: 3
   attacker: 3
+  resources:
+  - {fileID: 1642202884}
+  - {fileID: 1642202883}
+  - {fileID: 1642202882}
   onCaptured:
     m_PersistentCalls:
       m_Calls: []
@@ -5367,6 +5368,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   affiliation: 0
+  gameManager: {fileID: 1668784700}
+  outpostsContainer: {fileID: 661302778}
+  taskForcesContainer: {fileID: 1544278192}
+  unitsContainer: {fileID: 1444810936}
+  projectilesContainer: {fileID: 450434118}
+  taskForceHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
   onUnitSpawned:
     m_PersistentCalls:
       m_Calls: []
@@ -5376,12 +5383,6 @@ MonoBehaviour:
   onTaskForceSpawned:
     m_PersistentCalls:
       m_Calls: []
-  taskForceHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
-  gameManager: {fileID: 1668784700}
-  outpostsContainer: {fileID: 661302778}
-  taskForcesContainer: {fileID: 1544278192}
-  unitsContainer: {fileID: 1444810936}
-  projectilesContainer: {fileID: 450434118}
 --- !u!1 &1727458507
 GameObject:
   m_ObjectHideFlags: 0
@@ -5737,6 +5738,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   gatherInterval: 3
   allResources: []
+  currentResources: []
   totalMetal: 9999999
   totalCrystal: 9999999
   totalCredits: 9999999
@@ -6138,6 +6140,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   affiliation: 1
+  gameManager: {fileID: 1668784700}
+  outpostsContainer: {fileID: 1148014244}
+  taskForcesContainer: {fileID: 438082947}
+  unitsContainer: {fileID: 1981450944}
+  projectilesContainer: {fileID: 582657839}
+  taskForceHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
   onUnitSpawned:
     m_PersistentCalls:
       m_Calls: []
@@ -6147,12 +6155,6 @@ MonoBehaviour:
   onTaskForceSpawned:
     m_PersistentCalls:
       m_Calls: []
-  taskForceHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
-  gameManager: {fileID: 1668784700}
-  outpostsContainer: {fileID: 1148014244}
-  taskForcesContainer: {fileID: 438082947}
-  unitsContainer: {fileID: 1981450944}
-  projectilesContainer: {fileID: 582657839}
 --- !u!1 &2106478007
 GameObject:
   m_ObjectHideFlags: 0
