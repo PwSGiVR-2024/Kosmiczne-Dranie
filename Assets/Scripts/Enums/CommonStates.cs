@@ -12,7 +12,8 @@ public enum State {
 public enum Affiliation {
     Blue,
     Red,
-    Green
+    Green,
+    None
 }
 
 public enum TaskForceBehaviour {

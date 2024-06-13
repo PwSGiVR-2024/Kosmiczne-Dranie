@@ -9,11 +9,10 @@ public class CruiserUnitController : AiController
     [SerializeField] private WeaponController weapon_3;
     [SerializeField] private WeaponController weapon_4;
     [SerializeField] private WeaponController weapon_5;
-    [SerializeField] private int health;
+   
 
     [SerializeField] private AiController targetCtrl;
-    [SerializeField] private LayerMask maskCtrl;
-    [SerializeField] private int bitMask;
+    public int healthCtrl;
 
     protected override void AdditionalInit()
     {
@@ -22,9 +21,6 @@ public class CruiserUnitController : AiController
         if (weapon_3) weapon_3.Init(this);
         if (weapon_4) weapon_4.Init(this);
         if (weapon_5) weapon_5.Init(this);
-
-        maskCtrl = Target.targetLayer;
-        bitMask = Target.targetLayer;
     }
 
     protected override void BeforeDeactivation()
@@ -54,7 +50,6 @@ public class CruiserUnitController : AiController
             }
         }
 
-        Debug.Log(Target.distance);
         if (Target.distance < Values.attackDistance)
         {
             if (weapon_5 && weapon_5.isActiveAndEnabled && weapon_5.CheckIfFacingTarget(Target.position))
@@ -103,7 +98,7 @@ public class CruiserUnitController : AiController
     protected override void UpdateOperations()
     {
         base.UpdateOperations();
-        health = Health;
+        healthCtrl = Health;
         Target.TryLockTarget(out targetCtrl);
     }
 

@@ -6,113 +6,156 @@ using System.Resources;
 using TMPro;
 using UnityEngine;
 using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
+using static UnityEditor.Rendering.CameraUI;
 
-public class ResourceManager : MonoBehaviour
+public abstract class ResourceManager : MonoBehaviour
 {
-    public GameObject resourceZonePrefab; // Prefab strefy
-    private int numberOfZones = 200; // Liczba stref
-    private Vector2 areaSize = new Vector2(2000, 2000); // Rozmiar obszaru do losowego rozmieszczenia stref
-    public int metalValue = 0;
-    public int crystalValue = 0;
-    public int playerTotalMetal = 0;
-    public int playerTotalCrystal = 0;
-    public Spawner spawner;
-    public TMP_Text resourceText;
-    public int playerTotalMoney;
-    public int totalMaintenance = 0;
-    public int moneyValue = 0;
+    public float gatherInterval = 3.0f;
+    public ResourceHolder[] allResources;
+    public List<ResourceHolder> currentResources = new();
 
-    public int PlayerMetal { get => playerTotalMetal; set => playerTotalMetal = value; }
-    public int PlayerCrystal { get => playerTotalCrystal; set => playerTotalCrystal = value; }
-    public int PlayerMoney { get => playerTotalMoney; set => playerTotalMoney = value; }
-    public int PlayerMaintenance { get => totalMaintenance; set => totalMaintenance = value; }
+    public int totalMetal = 0;
+    public int totalCrystal = 0;
+    public int totalCredits;
+    public int totalMaintenance = 0;
+
+
+    public int Metals { get => totalMetal; set => totalMetal = value; }
+    public int Crystals { get => totalCrystal; set => totalCrystal = value; }
+    public int Credits { get => totalCredits; set => totalCredits = value; }
+    public int Maintenance { get => totalMaintenance; set => totalMaintenance = value; }
 
     void Start()
     {
-        spawner.onAllyOutpostSpawned.AddListener(Subscribe);
-        spawner.onEnemyOutpostSpawned.AddListener(Subscribe);
-        GenerateRandomZones();
-        StartCoroutine(ResourceCalculator());
-        UpdateResourceText();
-    }
+        allResources = FindObjectsOfType<ResourceHolder>();
 
-    public void Subscribe(Outpost outpost)
-    {
-        outpost.onZoneCaptured.AddListener(GatherResources);
-        outpost.onZoneRelease.AddListener(UngatherResources);
-    }
-
-    private void Update()
-    {
-        UpdateResourceText();
-    }
-    void UngatherResources(ResourceZone zone)
-    {
-        zone.captured = false;
-
-        switch (zone.zoneResource)
+        foreach (var resource in allResources)
         {
-            case ResourceZone.ResourceType.Crystals:
-                crystalValue -= zone.value;
-                break;
-
-            case ResourceZone.ResourceType.Metals:
-                metalValue -= zone.value;
-                break;
+            resource.onCapture.AddListener((capturer) => OnResourceCapture(resource, capturer));
         }
 
-        moneyValue -= (int)(zone.value * 0.1f);
+        StartCoroutine(GatherResources());
     }
-    void GatherResources(ResourceZone zone)
+
+    public abstract void OnResourceCapture(ResourceHolder resource, Affiliation capturer);
+
+    IEnumerator GatherResources()
     {
-        if (zone.captured)
-            return;
-
-        zone.captured = true;
-
-        switch (zone.zoneResource)
-        {
-            case ResourceZone.ResourceType.Crystals:
-                crystalValue += zone.value;
-            break;
-
-            case ResourceZone.ResourceType.Metals:
-                metalValue += zone.value;
-            break;
-        }
-
-        moneyValue += (int)(zone.value * 0.1f);
-    }
-    IEnumerator ResourceCalculator()
-    {
-        WaitForSeconds interval = new(3);
+        WaitForSeconds interval = new(gatherInterval);
         while (true)
         {
-            playerTotalCrystal += crystalValue;
-            playerTotalMetal += metalValue;
-            playerTotalMoney += moneyValue;
-            playerTotalMoney -= totalMaintenance;
+            foreach (var resource in currentResources)
+            {
+                switch (resource.zoneResource)
+                {
+                    case ResourceHolder.ResourceType.Crystals:
+                        Crystals += resource.value;
+                        break;
+
+                    case ResourceHolder.ResourceType.Metals:
+                        Metals += resource.value;
+                        break;
+
+                    case ResourceHolder.ResourceType.Credits:
+                        Credits += resource.value;
+                        break;
+                }
+            }
+
+            Credits -= Maintenance;
+
             yield return interval;
         }
     }
-    void GenerateRandomZones()
-    {
-        for (int i = 0; i < numberOfZones; i++)
-        {
-            Vector3 randomPosition = new Vector3(
-                Random.Range(-areaSize.x , areaSize.x ),
-                0, // Ustaw wysokoœæ na 0
-                Random.Range(-areaSize.y , areaSize.y )
-            );
 
-            GameObject zoneObject = Instantiate(resourceZonePrefab, randomPosition, Quaternion.identity);
-            ResourceZone zone = zoneObject.GetComponent<ResourceZone>();
-            zone.Init();
-        }
-    }
-    private void UpdateResourceText()
+    public void RemoveResources(GameObject unitPrefab, int count)
     {
-        resourceText.text = $"Space Credits: {playerTotalMoney} Crystals: {playerTotalCrystal} Metals: {playerTotalMetal}";
+        AiController controller = unitPrefab.GetComponent<AiController>();
+        UnitValues values = controller.Values;
+
+        Crystals -= values.crystalPrice * count;
+        Metals -= values.metalPrice * count;
+        Maintenance += values.maintenancePrice * count;
+
+        controller.onUnitNeutralized.AddListener((unit) => RemoveMaintenance(unit.Values.maintenancePrice));
+    }
+
+    public void RemoveResources(GameObject outpostPrefab)
+    {
+        Outpost outpost = outpostPrefab.GetComponent<Outpost>();
+        OutpostValues values = outpost.values;
+
+        Crystals -= values.crystalPrice;
+        Metals -= values.metalPrice;
+        Maintenance += values.maintenancePrice;
+
+        outpost.onOutpostDestroy.AddListener(() => RemoveMaintenance(outpost.values.maintenancePrice));
+    }
+
+    private void RemoveMaintenance(int value)
+    {
+        Debug.Log("removing maintenance: " + value);
+        Maintenance -= value;
+    }
+
+    public bool CheckIfHavingResources(GameObject prefab)
+    {
+        if (totalCredits <= 0)
+            return false;
+
+        if (prefab.TryGetComponent(out AiController controller))
+        {
+            UnitValues values = controller.Values;
+            if (values.metalPrice > Crystals || values.crystalPrice > Metals)
+                return false;
+
+            else return true;
+        }
+
+        else if (prefab.TryGetComponent(out Outpost outpst))
+        {
+            OutpostValues values = outpst.values;
+            if (values.metalPrice > Crystals || values.crystalPrice > Metals)
+                return false;
+
+            else return true;
+        }
+
+        return false;
+    }
+
+    public bool CheckIfHavingResources(GameObject prefab, int number)
+    {
+        if (totalCredits <= 0)
+            return false;
+
+        if (prefab.TryGetComponent(out AiController controller))
+        {
+            UnitValues values = controller.Values;
+
+            int metalTotalPrice = values.metalPrice * number;
+            int crystalTotalPrice = values.crystalPrice * number;
+
+            if (crystalTotalPrice > Crystals || metalTotalPrice > Metals)
+                return false;
+
+            else return true;
+        }
+
+        else if (prefab.TryGetComponent(out Outpost outpst))
+        {
+            OutpostValues values = outpst.values;
+
+            int metalTotalPrice = values.metalPrice * number;
+            int crystalTotalPrice = values.crystalPrice * number;
+
+            if (crystalTotalPrice > Crystals || metalTotalPrice > Metals)
+                return false;
+
+            else return true;
+        }
+
+        return false;
     }
 }
 

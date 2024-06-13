@@ -1733,6 +1733,7 @@ GameObject:
   - component: {fileID: 8086301693601731191}
   - component: {fileID: 1955824277066690864}
   - component: {fileID: 7794637729945247275}
+  - component: {fileID: -8706461223304523709}
   m_Layer: 7
   m_Name: Battleship
   m_TagString: Ally
@@ -1853,6 +1854,33 @@ BoxCollider:
   serializedVersion: 3
   m_Size: {x: 6.25, y: 5, z: 21.2}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!54 &-8706461223304523709
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 8926111476536506263}
+  serializedVersion: 4
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0
+  m_CenterOfMass: {x: 0, y: 0, z: 0}
+  m_InertiaTensor: {x: 1, y: 1, z: 1}
+  m_InertiaRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ImplicitCom: 0
+  m_ImplicitTensor: 0
+  m_UseGravity: 0
+  m_IsKinematic: 1
+  m_Interpolate: 0
+  m_Constraints: 0
+  m_CollisionDetection: 1
 --- !u!1 &9037690404484567796
 GameObject:
   m_ObjectHideFlags: 0

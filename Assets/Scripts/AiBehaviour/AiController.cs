@@ -3,6 +3,7 @@ using System.Collections;
 using TMPro;
 using Unity.Entities;
 using Unity.VisualScripting;
+using UnityEditor.UIElements;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.Events;
@@ -100,15 +101,15 @@ public abstract class AiController : MonoBehaviour, IInteractable
         if (affiliation == Affiliation.Blue)
         {
             hostileProjectileMask = LayerMask.GetMask("EnemyProjectiles");
-            // target = new TargetData(LayerMask.GetMask("Enemies"));
-            target = new TargetData(6);
+            gameObject.layer = LayerMask.NameToLayer("Allies");
+            target = new TargetData(LayerMask.NameToLayer("Enemies"));
         }
 
         else if (affiliation == Affiliation.Red)
         {
             hostileProjectileMask = LayerMask.GetMask("AllyProjectiles");
-            //target = new TargetData(LayerMask.GetMask("Allies"));
-            target = new TargetData(7);
+            gameObject.layer = LayerMask.NameToLayer("Enemies");
+            target = new TargetData(LayerMask.NameToLayer("Allies"));
         }
 
         AdditionalInit();

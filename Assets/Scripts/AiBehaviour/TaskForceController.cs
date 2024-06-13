@@ -88,6 +88,7 @@ public class TaskForceController : MonoBehaviour
     public UnityEvent<TaskForceBehaviour> onBehaviourChanged = new();
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
+    public UnityEvent<TaskForceController> onTaskForceSpotted = new();
 
     public Affiliation Affiliation { get => affiliation; }
     public State CurrentState {
@@ -641,7 +642,10 @@ public class TaskForceController : MonoBehaviour
         if (targets[closestIndex].TryGetComponent(out MonoBehaviour mono))
         {
             if (mono is AiController controller)
+            {
                 target = controller.UnitTaskForce;
+                onTaskForceSpotted.Invoke(controller.UnitTaskForce);
+            }
 
             else
                 target = mono;

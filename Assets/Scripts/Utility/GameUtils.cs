@@ -107,4 +107,23 @@ public static class GameUtils
         return Vector3.Angle(target - pos.position, pos.forward);
     }
 
+    public static LayerMask SubtractLayerMasks(LayerMask a, LayerMask b)
+    {
+        return a & ~b;
+    }
+
+    public static LayerMask AddLayerMasks(LayerMask a, LayerMask b)
+    {
+        return a | b;
+    }
+
+    public static bool CheckIfContainsLayer(LayerMask layerMask, int layer)
+    {
+        return (layerMask & (1 << layer)) != 0;
+    }
+
+    public static bool CheckIfContainsLayer(LayerMask baseMask, LayerMask checkMask)
+    {
+        return (baseMask & checkMask) == checkMask;
+    }
 }

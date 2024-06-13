@@ -14,7 +14,7 @@ public class FleetPanelController : MonoBehaviour
     public InputControl currentState = InputControl.Normal;
 
     // skrypty do komunikacji
-    public FleetManager fleetManager;
+    public PlayerFleetManager fleetManager;
     public InputManager input;
     public Spawner spawner;
 
@@ -26,14 +26,34 @@ public class FleetPanelController : MonoBehaviour
     public List<TaskForceContainer> allElements = new(); // lista wszystkich elementów scroll listy
     public List<TaskForceContainer> selectedTaskForceContainers = new(); // lista wybranych elementów w scroll liœcie
     public List<TaskForceController> selectedTaskForces = new(); // lista task forców przypadaj¹cych elementom ui
- 
+
+    public SelectUnitButton buttonSelectFrigate;
+    public SelectUnitButton buttonSelectDestroyer;
+    public SelectUnitButton buttonSelectCruiser;
+    public SelectUnitButton buttonSelectBattleship;
+    public SelectUnitButton buttonSelectOutpost;
+
+    public SelectUnitButton currentSelection;
+
     void Start()
     {
         input.OnStateChange.AddListener(ChangeCurrentState); // zmiana stanu na podstawie inputManagera
         buttonMerge.onClick.AddListener(MergeWrapper);
-        spawner.onAllyTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
+        spawner.onTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
+
+        buttonSelectFrigate.onSelect.AddListener(() => SelectButton(buttonSelectFrigate));
+        buttonSelectDestroyer.onSelect.AddListener(() => SelectButton(buttonSelectDestroyer));
+        buttonSelectCruiser.onSelect.AddListener(() => SelectButton(buttonSelectCruiser));
+        buttonSelectBattleship.onSelect.AddListener(() => SelectButton(buttonSelectBattleship));
+        buttonSelectOutpost.onSelect.AddListener(() => SelectButton(buttonSelectOutpost));
     }
 
+    public void SelectButton(SelectUnitButton button)
+    {
+        DeselectAllOtherButtons(button);
+        currentSelection = button;
+        //fleetManager.SetUnitToProcure(button.unitPrefab, button.selectedCount);
+    }
 
     private void ChangeCurrentState(InputControl state)
     {
@@ -153,5 +173,21 @@ public class FleetPanelController : MonoBehaviour
         }
     }
 
+    private void DeselectAllOtherButtons(SelectUnitButton exception)
+    {
+        if (buttonSelectFrigate != exception)
+            buttonSelectFrigate.DeselectMain();
 
+        if (buttonSelectDestroyer != exception)
+            buttonSelectDestroyer.DeselectMain();
+
+        if (buttonSelectCruiser != exception)
+            buttonSelectCruiser.DeselectMain();
+
+        if (buttonSelectBattleship != exception)
+            buttonSelectBattleship.DeselectMain();
+
+        if (buttonSelectOutpost != exception)
+            buttonSelectOutpost.DeselectMain();
+    }
 }

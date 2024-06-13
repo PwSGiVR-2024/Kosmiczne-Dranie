@@ -6,6 +6,6 @@ public class PlayerHeadquarters : Headquarters
 {
     private void Start()
     {
-        spawner.onAllyOutpostSpawned.AddListener((outpost) => outpostNetwork.Add(outpost));
+
     }
 }
