@@ -19,10 +19,23 @@ using Debug = UnityEngine.Debug;
 
 public class TaskForceController : MonoBehaviour
 {
-    //public int frigateCount = 0;
-    //public int destroyerCount = 0;
-    //public int cruiserCount = 0;
-    //public int battleshipCount = 0;
+    public bool frigatesRDY = false;
+    public bool destroyersRDY = false;
+    public bool cruisersRDY = false;
+    public bool battleshipsRDY = false;
+
+    private bool CheckIfReady()
+    {
+        if (frigatesRDY && destroyersRDY && cruisersRDY && battleshipsRDY)
+            return true;
+
+        return false;
+    }
+
+    //public int frigatesCount = 0;
+    //public int destroyersCount = 0;
+    //public int cruisersCount = 0;
+    //public int battleshipsCount = 0;
     public Vector3 currentDestination;
 
 
@@ -33,6 +46,7 @@ public class TaskForceController : MonoBehaviour
 
     // helper attributes
     private bool initialized = false;
+    
 
     private float secondsAfterStop = 0;
     private bool counterRunning = false;
@@ -207,6 +221,8 @@ public class TaskForceController : MonoBehaviour
 
         else if (affiliation == Affiliation.Red)
             targetMask = LayerMask.GetMask("Allies", "AllyOutposts", "PlayerHeadquarters");
+
+
     }
 
     public void AddUnit(AiController unit, bool reinforce=false)
@@ -456,6 +472,8 @@ public class TaskForceController : MonoBehaviour
 
     private void Update()
     {
+        if (!CheckIfReady()) return;
+
         switch (CurrentState)
         {
             case State.Combat:
@@ -664,6 +682,8 @@ public class TaskForceController : MonoBehaviour
 
     public void Engage(MonoBehaviour target)
     {
+        if (!CheckIfReady()) return;
+
         if (target == null)
             return;
 
@@ -677,6 +697,8 @@ public class TaskForceController : MonoBehaviour
 
     public void Disengage(Vector3 escapePoint)
     {
+        if (!CheckIfReady()) return;
+
         CurrentState = State.Retreat;
 
         foreach (var controller in unitControllers)
@@ -692,6 +714,8 @@ public class TaskForceController : MonoBehaviour
     public void SetDestination(Vector3 destination)
     {
         if (destination == currentDestination) return;
+         
+        if (!CheckIfReady()) return;
 
         CurrentState = State.Moving;
         currentDestination = destination;
@@ -737,6 +761,8 @@ public class TaskForceController : MonoBehaviour
         if (reinforcements == this || reinforcements == null)
             return;
 
+        if (!CheckIfReady()) return;
+
         reinforcements.SetDestination(commander.transform.position);
 
         foreach (var controller in reinforcements.unitControllers)
@@ -747,6 +773,11 @@ public class TaskForceController : MonoBehaviour
         onSizeChanged?.Invoke(unitControllers.Count);
         onStrengthChanged?.Invoke(currentStrength);
         reinforcements.DestroyTaskForce();
+    }
+
+    public TaskForceController[] Split()
+    {
+        return null;
     }
 
     private void OnDestroy()
@@ -778,6 +809,8 @@ public class TaskForceController : MonoBehaviour
 
     private void LateUpdate()
     {
+        if (!CheckIfReady()) return;
+
         if (commander)
         {
             GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);

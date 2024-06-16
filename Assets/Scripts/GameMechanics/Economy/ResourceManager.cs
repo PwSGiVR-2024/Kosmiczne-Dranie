@@ -92,10 +92,27 @@ public abstract class ResourceManager : MonoBehaviour
         outpost.onOutpostDestroy.AddListener(() => RemoveMaintenance(outpost.values.maintenancePrice));
     }
 
-    private void RemoveMaintenance(int value)
+    public void RemoveMaintenance(int value)
     {
-        Debug.Log("removing maintenance: " + value);
         Maintenance -= value;
+    }
+
+    public void RemoveResources(TaskForcePreset preset)
+    {
+        Crystals -= preset.crysalsPrice;
+        Metals -= preset.metalsPrice;
+        Maintenance += preset.maintenancePrice;
+    }
+
+    public bool CheckIfHavingResources(TaskForcePreset preset)
+    {
+        if (totalCredits <= 0)
+            return false;
+
+        if (preset.metalsPrice > Metals || preset.crysalsPrice > Crystals)
+            return false;
+
+        return true;
     }
 
     public bool CheckIfHavingResources(GameObject prefab)

@@ -50,16 +50,21 @@ public class EnemyHeadquarters : Headquarters
 
     private void Start()
     {
-        basicPreset = new TaskForcePreset
-        {
-            frigatesCount = 25,
-            destroyersCount = 15,
-            cruisersCount = 6,
-            battleshipsCount = 3
-        };
+        basicPreset = new TaskForcePreset(
+            frigatePrefab: fleetManager.frigatePrefab,
+            destroyerPrefab: fleetManager.destroyerPrefab,
+            cruiserPrefab: fleetManager.cruiserPrefab,
+            battleshipPrefab: fleetManager.battleshipPrefab,
+            frigatesCount: 50,
+            destroyersCount: 24,
+            cruisersCount: 10,
+            battleshipsCount: 4
+            );
 
-        
-
+        Debug.Log(basicPreset.power);
+        Debug.Log(basicPreset.metalsPrice);
+        Debug.Log(basicPreset.crysalsPrice);
+        Debug.Log(basicPreset.maintenancePrice);
 
         sites = FindObjectsOfType<SiteController>();
 
@@ -185,8 +190,8 @@ public class EnemyHeadquarters : Headquarters
 
         while (true)
         {
-            basicPreset.Recruit(fleetManager, transform.position, "enemy task force");
-
+            //basicPreset.Recruit(fleetManager, transform.position, "enemy task force");
+            fleetManager.ProcureTaskForce(basicPreset, transform.position, "enemy task force");
 
             yield return interval;
         }

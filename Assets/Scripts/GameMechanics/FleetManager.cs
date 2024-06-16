@@ -90,6 +90,20 @@ public abstract class FleetManager : MonoBehaviour
         return null;
     }
 
+    public TaskForceController ProcureTaskForce(TaskForcePreset preset, Vector3 position, string name)
+    {
+        if (resources.CheckIfHavingResources(preset))
+        {
+            TaskForceController taskForce = spawner.SpawnTaskForce(preset, position, name);
+            taskForces.Add(taskForce);
+            resources.RemoveResources(preset);
+            taskForce.onTaskForceDestroyed.AddListener((tf) => resources.RemoveMaintenance(preset.maintenancePrice));
+            return taskForce;
+        }
+
+        return null;
+    }
+
     public Outpost ProcureOutpost(GameObject outpostPrefab, Vector3 position, string name)
     {
         if (resources.CheckIfHavingResources(outpostPrefab))
