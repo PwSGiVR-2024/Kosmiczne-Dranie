@@ -44,6 +44,18 @@ public struct TaskForcePreset
         crysalsPrice = 0;
         maintenancePrice = 0;
 
+        UpdateValues();
+    }
+
+    public void UpdateValues()
+    {
+        Debug.Log("updating");
+
+        power = 0;
+        metalsPrice = 0;
+        crysalsPrice = 0;
+        maintenancePrice = 0;
+
         AiController member;
 
         if (battleshipsCount > 0 && battleshipPrefab)
@@ -54,6 +66,7 @@ public struct TaskForcePreset
             crysalsPrice += member.Values.crystalPrice * battleshipsCount;
             maintenancePrice += member.Values.maintenancePrice * battleshipsCount;
         }
+        else battleshipsCount = 0;
 
         if (cruisersCount > 0 && cruiserPrefab)
         {
@@ -63,6 +76,7 @@ public struct TaskForcePreset
             crysalsPrice += member.Values.crystalPrice * cruisersCount;
             maintenancePrice += member.Values.maintenancePrice * cruisersCount;
         }
+        else cruisersCount = 0;
 
         if (destroyersCount > 0 && destroyerPrefab)
         {
@@ -72,6 +86,7 @@ public struct TaskForcePreset
             crysalsPrice += member.Values.crystalPrice * destroyersCount;
             maintenancePrice += member.Values.maintenancePrice * destroyersCount;
         }
+        else destroyersCount = 0;
 
         if (frigatesCount > 0 && frigatePrefab)
         {
@@ -81,6 +96,7 @@ public struct TaskForcePreset
             crysalsPrice += member.Values.crystalPrice * frigatesCount;
             maintenancePrice += member.Values.maintenancePrice * frigatesCount;
         }
+        else frigatesCount = 0;
     }
     //public TaskForceController Recruit(EnemyFleetManager manager, Vector3 pos, string name)
     //{

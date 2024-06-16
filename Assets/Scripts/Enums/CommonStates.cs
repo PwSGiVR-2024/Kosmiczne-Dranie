@@ -36,5 +36,6 @@ public enum ShipClass
     Frigate,
     Destroyer,
     Cruiser,
-    Battleship
+    Battleship,
+    Outpost
 }

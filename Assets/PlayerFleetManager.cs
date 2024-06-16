@@ -31,44 +31,49 @@ public class PlayerFleetManager : FleetManager
             return;
         }
 
-        if (fleetPanelController.currentSelection.unitPrefab == null)
-            return;
+        if (fleetPanelController.spawnOutpost && CheckIfPositionViable(position, fleetPanelController.buttonSelectOutpost.unitPrefab.GetComponent<Outpost>()))
+            ProcureOutpost(fleetPanelController.buttonSelectOutpost.unitPrefab, position, outpostNames.GetRandomName());
 
-        if (CheckIfPositionViable(position, fleetPanelController.currentSelection.unitPrefab))
-        {
-            if (fleetPanelController.currentSelection.isOutpost)
-                ProcureOutpost(fleetPanelController.currentSelection.unitPrefab, position, outpostNames.GetRandomName());
+        else if (CheckIfPositionViable(position, fleetPanelController.currentPreset))
+            ProcureTaskForce(fleetPanelController.currentPreset, position, taskForceNames.GetRandomName());
 
-            else ProcureTaskForce(fleetPanelController.currentSelection.unitPrefab, position, fleetPanelController.currentSelection.selectedCount, taskForceNames.GetRandomName());
-        }
+
+
+        //if (fleetPanelController.currentSelection.unitPrefab == null)
+        //    return;
+
+            //if (CheckIfPositionViable(position, fleetPanelController.currentSelection.unitPrefab))
+            //{
+            //    if (fleetPanelController.currentSelection.isOutpost)
+            //        ProcureOutpost(fleetPanelController.currentSelection.unitPrefab, position, outpostNames.GetRandomName());
+
+            //    else ProcureTaskForce(fleetPanelController.currentSelection.unitPrefab, position, fleetPanelController.currentSelection.selectedCount, taskForceNames.GetRandomName());
+            //}
     }
 
-    private bool CheckIfPositionViable(Vector3 pos, GameObject prefabToSpawn)
+    private bool CheckIfPositionViable(Vector3 pos, Outpost outpostToSpawn)
     {
-        if (prefabToSpawn.TryGetComponent(out Outpost outpostToSpawn))
+        if (Vector3.Distance(pos, headquarters.transform.position) <= headquarters.range + outpostToSpawn.values.range)
+            return true;
+
+        foreach (Outpost outpost in outposts)
         {
-            if (Vector3.Distance(pos, headquarters.transform.position) <= headquarters.range + outpostToSpawn.values.range)
+            if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range + outpostToSpawn.values.range)
                 return true;
-
-            foreach (Outpost outpost in outposts)
-            {
-                if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range + outpostToSpawn.values.range)
-                    return true;
-            }
         }
+        return false;
+    }
 
-        if (prefabToSpawn.TryGetComponent(out AiController _))
+    private bool CheckIfPositionViable(Vector3 pos, TaskForcePreset preset)
+    {
+        if (Vector3.Distance(pos, headquarters.transform.position) <= headquarters.range)
+            return true;
+
+        foreach (Outpost outpost in outposts)
         {
-            if (Vector3.Distance(pos, headquarters.transform.position) <= headquarters.range)
+            if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range)
                 return true;
-
-            foreach (Outpost outpost in outposts)
-            {
-                if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range)
-                    return true;
-            }
         }
-
         return false;
     }
 

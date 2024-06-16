@@ -7,8 +7,11 @@ using UnityEngine.UI;
 
 public class SelectUnitButton : MonoBehaviour
 {
+    // assign in inspector
+    public ShipClass shipClass;
 
     public GameObject unitPrefab;
+    public AiController prefabController;
     public bool isOutpost = false;
 
 
@@ -16,7 +19,7 @@ public class SelectUnitButton : MonoBehaviour
 
     public Button mainButton;
     public bool selected = false;
-    public int selectedCount = 1;
+    public int selectedCount = 0;
 
     public Button selectX1;
     public Button selectX10;
@@ -27,16 +30,26 @@ public class SelectUnitButton : MonoBehaviour
     public Color selectedMainColor;
 
     public UnityEvent onSelect = new();
+    public UnityEvent onDeselect = new();
+    public UnityEvent onCountChange = new();
 
     private void Start()
     {
-        if (unitPrefab.TryGetComponent(out Outpost _))
+        if (unitPrefab.TryGetComponent(out Outpost outpost))
+        {
             isOutpost = true;
+        }
 
-        else isOutpost = false;
+        else if (unitPrefab.TryGetComponent(out AiController unit))
+        {
+            prefabController = unit;
+            isOutpost = false;
+        }
 
         normalMainColor = image.color;
         mainButton.onClick.AddListener(ToggleSelect);
+
+        
 
         selectX1?.onClick.AddListener(() => SelectCountButton(selectX1, 1));
         selectX10?.onClick.AddListener(() => SelectCountButton(selectX10, 10));
@@ -62,6 +75,7 @@ public class SelectUnitButton : MonoBehaviour
     {
         selected = false;
         image.color = normalMainColor;
+        onDeselect.Invoke();
     }
 
     private void SelectCountButton(Button button, int count)
@@ -74,6 +88,8 @@ public class SelectUnitButton : MonoBehaviour
         DeselectCountButton(selectX100);
 
         button.image.color = button.colors.selectedColor;
+
+        onCountChange.Invoke();
     }
 
     private void DeselectCountButton(Button button)

@@ -10,6 +10,22 @@ using static FleetManager;
 // skrypt odpowiada za panel UI, odpowiadaj¹cy za sterowanie flot¹ (w projekcie ScreenSpaceCanvas -> FleetPanel)
 public class FleetPanelController : MonoBehaviour
 {
+    public bool spawnOutpost = false;
+
+    public TaskForcePreset currentPreset;
+    public int presetPower;
+    public int presetMetalsPrice;
+    public int presetCrystalsPrice;
+    public int presetMaintenancePrice;
+    public int presetFrigates;
+    public int presetDestroyers;
+    public int presetCruisers;
+    public int presetBattleships;
+    public GameObject presetFrigte;
+    public GameObject presetDestroyer;
+    public GameObject presetCruiser;
+    public GameObject presetBattleship;
+
     // enum z InputManagera, bo ten skrypt te¿ oferuje alternatywne sterowanie
     public InputControl currentState = InputControl.Normal;
 
@@ -33,10 +49,21 @@ public class FleetPanelController : MonoBehaviour
     public SelectUnitButton buttonSelectBattleship;
     public SelectUnitButton buttonSelectOutpost;
 
-    public SelectUnitButton currentSelection;
+    //public SelectUnitButton currentSelection;
 
     void Start()
     {
+        currentPreset = new TaskForcePreset(
+            frigatePrefab: null,
+            destroyerPrefab: null,
+            cruiserPrefab: null,
+            battleshipPrefab: null,
+            frigatesCount: 0,
+            destroyersCount: 0,
+            cruisersCount: 0,
+            battleshipsCount: 0
+            );
+
         input.OnStateChange.AddListener(ChangeCurrentState); // zmiana stanu na podstawie inputManagera
         buttonMerge.onClick.AddListener(MergeWrapper);
         spawner.onTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
@@ -46,12 +73,108 @@ public class FleetPanelController : MonoBehaviour
         buttonSelectCruiser.onSelect.AddListener(() => SelectButton(buttonSelectCruiser));
         buttonSelectBattleship.onSelect.AddListener(() => SelectButton(buttonSelectBattleship));
         buttonSelectOutpost.onSelect.AddListener(() => SelectButton(buttonSelectOutpost));
+
+        buttonSelectFrigate.onDeselect.AddListener(() => DeselectButton(buttonSelectFrigate));
+        buttonSelectDestroyer.onDeselect.AddListener(() => DeselectButton(buttonSelectDestroyer));
+        buttonSelectCruiser.onDeselect.AddListener(() => DeselectButton(buttonSelectCruiser));
+        buttonSelectBattleship.onDeselect.AddListener(() => DeselectButton(buttonSelectBattleship));
+        buttonSelectOutpost.onDeselect.AddListener(() => DeselectButton(buttonSelectOutpost));
     }
 
     public void SelectButton(SelectUnitButton button)
     {
-        DeselectAllOtherButtons(button);
-        currentSelection = button;
+        switch (button.shipClass)
+        {
+            case ShipClass.Outpost:
+                spawnOutpost = true;
+                return;
+
+            case ShipClass.Frigate:
+                button.onCountChange.AddListener(() => {
+                    currentPreset.frigatesCount = button.selectedCount;
+                    currentPreset.UpdateValues();
+                });
+                currentPreset.frigatePrefab = button.unitPrefab;
+                currentPreset.frigatesCount = button.selectedCount;
+                currentPreset.UpdateValues();
+                break;
+
+            case ShipClass.Destroyer:
+                button.onCountChange.AddListener(() => {
+                    currentPreset.destroyersCount = button.selectedCount;
+                    currentPreset.UpdateValues();
+                });
+                currentPreset.destroyerPrefab = button.unitPrefab;
+                currentPreset.destroyersCount = button.selectedCount;
+                currentPreset.UpdateValues();
+                break;
+
+            case ShipClass.Cruiser:
+                button.onCountChange.AddListener(() => {
+                    currentPreset.cruisersCount = button.selectedCount;
+                    currentPreset.UpdateValues();
+                });
+                currentPreset.cruiserPrefab = button.unitPrefab;
+                currentPreset.cruisersCount = button.selectedCount;
+                currentPreset.UpdateValues();
+                break;
+
+            case ShipClass.Battleship:
+                button.onCountChange.AddListener(() => {
+                    currentPreset.battleshipsCount = button.selectedCount;
+                    currentPreset.UpdateValues();
+                });
+                currentPreset.battleshipPrefab = button.unitPrefab;
+                currentPreset.battleshipsCount = button.selectedCount;
+                currentPreset.UpdateValues();
+                break;
+        }
+
+        //DeselectAllOtherButtons(button);
+        //currentSelection = button;
+        //fleetManager.SetUnitToProcure(button.unitPrefab, button.selectedCount);
+    }
+
+    public void DeselectButton(SelectUnitButton button)
+    {
+        switch (button.shipClass)
+        {
+            case ShipClass.Outpost:
+                spawnOutpost = false;
+                return;
+
+            case ShipClass.Frigate:
+                currentPreset.frigatePrefab = null;
+                currentPreset.UpdateValues();
+                button.onCountChange.RemoveAllListeners();
+                break;
+
+            case ShipClass.Destroyer:
+                currentPreset.destroyerPrefab = null;
+                currentPreset.UpdateValues();
+                button.onCountChange.RemoveAllListeners();
+                break;
+
+            case ShipClass.Cruiser:
+                currentPreset.cruiserPrefab = null;
+                currentPreset.UpdateValues();
+                button.onCountChange.RemoveAllListeners();
+                break;
+
+            case ShipClass.Battleship:
+                currentPreset.battleshipPrefab = null;
+                currentPreset.UpdateValues();
+                button.onCountChange.RemoveAllListeners();
+                break;
+        }
+
+        //currentPreset.power -= button.prefabController.Values.power * button.selectedCount;
+        //currentPreset.metalsPrice -= button.prefabController.Values.metalPrice * button.selectedCount;
+        //currentPreset.crysalsPrice -= button.prefabController.Values.crystalPrice * button.selectedCount;
+        //currentPreset.maintenancePrice -= button.prefabController.Values.maintenancePrice * button.selectedCount;
+
+        //DeselectAllOtherButtons(button);
+        //currentSelection = button;
         //fleetManager.SetUnitToProcure(button.unitPrefab, button.selectedCount);
     }
 
@@ -189,5 +312,23 @@ public class FleetPanelController : MonoBehaviour
 
         if (buttonSelectOutpost != exception)
             buttonSelectOutpost.DeselectMain();
+    }
+
+    private void Update()
+    {
+        presetPower = currentPreset.power;
+        presetMetalsPrice = currentPreset.metalsPrice;
+        presetCrystalsPrice = currentPreset.crysalsPrice;
+        presetMaintenancePrice = currentPreset.maintenancePrice;
+
+        presetFrigates = currentPreset.frigatesCount;
+        presetDestroyers = currentPreset.destroyersCount;
+        presetCruisers = currentPreset.cruisersCount;
+        presetBattleships = currentPreset.battleshipsCount;
+
+        presetFrigte = currentPreset.frigatePrefab;
+        presetDestroyer = currentPreset.destroyerPrefab;
+        presetCruiser = currentPreset.cruiserPrefab;
+        presetBattleship = currentPreset.battleshipPrefab;
     }
 }
