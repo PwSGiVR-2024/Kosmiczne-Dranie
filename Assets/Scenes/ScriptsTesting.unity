@@ -1368,6 +1368,10 @@ PrefabInstance:
       value: 
       objectReference: {fileID: 0}
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
+      propertyPath: shipClass
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: mainButton
       value: 
       objectReference: {fileID: 773140735}
@@ -2954,6 +2958,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bfef5584f4ddd24c8f307b97382994d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  spawnOutpost: 0
+  presetPower: 0
+  presetMetalsPrice: 0
+  presetCrystalsPrice: 0
+  presetMaintenancePrice: 0
+  presetFrigates: 0
+  presetDestroyers: 0
+  presetCruisers: 0
+  presetBattleships: 0
+  presetFrigte: {fileID: 0}
+  presetDestroyer: {fileID: 0}
+  presetCruiser: {fileID: 0}
+  presetBattleship: {fileID: 0}
   currentState: 0
   fleetManager: {fileID: 2020270633}
   input: {fileID: 1203598361}
@@ -2968,7 +2985,6 @@ MonoBehaviour:
   buttonSelectCruiser: {fileID: 1338167974}
   buttonSelectBattleship: {fileID: 759458763}
   buttonSelectOutpost: {fileID: 250138293}
-  currentSelection: {fileID: 0}
 --- !u!1 &647084729
 GameObject:
   m_ObjectHideFlags: 0
@@ -3566,6 +3582,10 @@ PrefabInstance:
     - target: {fileID: 3814500385401253195, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
+      propertyPath: shipClass
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: mainButton
@@ -5147,6 +5167,10 @@ PrefabInstance:
       value: 2
       objectReference: {fileID: 0}
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
+      propertyPath: shipClass
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: mainButton
       value: 
       objectReference: {fileID: 1934030723}
@@ -6155,6 +6179,10 @@ PrefabInstance:
     - target: {fileID: 3814500385401253195, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Delegates.Array.data[0].callback.m_PersistentCalls.m_Calls.Array.data[0].m_CallState
       value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
+      propertyPath: shipClass
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: mainButton
