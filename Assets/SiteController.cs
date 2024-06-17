@@ -15,6 +15,7 @@ public class SiteController : MonoBehaviour
     public LayerMask attackerMask;
     public Affiliation currentController = Affiliation.None;
     public Affiliation attacker = Affiliation.None;
+    public Affiliation previousControler = Affiliation.None;
 
     public ResourceHolder[] resources;
 
@@ -95,6 +96,7 @@ public class SiteController : MonoBehaviour
             if (timeLeft <= 0)
             {
                 // reset values and set controller
+                previousControler = currentController;
                 currentController = attacker;
                 capturing = false;
                 attackerMask = 0;

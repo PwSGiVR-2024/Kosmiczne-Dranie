@@ -65,7 +65,7 @@ public class DialogHandler : MonoBehaviour
                     break;
             }
         }
-        else if (site.currentController == Affiliation.Red)
+        else if (site.currentController == Affiliation.Red && site.previousControler == Affiliation.Blue)
         {
             switch (site.gameObject.name)
             {
