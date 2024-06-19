@@ -1,34 +1,28 @@
 using UnityEngine;
+using static UnityEngine.GraphicsBuffer;
 
 public class MapMovement : MonoBehaviour
 {
-
-    public float minZoom = 20.0f; //Minimalna wartoœæ Zooma
-    public float maxZoom = 100.0f; //Maksymalna wartoœæ Zooma
-    public float zoomSpeed = 10.0f; 
-    public float moveSpeed = 10.0f;
+    public float zoomSpeed = 30000.0f;
+    public float moveSpeed = 100.0f;
     public float dragSpeed = 20.0f;
-    public KeyCode modifierKey = KeyCode.LeftControl;
-    private float minFOV;
-    private float maxFOV;
+    public KeyCode modifierKey = KeyCode.LeftControl; //trzeba równie¿ zmieniæ w UnitSelector.cs
+    public float distanceToTarget = 10;
+
 
     private bool isDragging = false;
     private Vector3 lastPosition;
+    private KeyCode modifierMouseKey = KeyCode.Mouse1;
+    private Vector3 previousPosition;
 
-    void Start()
-    {
-        minFOV = minZoom;
-        maxFOV = maxZoom;
-        // Ustawienia wartoœci minFOV i maxFOV na podstawie ustawieñ pocz¹tkowych kamery
-        //minFOV = Camera.main.fieldOfView / 2f;
-        //maxFOV = Camera.main.fieldOfView * 2f;
-    }
-
+    
     void Update()
     {
         mouseMovement();
         WASDMovement();
-        zoomMovement();
+        ZoomMovement();
+        Roatato();
+        // RotateMovement();
     }
 
     void mouseMovement()
@@ -37,14 +31,14 @@ public class MapMovement : MonoBehaviour
         bool isModifierKeyPressed = Input.GetKey(modifierKey);
 
         // Jeœli naciœniêty jest prawy przycisk myszy i klawisz modyfikatora, w³¹cz tryb przeci¹gania
-        if (Input.GetMouseButtonDown(1) && isModifierKeyPressed)
+        if (Input.GetMouseButtonDown(0) && isModifierKeyPressed)
         {
             isDragging = true;
             lastPosition = Input.mousePosition;
         }
 
         // Jeœli przycisk myszy zosta³ puszczony, wy³¹cz tryb przeci¹gania
-        if (Input.GetMouseButtonUp(1))
+        if (Input.GetMouseButtonUp(0))
         {
             isDragging = false;
         }
@@ -70,16 +64,45 @@ public class MapMovement : MonoBehaviour
         transform.Translate(movement);
     }
 
-    void zoomMovement()
+    void ZoomMovement()
     {
         // Input Scroll'a
         float zoomInput = Input.GetAxis("Mouse ScrollWheel");
 
-        // Zmniejsz lub zwiêksz pole widzenia (FOV) kamery w zale¿noœci od wartoœci wejœcia
-        Camera.main.fieldOfView += zoomInput * zoomSpeed;
+        Vector3 movement = new Vector3(0, 0, zoomInput) * zoomSpeed * Time.deltaTime;
+        transform.Translate(movement);
+    }
+    void Roatato()
+    {
+        bool isModifierKeyPressed = Input.GetKey(modifierKey);
+        bool dragInput = Input.GetKey(modifierMouseKey);
 
-        // Ogranicz wartoœæ pola widzenia, aby nie wykracza³o poza okreœlone zakresy (np. 20 - 100 stopni) -- Ustawiaæ za pomoc¹ mix-max wartoœci zooma
-        Camera.main.fieldOfView = Mathf.Clamp(Camera.main.fieldOfView, minFOV, maxFOV);
 
+        if (dragInput)
+        {
+            if (Input.GetMouseButtonDown(1) && !isModifierKeyPressed)
+            {
+                previousPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+            }
+            else if (Input.GetMouseButton(1) && !isModifierKeyPressed)
+            {
+                Vector3 newPosition = Camera.main.ScreenToViewportPoint(Input.mousePosition);
+                Vector3 direction = previousPosition - newPosition;
+
+                float rotationAroundYAxis = -direction.x * 150; //prêdkoœæ poruszania Y
+                float rotationAroundXAxis = direction.y * 150;  //prêdkoœæ poruszania X
+                
+                float currentRotationX = transform.eulerAngles.x;
+                // Oblicz nowy k¹t rotacji, uwzglêdniaj¹c ograniczenia
+                float newRotationX = currentRotationX + rotationAroundXAxis;
+
+                newRotationX = Mathf.Clamp(newRotationX, 0.0f, 90.0f);
+
+                // Ustaw now¹ rotacjê, ale z ograniczonym k¹tem wokó³ osi X
+                transform.eulerAngles = new Vector3(newRotationX, transform.eulerAngles.y + rotationAroundYAxis, transform.eulerAngles.z);
+
+                previousPosition = newPosition;
+            }
+        }
     }
 }
