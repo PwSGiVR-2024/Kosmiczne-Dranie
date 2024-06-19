@@ -55,10 +55,10 @@ public class EnemyHeadquarters : Headquarters
             destroyerPrefab: fleetManager.destroyerPrefab,
             cruiserPrefab: fleetManager.cruiserPrefab,
             battleshipPrefab: fleetManager.battleshipPrefab,
-            frigatesCount: 50,
-            destroyersCount: 24,
-            cruisersCount: 10,
-            battleshipsCount: 4
+            frigatesCount: 20,
+            destroyersCount: 1,
+            cruisersCount: 1,
+            battleshipsCount: 1
             );
 
         Debug.Log(basicPreset.power);
