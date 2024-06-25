@@ -11,15 +11,25 @@ public class ScrollableList : MonoBehaviour
     
     public GameObject container; // gameObject przechowuj¹cy elementy listy
     public GameObject elementPrefab; // element listy
+    public List<GameObject> elementsList = new List<GameObject>();
 
     public GameObject CreateAndAddElement()
     {
         GameObject element = Instantiate(elementPrefab, container.transform);
+        elementsList.Add(element);
         return element;
+    }
+    public void CheckElementsList()
+    {
+        foreach (GameObject element in elementsList)
+        {
+            Debug.Log("Nazwa elementu: " + element.name);
+        }
     }
 
     public void RemoveElement(GameObject element)
     {
+        elementsList.Remove(element);
         Destroy(element);
     }
 
@@ -29,8 +39,17 @@ public class ScrollableList : MonoBehaviour
 
     }
 
-    public void ShowElement(GameObject element)
+    public void ToggleSelectForElement(GameObject element)
     {
-        element.SetActive(true);
+        var selectScript = element.GetComponent<TaskForceContainer>();
+
+        if (selectScript != null)
+        {
+            selectScript.ToggleSelect();
+        }
+    }
+    public List<GameObject> GetElementsList()
+    {
+        return elementsList;
     }
 }

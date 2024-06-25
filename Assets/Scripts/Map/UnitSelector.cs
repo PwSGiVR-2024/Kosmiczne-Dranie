@@ -13,9 +13,11 @@ public class SelectionBox : MonoBehaviour
     private Camera mainCamera;
     private List<TaskForceHUD> selectedObjects = new List<TaskForceHUD>();
     public KeyCode modifierKey = KeyCode.LeftControl;  //trzeba równie¿ zmieniæ w MapMovement.cs
+    private ScrollableList ScrollableListInstance;
 
     void Start()
     {
+        ScrollableListInstance = FindAnyObjectByType<ScrollableList>();
         if (selectionBoxImage != null)
         {
             selectionBoxRectTransform = selectionBoxImage.GetComponent<RectTransform>();
@@ -81,19 +83,31 @@ public class SelectionBox : MonoBehaviour
     }
     void SelectObjectsInArea()
     {
-        Vector2 min = selectionBoxRectTransform.anchoredPosition - (selectionBoxRectTransform.sizeDelta / 2);
-        Vector2 max = selectionBoxRectTransform.anchoredPosition + (selectionBoxRectTransform.sizeDelta / 2);
+        Rect selectionRect = new Rect(
+            selectionBoxRectTransform.anchoredPosition - (selectionBoxRectTransform.sizeDelta / 2),
+            selectionBoxRectTransform.sizeDelta);
 
         selectedObjects.Clear(); // Czyœcimy listê zaznaczonych obiektów
 
-        foreach (var hud in FindObjectsOfType<TaskForceHUD>())
+        //var element;
+
+        TaskForceHUD[] taskForceHUDs = FindObjectsOfType<TaskForceHUD>();
+
+        foreach (var hud in taskForceHUDs)
         {
             Vector3 screenPos = mainCamera.WorldToScreenPoint(hud.transform.position);
-            if (screenPos.x > min.x && screenPos.x < max.x && screenPos.y > min.y && screenPos.y < max.y)
+            if (selectionRect.Contains(screenPos))
             {
                 // Obiekt jest w zaznaczonym obszarze
                 selectedObjects.Add(hud);
                 hud.onSelect.Invoke(); // Wywo³aj UnityEvent onSelect
+
+
+                //ScrollableListInstance.ToggleSelectForElement(element);
+                foreach (var element in ScrollableListInstance.elementsList)
+                {
+                    ScrollableListInstance.ToggleSelectForElement(element);
+                }
             }
         }
     }

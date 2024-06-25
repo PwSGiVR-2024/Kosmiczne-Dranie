@@ -3,8 +3,8 @@ using static UnityEngine.GraphicsBuffer;
 
 public class MapMovement : MonoBehaviour
 {
-    public float zoomSpeed = 30000.0f;
-    public float moveSpeed = 100.0f;
+    public float zoomSpeed = 60000.0f;
+    public float moveSpeed = 2000.0f;
     public float dragSpeed = 20.0f;
     public KeyCode modifierKey = KeyCode.LeftControl; //trzeba równie¿ zmieniæ w UnitSelector.cs
     public float distanceToTarget = 10;
