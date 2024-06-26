@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.07229945, g: 0.050654814, b: 0.034133077, a: 1}
+  m_IndirectSpecularColor: {r: 0.07231705, g: 0.050671093, b: 0.034150615, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -175,7 +175,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 450
+  value: 4000
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 2000
+  value: 150
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -209,7 +209,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 200
+  value: 20
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1119,7 +1119,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 100
+  value: 10
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1136,7 +1136,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 200
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1153,7 +1153,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 1000
+  value: 100
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1188,7 +1188,7 @@ Transform:
   m_GameObject: {fileID: 247655023}
   serializedVersion: 2
   m_LocalRotation: {x: -0, y: -0, z: -0, w: 1}
-  m_LocalPosition: {x: 377, y: 0, z: 1841}
+  m_LocalPosition: {x: 377, y: 0, z: 1931}
   m_LocalScale: {x: 100, y: 1, z: 100}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1208,7 +1208,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 600
+  value: 4000
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1225,7 +1225,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 2500
+  value: 200
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1242,7 +1242,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 120
+  value: 20
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -1745,7 +1745,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a89e30fee6c6a6c49ab4ee1987d4d52d, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 563.53326
+      value: 441
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: a89e30fee6c6a6c49ab4ee1987d4d52d, type: 3}
       propertyPath: m_LocalPosition.y
@@ -2531,7 +2531,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 300
+  value: 3000
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -2548,7 +2548,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 1700
+  value: 125
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -2565,7 +2565,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 150
+  value: 15
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4344,7 +4344,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 220
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4361,7 +4361,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 1000
+  value: 100
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4378,7 +4378,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 70
+  value: 10
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -5262,7 +5262,7 @@ Camera:
     width: 1
     height: 1
   near clip plane: 0.3
-  far clip plane: 1000
+  far clip plane: 1000000
   field of view: 64.4
   orthographic: 0
   orthographic size: 5
@@ -5308,12 +5308,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0de6006d1b17ce848990f032d534047c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minZoom: 20
-  maxZoom: 100
   zoomSpeed: 10
   moveSpeed: 100
   dragSpeed: 200
   modifierKey: 306
+  distanceToTarget: 10
 --- !u!1 &1035458383
 GameObject:
   m_ObjectHideFlags: 0
@@ -5474,6 +5473,7 @@ MonoBehaviour:
   fleetManager: {fileID: 524505708}
   playerHeadquarters: {fileID: 458003957}
   spawner: {fileID: 2098798327}
+  spawnCooldown: 30
   manager: {fileID: 1668784700}
   sites: []
   capturedSites: []
@@ -5885,11 +5885,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d451cda33420574f9c75b25f9ad1399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gatherInterval: 3
+  multiplier: 1
+  gatherInterval: 1
   allResources: []
   currentResources: []
-  totalMetal: 9999999
-  totalCrystal: 9999999
+  totalMetal: 8000
+  totalCrystal: 600
   totalCredits: 9999999
   totalMaintenance: 0
   crystalsValue: 0
@@ -6803,7 +6804,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 2
-  value: 600
+  value: 5000
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -6820,7 +6821,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 1
-  value: 3000
+  value: 250
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -6837,7 +6838,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   zoneResource: 0
-  value: 300
+  value: 30
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -7496,11 +7497,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e41c2f41436ef4fb7ec5c63f271e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  multiplier: 1
   gatherInterval: 10
   allResources: []
   currentResources: []
-  totalMetal: 3500
-  totalCrystal: 250
+  totalMetal: 8000
+  totalCrystal: 600
   totalCredits: 1000
   totalMaintenance: 0
   crystalsValue: 0

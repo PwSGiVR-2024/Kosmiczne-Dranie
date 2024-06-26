@@ -10,6 +10,9 @@ using static UnityEditor.Rendering.CameraUI;
 
 public abstract class ResourceManager : MonoBehaviour
 {
+    public float multiplier = 1.0f;
+
+
     public float gatherInterval = 3.0f;
     public ResourceHolder[] allResources;
     public List<ResourceHolder> currentResources = new();
@@ -49,15 +52,15 @@ public abstract class ResourceManager : MonoBehaviour
                 switch (resource.zoneResource)
                 {
                     case ResourceHolder.ResourceType.Crystals:
-                        Crystals += resource.value;
+                        Crystals += (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Metals:
-                        Metals += resource.value;
+                        Metals += (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Credits:
-                        Credits += resource.value;
+                        Credits += (int)(resource.value * multiplier);
                         break;
                 }
             }

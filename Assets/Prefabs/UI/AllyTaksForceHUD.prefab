@@ -384,9 +384,9 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 485141758553000280}
-  - component: {fileID: 7954149202007255136}
   - component: {fileID: 2262937769838649771}
   - component: {fileID: 3054893891278931235}
+  - component: {fileID: 2395545030215033421}
   m_Layer: 5
   m_Name: AllyTaksForceHUD
   m_TagString: TaskForceHUD
@@ -418,25 +418,6 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 417.6, y: 116.4}
   m_Pivot: {x: 0.5, y: 0.5}
---- !u!114 &7954149202007255136
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5545485992319899636}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a110f1443b419a745a24b741bc0f52fe, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  owner: {fileID: 0}
-  healthBar: {fileID: 7086464228856669646}
-  strengthBar: {fileID: 1676470205294369264}
-  offset: {x: 0, y: 20, z: 0}
-  onSelect:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!222 &2262937769838649771
 CanvasRenderer:
   m_ObjectHideFlags: 0
@@ -475,3 +456,22 @@ MonoBehaviour:
   m_FillOrigin: 0
   m_UseSpriteMesh: 0
   m_PixelsPerUnitMultiplier: 1
+--- !u!114 &2395545030215033421
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5545485992319899636}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c5d3d65d65a52f04da09195bfea985f8, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  owner: {fileID: 0}
+  healthBar: {fileID: 7086464228856669646}
+  strengthBar: {fileID: 1676470205294369264}
+  offset: {x: 0, y: 20, z: 0}
+  onSelect:
+    m_PersistentCalls:
+      m_Calls: []

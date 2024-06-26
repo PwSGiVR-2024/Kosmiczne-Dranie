@@ -58,7 +58,13 @@ public class PlayerFleetManager : FleetManager
 
         foreach (Outpost outpost in outposts)
         {
-            if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range + outpostToSpawn.values.range)
+            if (Vector3.Distance(pos, outpost.transform.position) <= outpost.range)
+                return false;
+        }
+
+        foreach (TaskForceController taskForce in taskForces)
+        {
+            if (Vector3.Distance(pos, taskForce.Commander.transform.position) <= taskForce.spotDistance)
                 return true;
         }
         return false;

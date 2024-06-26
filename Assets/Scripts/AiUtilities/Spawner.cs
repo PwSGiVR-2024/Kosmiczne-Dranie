@@ -108,7 +108,7 @@ public class Spawner : MonoBehaviour
 
         onTaskForceSpawned.Invoke(taskForce);
 
-        TaskForceHUD.Create(taskForce, taskForceHUD, gameManager);
+        HUDController.Create(taskForce, taskForceHUD, gameManager);
         return taskForce;
     }
 
@@ -145,7 +145,7 @@ public class Spawner : MonoBehaviour
 
         onTaskForceSpawned.Invoke(taskForce);
 
-        TaskForceHUD.Create(taskForce, taskForceHUD, gameManager);
+        HUDController.Create(taskForce, taskForceHUD, gameManager);
 
         // spawn over many frames, does not create lag, but is slow
         // once given type of unit is spawned, callback is invoked
@@ -273,7 +273,7 @@ public class Spawner : MonoBehaviour
         Outpost outpost = Outpost.Create(position, outpostPrefab, affiliation, gameManager).GetComponent<Outpost>();
         outpost.gameObject.name = name + outpostCount;
         outpost.transform.SetParent(outpostsContainer.transform, true);
-        TaskForceHUD.Create(outpost, taskForceHUD, gameManager);
+        HUDController.Create(outpost, taskForceHUD, gameManager);
 
         onOutpostSpawned.Invoke(outpost);
 

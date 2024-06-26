@@ -5,11 +5,19 @@ using UnityEngine;
 
 public class EnemyHeadquarters : Headquarters
 {
-    private TaskForcePreset basicPreset;
+    private Dictionary<string, int> taskForcesCounts = new();
+
+    private TaskForcePreset scoutPreset;
+    private TaskForcePreset earlyPreset;
+    private TaskForcePreset midPreset;
+    private TaskForcePreset latePreset;
+
     public EnemyFleetManager fleetManager;
     public PlayerHeadquarters playerHeadquarters;
 
     public Spawner spawner;
+
+    public int spawnCooldown = 30;
 
     public class Target
     {
@@ -48,23 +56,68 @@ public class EnemyHeadquarters : Headquarters
     public List<TaskForceController> enemyTaskForces = new();
     public List<Target> targets = new();
 
-    private void Start()
+    private void Awake()
     {
-        basicPreset = new TaskForcePreset(
+        scoutPreset = new TaskForcePreset(
+            frigatePrefab: fleetManager.frigatePrefab,
+            destroyerPrefab: null,
+            cruiserPrefab: null,
+            battleshipPrefab: null,
+            frigatesCount: 1,
+            destroyersCount: 0,
+            cruisersCount: 0,
+            battleshipsCount: 0);
+
+        earlyPreset = new TaskForcePreset(
+            frigatePrefab: fleetManager.frigatePrefab,
+            destroyerPrefab: fleetManager.destroyerPrefab,
+            cruiserPrefab: null,
+            battleshipPrefab: null,
+            frigatesCount: 4,
+            destroyersCount: 1,
+            cruisersCount: 0,
+            battleshipsCount: 0);
+
+        midPreset = new TaskForcePreset(
+            frigatePrefab: fleetManager.frigatePrefab,
+            destroyerPrefab: fleetManager.destroyerPrefab,
+            cruiserPrefab: fleetManager.cruiserPrefab,
+            battleshipPrefab: null,
+            frigatesCount: 8,
+            destroyersCount: 4,
+            cruisersCount: 1,
+            battleshipsCount: 0);
+
+        latePreset = new TaskForcePreset(
             frigatePrefab: fleetManager.frigatePrefab,
             destroyerPrefab: fleetManager.destroyerPrefab,
             cruiserPrefab: fleetManager.cruiserPrefab,
             battleshipPrefab: fleetManager.battleshipPrefab,
-            frigatesCount: 20,
-            destroyersCount: 1,
-            cruisersCount: 1,
-            battleshipsCount: 1
-            );
+            frigatesCount: 16,
+            destroyersCount: 8,
+            cruisersCount: 4,
+            battleshipsCount: 1);
 
-        Debug.Log(basicPreset.power);
-        Debug.Log(basicPreset.metalsPrice);
-        Debug.Log(basicPreset.crysalsPrice);
-        Debug.Log(basicPreset.maintenancePrice);
+        
+    }
+
+
+
+    private void Start()
+    {
+        scoutPreset.MultiplyCounts(24);
+        scoutPreset.DebugLogValues(label: "Scout preset");
+
+        earlyPreset.MultiplyCounts(12);
+        earlyPreset.DebugLogValues(label: "Early preset");
+
+        midPreset.MultiplyCounts(6);
+        midPreset.DebugLogValues(label: "Mid preset");
+
+        latePreset.MultiplyCounts(4);
+        latePreset.DebugLogValues(label: "Late preset");
+
+
 
         sites = FindObjectsOfType<SiteController>();
 
@@ -78,7 +131,7 @@ public class EnemyHeadquarters : Headquarters
 
         spawner.onTaskForceSpawned.AddListener(RegisterTaskForce);
 
-        StartCoroutine(CreateTaskForceInInterval(30));
+        StartCoroutine(CreateTaskForceInInterval());
         StartCoroutine(OrderTaskForcesInInterval(5));
     }
 
@@ -184,16 +237,41 @@ public class EnemyHeadquarters : Headquarters
             });
     }
 
-    private IEnumerator CreateTaskForceInInterval(float seconds)
+    private IEnumerator CreateTaskForceInInterval()
     {
-        WaitForSeconds interval = new WaitForSeconds(seconds);
+        WaitForSeconds cooldown = new WaitForSeconds(spawnCooldown);
+        TaskForceController taskForce = null;
 
         while (true)
         {
-            //basicPreset.Recruit(fleetManager, transform.position, "enemy task force");
-            fleetManager.ProcureTaskForce(basicPreset, transform.position, "enemy task force");
+            taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
+            if (taskForce) yield return cooldown;
 
-            yield return interval;
+            taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
+            if (taskForce) yield return cooldown;
+
+            taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
+            if (taskForce) yield return cooldown;
+
+            taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
+            if (taskForce) yield return cooldown;
+
+
+            //if (taskForce == null)
+            //    taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
+
+            //else if (taskForce == null)
+            //    taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
+
+            //else if (taskForce == null)
+            //    taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
+
+            //else if (taskForce == null)
+            //    taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
+
+
+            Debug.Log("mewing");
+            yield return null;
         }
     }
 

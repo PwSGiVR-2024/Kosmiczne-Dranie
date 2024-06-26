@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c6726a8477d7720418388221dda3590e, type: 3}
   m_Name: BasicOutpost
   m_EditorClassIdentifier: 
-  metalPrice: 500
-  crystalPrice: 200
-  maintenancePrice: 70
+  metalPrice: 10000
+  crystalPrice: 500
+  maintenancePrice: 300
   upgradePrice: 0
-  health: 10000
-  range: 150
+  health: 100000
+  range: 500
   healModifier: 1

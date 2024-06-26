@@ -13,12 +13,16 @@ public class WeaponController: MonoBehaviour
     public bool debug = false;
 
     private ProjectilePool pool;
-    private AiController unit;
+    private AiController ownerUnit;
     private bool onCooldown = false;
     private float cooldownRemaining = 0f;
     public WeaponValues Values { get => values; }
     public ProjectilePool Pool { get => pool; }
-    public AiController Unit { get => unit; }
+    public AiController OwnerUnit { get => ownerUnit; }
+
+    public Outpost ownerOutpost;
+    private Vector3 targetPos;
+    private Collider target;
 
     // debug
     [SerializeField] private Projectile[] projectilePool;
@@ -28,8 +32,26 @@ public class WeaponController: MonoBehaviour
         if (!isActiveAndEnabled)
             return;
 
-        this.unit = unit;
+        ownerUnit = unit;
         unit.onUnitNeutralized.AddListener((_) => pool.Clean());
+
+        int poolSize = (int)((values.projectileLifeSpan / values.attackCooldown) + 2.0f);
+
+        pool = new(poolSize, this);
+
+        //debug
+        projectilePool = pool.Projectiles;
+
+        StartCoroutine(AttackCooldown());
+    }
+
+    public void Init(Outpost outpost)
+    {
+        if (!isActiveAndEnabled)
+            return;
+
+        ownerOutpost = outpost;
+        outpost.onOutpostDestroy.AddListener(() => pool.Clean());
 
         int poolSize = (int)((values.projectileLifeSpan / values.attackCooldown) + 2.0f);
 
@@ -55,6 +77,11 @@ public class WeaponController: MonoBehaviour
     {
         Projectile projectile = pool.GetProjectile();
         SetProjectilePosition(projectile);
+        projectile.targetPos = targetPos;
+        
+        if (projectile is LaserProjectile lp)
+            lp.target = target;
+
         return projectile;
     }
 
@@ -127,6 +154,13 @@ public class WeaponController: MonoBehaviour
         }
 
         return false;
+    }
+
+    public bool FireProjectile(Collider target)
+    {
+        this.target = target;
+
+        return FireProjectile();
     }
 
     public bool CheckIfFacingTarget(Vector3 targetPos)

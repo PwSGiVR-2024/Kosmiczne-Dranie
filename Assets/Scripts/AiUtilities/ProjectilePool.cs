@@ -75,10 +75,10 @@ public class ProjectilePool
         for (int i = 0; i < projectiles.Length; i++)
         {
             if (projectiles[i].gameObject.activeInHierarchy)
-                projectiles[i].ShotBy.GameManager.AddToTemporaryCamp(projectiles[i].gameObject);
+                projectiles[i].gameManager.AddToTemporaryCamp(projectiles[i].gameObject);
 
             else
-                projectiles[i].ShotBy.GameManager.AddToExterminationCamp(projectiles[i].gameObject);
+                projectiles[i].gameManager.AddToExterminationCamp(projectiles[i].gameObject);
         }
     }
 

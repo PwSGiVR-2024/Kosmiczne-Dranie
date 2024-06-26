@@ -10,6 +10,14 @@ using static UnityEditor.Rendering.CameraUI;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
+    public Collider[] targetNonAlloc = new Collider[12];
+    public LayerMask targetMask;
+
+    [SerializeField] private WeaponController weapon_1;
+    [SerializeField] private WeaponController weapon_2;
+    [SerializeField] private WeaponController weapon_3;
+    [SerializeField] private WeaponController weapon_4;
+
     public OutpostValues values;
     private LayerMask healMask;
     //public bool isConnected;
@@ -27,7 +35,7 @@ public class Outpost : MonoBehaviour, IInteractable
         }
     }
 
-    private GameManager gameManager;
+    public GameManager gameManager;
     private Affiliation affiliation;
     public int range;
     public UnityEvent onOutpostDestroy = new();
@@ -61,6 +69,7 @@ public class Outpost : MonoBehaviour, IInteractable
         {
             healMask = LayerMask.GetMask("Allies");
             gameObject.layer = LayerMask.NameToLayer("AllyOutposts");
+            targetMask = LayerMask.GetMask("Enemies");
 
         }
 
@@ -68,13 +77,47 @@ public class Outpost : MonoBehaviour, IInteractable
         {
             healMask = LayerMask.GetMask("Enemies");
             gameObject.layer = LayerMask.NameToLayer("EnemyOutposts");
+            targetMask = LayerMask.GetMask("Allies");
         }
     }
 
     private void Update()
     {
         GameUtils.DrawCircle(gameObject, range, transform);
+        EngageClosestTarget();
+
+
     }
+
+    private void EngageClosestTarget()
+    {
+        int collidersNum = Physics.OverlapSphereNonAlloc(transform.position, range, targetNonAlloc, targetMask);
+        if (collidersNum == 0) return;
+
+        int random_1 = Random.Range(0, collidersNum);
+        int random_2 = Random.Range(0, collidersNum);
+        int random_3 = Random.Range(0, collidersNum);
+        int random_4 = Random.Range(0, collidersNum);
+
+        weapon_1.RotateWeaponAtPosition(targetNonAlloc[random_1].transform.position);
+        weapon_2.RotateWeaponAtPosition(targetNonAlloc[random_2].transform.position);
+        weapon_3.RotateWeaponAtPosition(targetNonAlloc[random_3].transform.position);
+        weapon_4.RotateWeaponAtPosition(targetNonAlloc[random_4].transform.position);
+
+        if (weapon_1.CheckIfFacingTarget(targetNonAlloc[random_1].transform.position))
+            weapon_1.FireProjectile(targetNonAlloc[random_1]);
+
+        if (weapon_2.CheckIfFacingTarget(targetNonAlloc[random_2].transform.position))
+            weapon_2.FireProjectile(targetNonAlloc[random_2]);
+
+        if (weapon_3.CheckIfFacingTarget(targetNonAlloc[random_3].transform.position))
+            weapon_4.FireProjectile(targetNonAlloc[random_3]);
+
+        if (weapon_4.CheckIfFacingTarget(targetNonAlloc[random_4].transform.position))
+            weapon_4.FireProjectile(targetNonAlloc[random_4]);
+    }
+
+
 
     //public void GatherResources()
     //{
@@ -94,12 +137,17 @@ public class Outpost : MonoBehaviour, IInteractable
 
     void Start()
     {
+        weapon_1.Init(this);
+        weapon_2.Init(this);
+        weapon_3.Init(this);
+        weapon_4.Init(this);
+
         StartCoroutine(HealUnits());
     }
 
     public void Damage(Projectile projectile)
     {
-        currentHealth -= projectile.Values.projectileDamage;
+        CurrentHealth -= projectile.Values.projectileDamage;
 
         if (currentHealth <= 0)
             Destroy(gameObject);
@@ -107,7 +155,7 @@ public class Outpost : MonoBehaviour, IInteractable
 
     public void Damage(int value, AiController attacker)
     {
-        currentHealth -= value;
+        CurrentHealth -= value;
 
         if (currentHealth <= 0)
             Destroy(gameObject);
@@ -121,12 +169,12 @@ public class Outpost : MonoBehaviour, IInteractable
 
         while (true)
         {
-            if (currentHealth < values.health)
+            if (CurrentHealth < values.health)
             {
-                currentHealth += (int)(values.health * 0.01f);
+                CurrentHealth += (int)(values.health * 0.01f);
 
-                if (currentHealth > values.health)
-                    currentHealth = values.health;
+                if (CurrentHealth > values.health)
+                    CurrentHealth = values.health;
             }
 
             colliders = Physics.OverlapSphere(transform.position, range, healMask);
@@ -152,10 +200,10 @@ public class Outpost : MonoBehaviour, IInteractable
 
     private void OnDestroy()
     {
-        foreach (ResourceHolder zone in zones)
-        {
-            onZoneRelease.Invoke(zone);
-        }
+        //foreach (ResourceHolder zone in zones)
+        //{
+        //    onZoneRelease.Invoke(zone);
+        //}
 
         onOutpostDestroy.Invoke();
     }

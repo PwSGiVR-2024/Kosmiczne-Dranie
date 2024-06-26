@@ -6,6 +6,8 @@ public class LaserProjectile : Projectile
 {
     public bool hitObject = false;
     public LineRenderer lineRenderer;
+    public Collider target;
+    private Vector3 cachedLastTargetPos;
 
     protected override void Init(WeaponController weapon)
     {
@@ -42,7 +44,18 @@ public class LaserProjectile : Projectile
     protected void UpdatePosition()
     {
         lineRenderer.SetPosition(0, transform.position);
-        lineRenderer.SetPosition(1, ShotBy.Target.position);
+
+        if (ShotByUnit)
+            lineRenderer.SetPosition(1, ShotByUnit.Target.position);
+
+        else if (shotByOutpost && target)
+        {
+            lineRenderer.SetPosition(1, target.transform.position);
+            cachedLastTargetPos = target.transform.position;
+        }
+
+        else if (shotByOutpost && target == null)
+            lineRenderer.SetPosition(1, cachedLastTargetPos);
     }
 
     protected override void Update()

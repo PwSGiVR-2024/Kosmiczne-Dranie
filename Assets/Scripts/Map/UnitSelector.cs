@@ -11,8 +11,8 @@ public class SelectionBox : MonoBehaviour
     private bool isDragging = false;
     private bool isSelecting = false;
     private Camera mainCamera;
-    private List<TaskForceHUD> selectedObjects = new List<TaskForceHUD>();
-    public KeyCode modifierKey = KeyCode.LeftControl;  //trzeba równie¿ zmieniæ w MapMovement.cs
+    private List<HUDController> selectedObjects = new List<HUDController>();
+    public KeyCode modifierKey = KeyCode.LeftControl;  //trzeba rï¿½wnieï¿½ zmieniï¿½ w MapMovement.cs
     private ScrollableList ScrollableListInstance;
 
     void Start()
@@ -24,7 +24,7 @@ public class SelectionBox : MonoBehaviour
             selectionBoxImage.gameObject.SetActive(false);
         }
 
-        mainCamera = Camera.main; // Zak³adamy, ¿e g³ówna kamera to ta, której u¿ywamy
+        mainCamera = Camera.main; // Zakï¿½adamy, ï¿½e gï¿½ï¿½wna kamera to ta, ktï¿½rej uï¿½ywamy
     }
 
     void Update()
@@ -34,18 +34,18 @@ public class SelectionBox : MonoBehaviour
 
     void dziala()
     {
-        // SprawdŸ, czy naciœniêty jest klawisz modyfikatora (Ctrl)
+        // Sprawdï¿½, czy naciï¿½niï¿½ty jest klawisz modyfikatora (Ctrl)
         bool isModifierKeyPressed = Input.GetKey(modifierKey);
 
         if (Input.GetMouseButtonDown(1) && isModifierKeyPressed)
         {
-            // Rozpoczêcie przeci¹gania
+            // Rozpoczï¿½cie przeciï¿½gania
             startPosition = Input.mousePosition;
             isDragging = true;
         }
         else if (Input.GetMouseButtonUp(1) && isModifierKeyPressed)
         {
-            // Zakoñczenie zaznaczania lub przeci¹gania
+            // Zakoï¿½czenie zaznaczania lub przeciï¿½gania
             isDragging = false;
             if (isSelecting)
             {
@@ -61,7 +61,7 @@ public class SelectionBox : MonoBehaviour
         if (isDragging)
         {
             Vector2 currentMousePosition = Input.mousePosition;
-            if (!isSelecting && Vector2.Distance(startPosition, currentMousePosition) > 10) // Próg przeci¹gniêcia, aby rozpocz¹æ zaznaczanie
+            if (!isSelecting && Vector2.Distance(startPosition, currentMousePosition) > 10) // Prï¿½g przeciï¿½gniï¿½cia, aby rozpoczï¿½ï¿½ zaznaczanie
             {
                 isSelecting = true;
                 if (selectionBoxImage != null)
@@ -75,7 +75,7 @@ public class SelectionBox : MonoBehaviour
                 Vector2 size = currentMousePosition - startPosition;
 
                 selectionBoxRectTransform.sizeDelta = new Vector2(Mathf.Abs(size.x), Mathf.Abs(size.y));
-                selectionBoxRectTransform.anchoredPosition = startPosition + size / 2;  //Ustawiæ anchor w image na lewy dó³
+                selectionBoxRectTransform.anchoredPosition = startPosition + size / 2;  //Ustawiï¿½ anchor w image na lewy dï¿½
             }
         }
 
@@ -87,11 +87,11 @@ public class SelectionBox : MonoBehaviour
             selectionBoxRectTransform.anchoredPosition - (selectionBoxRectTransform.sizeDelta / 2),
             selectionBoxRectTransform.sizeDelta);
 
-        selectedObjects.Clear(); // Czyœcimy listê zaznaczonych obiektów
+        selectedObjects.Clear(); // CzyÅ“cimy listÃª zaznaczonych obiektÃ³w
 
         //var element;
 
-        TaskForceHUD[] taskForceHUDs = FindObjectsOfType<TaskForceHUD>();
+        HUDController[] taskForceHUDs = FindObjectsOfType<HUDController>();
 
         foreach (var hud in taskForceHUDs)
         {
@@ -100,7 +100,7 @@ public class SelectionBox : MonoBehaviour
             {
                 // Obiekt jest w zaznaczonym obszarze
                 selectedObjects.Add(hud);
-                hud.onSelect.Invoke(); // Wywo³aj UnityEvent onSelect
+                hud.onSelect.Invoke(); // WywoÂ³aj UnityEvent onSelect
 
 
                 //ScrollableListInstance.ToggleSelectForElement(element);

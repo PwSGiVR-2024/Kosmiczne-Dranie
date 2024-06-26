@@ -20,7 +20,7 @@ public class GuidedProjectile : Projectile
         // get transform of the terget if feasible (target of the unit, that shot this projectile)
         if (targetTransform == null)
         {
-            if (ShotBy.Target.TryLockTarget(out AiController controller))
+            if (ShotByUnit.Target.TryLockTarget(out AiController controller))
                 targetTransform = controller.transform;
         }
 
@@ -38,7 +38,7 @@ public class GuidedProjectile : Projectile
         if (targetTransform)
         {
             // target direction
-            Vector3 direction = (ShotBy.Target.position - transform.position).normalized;
+            Vector3 direction = (ShotByUnit.Target.position - transform.position).normalized;
             Quaternion targetRotation = Quaternion.LookRotation(direction);
 
             // guiding error

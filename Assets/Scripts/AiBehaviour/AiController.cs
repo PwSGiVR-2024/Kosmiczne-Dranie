@@ -286,7 +286,7 @@ public abstract class AiController : MonoBehaviour, IInteractable
         health -= projectile.Values.projectileDamage;
 
         if (currentState != State.Combat)
-            onUnitEngaged.Invoke(projectile.ShotBy?.UnitTaskForce);
+            onUnitEngaged.Invoke(projectile.ShotByUnit?.UnitTaskForce);
 
         if (health <= 0)
         {

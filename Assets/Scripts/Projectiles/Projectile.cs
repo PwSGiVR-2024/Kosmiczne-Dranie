@@ -14,20 +14,25 @@ using Unity.Burst.CompilerServices;
 
 public abstract class Projectile : MonoBehaviour
 {
+    public GameManager gameManager;
+
     public event Action OnProjectileEnable;
     public event Action OnProjectileDisable;
     public event Action OnProjectileDestroy;
 
     private Affiliation affiliation;
-    private AiController shotBy;
+    private AiController shotByUnit;
     private WeaponValues values;
     private float timeTillDeactivation;
     public LayerMask damageMask;
     public LayerMask hitMask;
 
     public WeaponValues Values { get => values; }
-    public AiController ShotBy { get => shotBy; }
+    public AiController ShotByUnit { get => shotByUnit; }
     public Affiliation Affiliation { get => affiliation; }
+
+    public Outpost shotByOutpost;
+    public Vector3 targetPos;
 
     public static Projectile Create(WeaponController weapon)
     {
@@ -39,11 +44,22 @@ public abstract class Projectile : MonoBehaviour
     protected virtual void Init(WeaponController weapon)
     {
         values = weapon.Values;
-        shotBy = weapon.Unit;
+        shotByUnit = weapon.OwnerUnit;
 
-        affiliation = shotBy.Affiliation;
+        shotByOutpost = weapon.ownerOutpost;
+        shotByUnit = weapon.OwnerUnit;
+
+        gameManager = shotByOutpost?.gameManager;
+        gameManager = shotByUnit?.GameManager;
+
+        if (weapon.ownerOutpost)
+            affiliation = weapon.ownerOutpost.Affiliation;
+
+        else if (weapon.OwnerUnit)
+            affiliation = weapon.OwnerUnit.Affiliation;
+
         timeTillDeactivation = values.projectileLifeSpan;
-        transform.SetParent(shotBy.ProjectileContainer.transform);
+        
 
         if (affiliation == Affiliation.Blue)
         {

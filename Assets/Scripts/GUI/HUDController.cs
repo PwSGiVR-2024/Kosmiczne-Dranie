@@ -4,7 +4,7 @@ using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.UI;
 
-public class TaskForceHUD : MonoBehaviour
+public class HUDController : MonoBehaviour
 {
     public MonoBehaviour owner;
 
@@ -17,9 +17,9 @@ public class TaskForceHUD : MonoBehaviour
 
     public UnityEvent onSelect = new();
 
-    public static TaskForceHUD Create(MonoBehaviour owner, GameObject prefab, GameManager gameManager)
+    public static HUDController Create(MonoBehaviour owner, GameObject prefab, GameManager gameManager)
     {
-        TaskForceHUD instance = Instantiate(prefab, gameManager.worldSpaceCanvas.transform).GetComponent<TaskForceHUD>();
+        HUDController instance = Instantiate(prefab, gameManager.worldSpaceCanvas.transform).GetComponent<HUDController>();
 
         if (owner is TaskForceController taskForce)
         {

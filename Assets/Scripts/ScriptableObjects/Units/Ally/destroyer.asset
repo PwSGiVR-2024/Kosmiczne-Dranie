@@ -15,7 +15,7 @@ MonoBehaviour:
   prefabName: 
   shipClass: 2
   size: 8
-  power: 40
+  power: 80
   description: 
   spotDistance: 280
   health: 600

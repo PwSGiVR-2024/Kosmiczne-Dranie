@@ -71,7 +71,7 @@ public class TaskForceController : MonoBehaviour
     [Header("Main attributes:")]
     [SerializeField] private MonoBehaviour currentTarget;
     [SerializeField] private AiController commander;
-    [SerializeField] private float spotDistance;
+    [SerializeField] public float spotDistance;
     [SerializeField] private int initialHealth;
     [SerializeField] private int initialSize;
     [SerializeField] private int initialPower;
