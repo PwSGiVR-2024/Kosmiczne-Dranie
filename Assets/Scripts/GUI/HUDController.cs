@@ -1,15 +1,23 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
+    private RectTransform rectTransform;
     public MonoBehaviour owner;
 
     public Image healthBar;
     public Image strengthBar;
+
+    public GameObject additionalInfoContainer;
+    public TMP_Text unitsCount;
+    public TMP_Text healthText;
 
     private enum DisplayMode { TaskForce, Outpost }
     private DisplayMode displayMode;
@@ -19,6 +27,8 @@ public class HUDController : MonoBehaviour
 
     public static HUDController Create(MonoBehaviour owner, GameObject prefab, GameManager gameManager)
     {
+        
+
         HUDController instance = Instantiate(prefab, gameManager.worldSpaceCanvas.transform).GetComponent<HUDController>();
 
         if (owner is TaskForceController taskForce)
@@ -28,19 +38,26 @@ public class HUDController : MonoBehaviour
             taskForce.onStrengthChanged.AddListener(instance.UpdateStrengthBar);
             taskForce.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, taskForce.InitialHealth));
             taskForce.onTaskForceDestroyed.AddListener((_) => Destroy(instance.gameObject));
+            taskForce.onHealthChanged.AddListener((_) => instance.unitsCount.text = taskForce.Units.Count.ToString());
+            instance.healthText?.gameObject.SetActive(false);
         }
 
         else if (owner is Outpost outpost)
         {
             instance.displayMode = DisplayMode.Outpost;
             instance.owner = outpost;
-            outpost.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, outpost.values.health));
             outpost.onOutpostDestroy.AddListener(() => Destroy(instance.gameObject));
+            outpost.onHealthChanged.AddListener((newHealth) =>
+            {
+                instance.UpdateHealthBar(newHealth, outpost.values.health);
+                instance.healthText.text = outpost.values.health.ToString();
+            });
+            instance.unitsCount?.gameObject.SetActive(false);
         }
 
         else return null;
 
-        
+        instance.rectTransform = instance.gameObject.GetComponent<RectTransform>();
         instance.transform.rotation = Quaternion.Euler(90f, 0f, 0f);
         instance.transform.localScale = new Vector3(0.25f, 0.25f, 25f);
         return instance;
@@ -48,6 +65,11 @@ public class HUDController : MonoBehaviour
 
     void Update()
     {
+        transform.rotation = Quaternion.LookRotation(transform.position - Camera.main.transform.position, Vector3.up);
+
+        float cameraDistance = Vector3.Distance(transform.position, Camera.main.transform.position);
+        rectTransform.localScale = new Vector3(1, 1, 1) * cameraDistance * 0.0005f;
+
         switch (displayMode)
         {
             case DisplayMode.TaskForce:
@@ -87,5 +109,20 @@ public class HUDController : MonoBehaviour
     private void UpdateStrengthBar(float value)
     {
         strengthBar.fillAmount = value;
+    }
+
+    public void ShowAdditionalInfo(BaseEventData data)
+    {
+        additionalInfoContainer.SetActive(true);
+    }
+
+    public void HideAdditionalInfo(BaseEventData data)
+    {
+        additionalInfoContainer.SetActive(false);
+    }
+
+    public void OnPointerClick(BaseEventData data)
+    {
+        Debug.Log("click");
     }
 }

@@ -21,6 +21,7 @@ public class Spawner : MonoBehaviour
     public GameObject projectilesContainer;
 
     public GameObject taskForceHUD;
+    public GameObject outpostHUD;
 
     private int unitCount = 0;
     private int outpostCount = 0;
@@ -273,7 +274,7 @@ public class Spawner : MonoBehaviour
         Outpost outpost = Outpost.Create(position, outpostPrefab, affiliation, gameManager).GetComponent<Outpost>();
         outpost.gameObject.name = name + outpostCount;
         outpost.transform.SetParent(outpostsContainer.transform, true);
-        HUDController.Create(outpost, taskForceHUD, gameManager);
+        HUDController.Create(outpost, outpostHUD, gameManager);
 
         onOutpostSpawned.Invoke(outpost);
 
