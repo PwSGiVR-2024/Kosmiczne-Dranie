@@ -52,7 +52,7 @@ public class HUDController : MonoBehaviour
         else if (owner is Outpost outpost)
         {
             instance.displayMode = DisplayMode.Outpost;
-            instance.owner = outpost;
+            instance.owner = outpost; 
             outpost.onOutpostDestroy.AddListener(() => Destroy(instance.gameObject));
             outpost.onHealthChanged.AddListener((newHealth) =>
             {

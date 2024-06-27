@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 using UnityEngine.UI;
 
 public class SelectionBox : MonoBehaviour
@@ -11,6 +12,7 @@ public class SelectionBox : MonoBehaviour
     private bool isSelecting = false;
     private Camera mainCamera;
     private List<HUDController> selectedObjects = new List<HUDController>();
+    public UnityEvent<TaskForceContainer> OnSelect = new();
     public KeyCode modifierKey = KeyCode.LeftControl;  //trzeba r�wnie� zmieni� w MapMovement.cs
     private ScrollableList ScrollableListInstance;
 
@@ -77,8 +79,6 @@ public class SelectionBox : MonoBehaviour
                 selectionBoxRectTransform.anchoredPosition = startPosition + size / 2;  //Ustawi� anchor w image na lewy d�
             }
         }
-
-
     }
     void SelectObjectsInArea()
     {
@@ -86,9 +86,7 @@ public class SelectionBox : MonoBehaviour
             selectionBoxRectTransform.anchoredPosition - (selectionBoxRectTransform.sizeDelta / 2),
             selectionBoxRectTransform.sizeDelta);
 
-        selectedObjects.Clear(); // Czyœcimy listê zaznaczonych obiektów
-
-        //var element;
+        selectedObjects.Clear(); // Czyścimy listę zaznaczonych obiektów
 
         HUDController[] taskForceHUDs = FindObjectsOfType<HUDController>();
 
@@ -99,14 +97,14 @@ public class SelectionBox : MonoBehaviour
             {
                 // Obiekt jest w zaznaczonym obszarze
                 selectedObjects.Add(hud);
-                hud.onSelect.Invoke(); // Wywo³aj UnityEvent onSelect
-
-
-                //ScrollableListInstance.ToggleSelectForElement(element);
-                foreach (var element in ScrollableListInstance.elementsList)
-                {
-                    ScrollableListInstance.ToggleSelectForElement(element);
-                }
+            }
+            
+        }
+        foreach(var cos in selectedObjects)
+        {
+            if (cos.owner is TaskForceController tf)
+            {
+                tf.onSelect.Invoke();
             }
         }
     }
