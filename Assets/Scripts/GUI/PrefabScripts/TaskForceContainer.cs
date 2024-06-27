@@ -1,14 +1,7 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using TMPro;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.EventSystems;
 using UnityEngine.UI;
-using static FleetManager;
 
 // skrypt steruj¹cy prefabem UI TaskForceContainer. Prefab zosta³ stworzony jako element listy i jest odpowiedzialny za wyœwietlanie informacji o danym taskForce
 public class TaskForceContainer : MonoBehaviour
@@ -52,6 +45,7 @@ public class TaskForceContainer : MonoBehaviour
         taskForce.onStrengthChanged.AddListener(UpdateStrength);
         taskForce.onPowerChanged.AddListener((newPower) => power.text = newPower.ToString());
         taskForce.onStateChanged.AddListener(UpdateState);
+        taskForce.onSelect.AddListener(() => ToggleSelect());
     }
 
     private void UpdateState(State state)
@@ -91,6 +85,11 @@ public class TaskForceContainer : MonoBehaviour
             image.color = selectedColor;
             OnSelect.Invoke(this);
         }
+    }
+
+    public void OnPointerClick()
+    {
+        taskForce.onSelect.Invoke();
     }
 
     // Powinno zostaæ przypisane do jakiegoœ buttona w prefabie podobnie jak ToggleSelect()

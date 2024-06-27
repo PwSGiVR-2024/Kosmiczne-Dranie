@@ -1,4 +1,3 @@
-using Unity.VisualScripting;
 using UnityEngine;
 
 // kontener przechowuj¹cy wartoœci danej jednostki

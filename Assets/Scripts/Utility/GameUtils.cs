@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using UnityEngine;
 
 
@@ -72,33 +69,54 @@ public static class GameUtils
         return velocity / Time.deltaTime;
     }
 
-    public static void DrawCircle(GameObject obj, float radius, Transform point)
+    //public static void DrawCircle(GameObject obj, float radius, Transform point)
+    //{
+    //    LineRenderer lineRenderer;
+    //    int segments = 50;
+
+    //    if (!obj.TryGetComponent<LineRenderer>(out lineRenderer))
+    //        lineRenderer = obj.AddComponent<LineRenderer>();
+
+    //    if (lineRenderer)
+    //    {
+    //        lineRenderer.positionCount = 51;
+    //        lineRenderer.startWidth = 0.1f;
+    //        lineRenderer.endWidth = 0.1f;
+    //        lineRenderer.useWorldSpace = true;
+
+    //        float x;
+    //        float z;
+    //        float angle = 0f;
+
+    //        // Loop through all segments and set their position based on world point and angle/radius
+    //        for (int i = 0; i <= segments; i++)
+    //        {
+    //            x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius + point.position.x; // Add world point x
+    //            z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius + point.position.z; // Add world point y
+    //            lineRenderer.SetPosition(i, new Vector3(x, 0, z)); // Assuming a 2D circle
+    //            angle += 360f / segments;
+    //        }
+    //    }
+    //}
+
+    public static void DrawCircle(LineRenderer lineRenderer, float radius, float width, Vector3 point)
     {
-        LineRenderer lineRenderer;
+        lineRenderer.startWidth = width;
+        lineRenderer.endWidth = width;
         int segments = 50;
+        lineRenderer.positionCount = 51;
+        lineRenderer.useWorldSpace = true;
 
-        if (!obj.TryGetComponent<LineRenderer>(out lineRenderer))
-            lineRenderer = obj.AddComponent<LineRenderer>();
+        float x;
+        float z;
+        float angle = 0f;
 
-        if (lineRenderer)
+        for (int i = 0; i <= segments; i++)
         {
-            lineRenderer.positionCount = 51;
-            lineRenderer.startWidth = 0.1f;
-            lineRenderer.endWidth = 0.1f;
-            lineRenderer.useWorldSpace = true;
-
-            float x;
-            float z;
-            float angle = 0f;
-
-            // Loop through all segments and set their position based on world point and angle/radius
-            for (int i = 0; i <= segments; i++)
-            {
-                x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius + point.position.x; // Add world point x
-                z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius + point.position.z; // Add world point y
-                lineRenderer.SetPosition(i, new Vector3(x, 0, z)); // Assuming a 2D circle
-                angle += 360f / segments;
-            }
+            x = Mathf.Sin(Mathf.Deg2Rad * angle) * radius + point.x;
+            z = Mathf.Cos(Mathf.Deg2Rad * angle) * radius + point.z;
+            lineRenderer.SetPosition(i, new Vector3(x, 0, z));
+            angle += 360f / segments;
         }
     }
 

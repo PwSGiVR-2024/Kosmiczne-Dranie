@@ -1,10 +1,10 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 
 public class SiteController : MonoBehaviour
 {
+    public LineRenderer lineRenderer;
     private Collider[] checkerArray = new Collider[1];
 
     public int range;
@@ -29,7 +29,7 @@ public class SiteController : MonoBehaviour
 
     void Update()
     {
-        GameUtils.DrawCircle(gameObject, range, transform);
+        GameUtils.DrawCircle(lineRenderer, range, 5, transform.position);
 
         if (CheckForNewCapturers(out AiController capturer))
             StartCoroutine(StartCapturing(capturer));

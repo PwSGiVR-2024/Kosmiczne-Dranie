@@ -1,15 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using Unity.VisualScripting;
-using UnityEditor.MemoryProfiler;
 using UnityEngine;
 using UnityEngine.Events;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Rendering.CameraUI;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
+    public LineRenderer lineRenderer;
+
     public Collider[] targetNonAlloc = new Collider[12];
     public LayerMask targetMask;
 
@@ -83,7 +80,7 @@ public class Outpost : MonoBehaviour, IInteractable
 
     private void Update()
     {
-        GameUtils.DrawCircle(gameObject, range, transform);
+        GameUtils.DrawCircle(lineRenderer, range, 5, transform.position);
         EngageClosestTarget();
 
 

@@ -1,17 +1,13 @@
 using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel.Design;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
-using UnityEngine.UIElements;
-using static UnityEditor.PlayerSettings;
-using static UnityEditor.Rendering.CameraUI;
 
 
 // klasa odpowiada za instancjonowanie ka¿dej jednostki oraz Task Forca w œwiecie gry
 public class Spawner : MonoBehaviour
 {
+    public Material taskForceLineRendererMaterial;
+
     public Affiliation affiliation = Affiliation.None;
     public GameManager gameManager;
 
@@ -147,6 +143,7 @@ public class Spawner : MonoBehaviour
         onTaskForceSpawned.Invoke(taskForce);
 
         HUDController.Create(taskForce, taskForceHUD, gameManager);
+        AddLineRenderer(taskForce.gameObject, taskForceLineRendererMaterial);
 
         // spawn over many frames, does not create lag, but is slow
         // once given type of unit is spawned, callback is invoked
@@ -279,5 +276,15 @@ public class Spawner : MonoBehaviour
         onOutpostSpawned.Invoke(outpost);
 
         return outpost;
+    }
+
+    private void AddLineRenderer(GameObject obj, Material rendererMaterial)
+    {
+        if (!obj.TryGetComponent(out LineRenderer lineRenderer))
+        {
+            lineRenderer = obj.AddComponent<LineRenderer>();
+            lineRenderer.material = rendererMaterial;
+        }
+            
     }
 }

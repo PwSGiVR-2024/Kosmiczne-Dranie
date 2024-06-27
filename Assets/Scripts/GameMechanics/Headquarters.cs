@@ -1,9 +1,9 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public abstract class Headquarters : MonoBehaviour, IInteractable
 {
+    public LineRenderer lineRenderer;
+
     public int range;
     public int health;
     //public List<Outpost> outpostNetwork = new();
@@ -29,6 +29,6 @@ public abstract class Headquarters : MonoBehaviour, IInteractable
     // Update is called once per frame
     void Update()
     {
-        GameUtils.DrawCircle(gameObject, range, transform);
+        GameUtils.DrawCircle(lineRenderer, range, 5, transform.position);
     }
 }

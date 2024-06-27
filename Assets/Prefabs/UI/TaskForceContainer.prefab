@@ -1371,8 +1371,8 @@ MonoBehaviour:
     m_PersistentCalls:
       m_Calls:
       - m_Target: {fileID: 2101570498365106387}
-        m_TargetAssemblyTypeName: TaskForceElement, Assembly-CSharp
-        m_MethodName: ToggleSelect
+        m_TargetAssemblyTypeName: TaskForceContainer, Assembly-CSharp
+        m_MethodName: OnPointerClick
         m_Mode: 1
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

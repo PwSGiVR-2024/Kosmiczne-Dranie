@@ -1,15 +1,10 @@
-using Mono.Cecil;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data.SqlTypes;
-using System.Resources;
-using TMPro;
 using UnityEngine;
-using static TMPro.SpriteAssetUtilities.TexturePacker_JsonArray;
-using static UnityEditor.Rendering.CameraUI;
 
 public abstract class ResourceManager : MonoBehaviour
 {
+    public bool infiniteResources = false;
     public float multiplier = 1.0f;
 
 
@@ -73,6 +68,9 @@ public abstract class ResourceManager : MonoBehaviour
 
     public void RemoveResources(GameObject unitPrefab, int count)
     {
+        if (infiniteResources)
+            return;
+
         AiController controller = unitPrefab.GetComponent<AiController>();
         UnitValues values = controller.Values;
 
@@ -85,6 +83,9 @@ public abstract class ResourceManager : MonoBehaviour
 
     public void RemoveResources(GameObject outpostPrefab)
     {
+        if (infiniteResources)
+            return;
+
         Outpost outpost = outpostPrefab.GetComponent<Outpost>();
         OutpostValues values = outpost.values;
 
@@ -97,11 +98,17 @@ public abstract class ResourceManager : MonoBehaviour
 
     public void RemoveMaintenance(int value)
     {
+        if (infiniteResources)
+            return;
+
         Maintenance -= value;
     }
 
     public void RemoveResources(TaskForcePreset preset)
     {
+        if (infiniteResources)
+            return;
+
         Crystals -= preset.crysalsPrice;
         Metals -= preset.metalsPrice;
         Maintenance += preset.maintenancePrice;
@@ -109,6 +116,9 @@ public abstract class ResourceManager : MonoBehaviour
 
     public bool CheckIfHavingResources(TaskForcePreset preset)
     {
+        if (infiniteResources)
+            return true;
+
         if (totalCredits <= 0)
             return false;
 
@@ -120,6 +130,9 @@ public abstract class ResourceManager : MonoBehaviour
 
     public bool CheckIfHavingResources(GameObject prefab)
     {
+        if (infiniteResources)
+            return true;
+
         if (totalCredits <= 0)
             return false;
 
@@ -146,6 +159,9 @@ public abstract class ResourceManager : MonoBehaviour
 
     public bool CheckIfHavingResources(GameObject prefab, int number)
     {
+        if (infiniteResources)
+            return true;
+
         if (totalCredits <= 0)
             return false;
 

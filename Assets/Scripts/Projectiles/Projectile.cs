@@ -1,16 +1,5 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
-using Unity.Collections;
-using Unity.Jobs;
 using UnityEngine;
-using UnityEngine.Jobs;
-using static UnityEditor.Experimental.GraphView.GraphView;
-using UnityEngine.UI;
-using UnityEngine.UIElements;
-using Unity.Mathematics;
-using Unity.Burst.CompilerServices;
 
 public abstract class Projectile : MonoBehaviour
 {

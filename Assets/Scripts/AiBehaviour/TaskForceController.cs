@@ -1,24 +1,17 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel.Design;
-using System.Diagnostics;
-using Unity.Burst;
 using Unity.Collections;
-using Unity.Collections.LowLevel.Unsafe;
 using Unity.Jobs;
-using Unity.Mathematics;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.Jobs;
-using UnityEngine.UIElements;
-using static UnityEngine.Rendering.VirtualTexturing.Debugging;
-using Debug = UnityEngine.Debug;
 
 
 public class TaskForceController : MonoBehaviour
 {
+    private LineRenderer lineRenderer;
+
     public bool frigatesRDY = false;
     public bool destroyersRDY = false;
     public bool cruisersRDY = false;
@@ -105,6 +98,7 @@ public class TaskForceController : MonoBehaviour
     public UnityEvent<TaskForceOrder> onOrderChanged = new();
     public UnityEvent<TaskForceController> onTaskForceDestroyed = new();
     public UnityEvent<TaskForceController> onTaskForceSpotted = new();
+    public UnityEvent onSelect = new();
 
     public Affiliation Affiliation { get => affiliation; }
     public State CurrentState {
@@ -214,6 +208,7 @@ public class TaskForceController : MonoBehaviour
 
     private void Start()
     {
+        lineRenderer = GetComponent<LineRenderer>();
         onStateChanged.AddListener(OnStateChanged);
 
         if (affiliation == Affiliation.Blue)
@@ -813,7 +808,7 @@ public class TaskForceController : MonoBehaviour
 
         if (commander)
         {
-            GameUtils.DrawCircle(gameObject, spotDistance, commander.transform);
+            GameUtils.DrawCircle(lineRenderer, spotDistance, 5, commander.transform.position);
 
             //icon.transform.LookAt(Camera.main.transform, Vector3.up);
             //icon.transform.position = commander.transform.position + iconOffset;

@@ -1,10 +1,7 @@
-using System.Collections;
 using System.Collections.Generic;
-using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static InputManager;
-using static FleetManager;
 
 
 // skrypt odpowiada za panel UI, odpowiadaj¹cy za sterowanie flot¹ (w projekcie ScreenSpaceCanvas -> FleetPanel)
@@ -292,7 +289,8 @@ public class FleetPanelController : MonoBehaviour
                 continue;
 
             if (container.selected)
-                container.ToggleSelect();
+                //container.ToggleSelect();
+                container.taskForce.onSelect.Invoke();
         }
     }
 

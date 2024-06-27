@@ -1,6 +1,3 @@
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,11 +6,17 @@ using UnityEngine.UI;
 
 public class HUDController : MonoBehaviour
 {
+    public Image indicator;
+    public Image selectIndicator;
+
     private RectTransform rectTransform;
     public MonoBehaviour owner;
 
     public Image healthBar;
     public Image strengthBar;
+
+    public Image defaultBackground;
+    public Image selectBackground;
 
     public GameObject additionalInfoContainer;
     public TMP_Text unitsCount;
@@ -21,7 +24,9 @@ public class HUDController : MonoBehaviour
 
     private enum DisplayMode { TaskForce, Outpost }
     private DisplayMode displayMode;
-    public Vector3 offset = new(0, 20, 0);
+    public Vector3 offset = new();
+
+    private bool selected = false;
 
     public UnityEvent onSelect = new();
 
@@ -40,6 +45,8 @@ public class HUDController : MonoBehaviour
             taskForce.onTaskForceDestroyed.AddListener((_) => Destroy(instance.gameObject));
             taskForce.onHealthChanged.AddListener((_) => instance.unitsCount.text = taskForce.Units.Count.ToString());
             instance.healthText?.gameObject.SetActive(false);
+            //instance.onSelect.AddListener(() => instance.ToggleSelect());
+            taskForce.onSelect.AddListener(() => instance.ToggleSelect());
         }
 
         else if (owner is Outpost outpost)
@@ -90,7 +97,23 @@ public class HUDController : MonoBehaviour
             return;
 
         //transform.LookAt(Camera.main.transform, Vector3.up);
-        transform.position = taskForce.Commander.transform.position + offset;
+        //transform.position = taskForce.Commander.transform.position + offset;
+
+        rectTransform.position = taskForce.Commander.transform.position + offset;
+
+        if (indicator)
+        {
+            indicator.rectTransform.position = new Vector3(taskForce.Commander.transform.position.x, -20, taskForce.Commander.transform.position.z);
+            indicator.rectTransform.rotation = Quaternion.Euler(90, 0, 0);
+        }
+
+        if (selectIndicator)
+        {
+            selectIndicator.rectTransform.position = new Vector3(taskForce.Commander.transform.position.x, -20, taskForce.Commander.transform.position.z);
+            selectIndicator.rectTransform.rotation = Quaternion.Euler(90, 0, 0);
+        }
+            
+            
     }
 
     private void OutpostUpdate()
@@ -98,7 +121,22 @@ public class HUDController : MonoBehaviour
         Outpost outpost = owner as Outpost;
 
         //transform.LookAt(Camera.main.transform, Vector3.up);
-        transform.position = outpost.transform.position + offset;
+        //transform.position = outpost.transform.position + offset;
+
+        rectTransform.position = outpost.transform.position + offset;
+
+        if (indicator)
+        {
+            indicator.rectTransform.position = new Vector3(outpost.transform.position.x, -20, outpost.transform.position.z);
+            indicator.rectTransform.rotation = Quaternion.Euler(90, 0, 0);
+        }
+
+        if (selectIndicator)
+        {
+            selectIndicator.rectTransform.position = new Vector3(outpost.transform.position.x, -20, outpost.transform.position.z);
+            selectIndicator.rectTransform.rotation = Quaternion.Euler(90, 0, 0);
+        }
+            
     }
 
     private void UpdateHealthBar(int newHealth, int originalHealth)
@@ -123,6 +161,29 @@ public class HUDController : MonoBehaviour
 
     public void OnPointerClick(BaseEventData data)
     {
-        Debug.Log("click");
+        if (owner is TaskForceController tf)
+            tf.onSelect.Invoke();
+    }
+
+
+    public void ToggleSelect()
+    {
+        selected = !selected;
+
+        if (selected)
+        {
+            defaultBackground?.gameObject.SetActive(false);
+            selectBackground?.gameObject.SetActive(true);
+            indicator?.gameObject.SetActive(false);
+            selectIndicator?.gameObject.SetActive(true);
+        }
+
+        else
+        {
+            defaultBackground?.gameObject.SetActive(true);
+            selectBackground?.gameObject.SetActive(false);
+            indicator?.gameObject.SetActive(true);
+            selectIndicator?.gameObject.SetActive(false);
+        }
     }
 }
