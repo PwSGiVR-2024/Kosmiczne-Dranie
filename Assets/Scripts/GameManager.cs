@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
+    public SoundManager soundManager;
+
     public Canvas worldSpaceCanvas;
     public Canvas screenSpaceCanvas;
 
@@ -22,34 +24,27 @@ public class GameManager : MonoBehaviour
         {
             if (exterminationCamp.TryPeek(out obj))
             {
-                if (obj)
-                {
-                    if (logExterminationChamber)
-                        Debug.Log("destroying: " + obj.name);
-
-                    Destroy(obj);
-                    exterminationCamp.Pop();
-                }
-                else
+                if (obj == null)
                 {
                     if (logExterminationChamber)
                         Debug.Log("object is null");
 
                     exterminationCamp.Pop();
                 }
-            }
-
-            if (temporaryCamp.TryPeek(out obj))
-            {
-                if (obj)
+                else
                 {
                     if (logExterminationChamber)
                         Debug.Log("destroying: " + obj.name);
 
                     Destroy(obj);
-                    temporaryCamp.Pop();
+                    exterminationCamp.Pop();
+                    yield return null;
                 }
-                else if (obj == null)
+            }
+
+            if (temporaryCamp.TryPeek(out obj))
+            {
+                if (obj == null)
                 {
                     if (logExterminationChamber)
                         Debug.Log("object is null");
@@ -60,11 +55,18 @@ public class GameManager : MonoBehaviour
                 {
                     if (logExterminationChamber)
                         Debug.Log("object is active in temporary camp. Skipping iteration");
+                }
+                else if (obj)
+                {
+                    if (logExterminationChamber)
+                        Debug.Log("destroying: " + obj.name);
 
+                    Destroy(obj);
+                    temporaryCamp.Pop();
                     yield return null;
                 }
-
             }
+
             yield return null;
         }
     }

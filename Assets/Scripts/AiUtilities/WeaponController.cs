@@ -1,8 +1,12 @@
 using System.Collections;
 using UnityEngine;
+using static UnityEditor.Rendering.CameraUI;
 
 public class WeaponController: MonoBehaviour
 {
+    public AudioSource shotSoundPrefab;
+    private SoundManager soundManager;
+
     [SerializeField] private WeaponValues values;
     public bool debug = false;
 
@@ -36,6 +40,8 @@ public class WeaponController: MonoBehaviour
         //debug
         projectilePool = pool.Projectiles;
 
+        soundManager = unit.GameManager.soundManager;
+
         StartCoroutine(AttackCooldown());
     }
 
@@ -53,6 +59,8 @@ public class WeaponController: MonoBehaviour
 
         //debug
         projectilePool = pool.Projectiles;
+
+        soundManager = outpost.gameManager.soundManager;
 
         StartCoroutine(AttackCooldown());
     }
@@ -144,6 +152,7 @@ public class WeaponController: MonoBehaviour
         {
             cooldownRemaining = values.attackCooldown;
             onCooldown = true;
+            soundManager.PlaySoundEffect(shotSoundPrefab);
             return true;
         }
 
@@ -183,4 +192,14 @@ public class WeaponController: MonoBehaviour
         Quaternion rotation = Quaternion.LookRotation(direction, Vector3.up);
         transform.rotation = Quaternion.Slerp(transform.rotation, rotation, 50f * Time.deltaTime);
     }
+
+    //private void PlayShotSound()
+    //{
+    //    if (shotSoundPrefab)
+    //    {
+    //        Debug.Log("sound");
+    //        shotSoundPrefab.Play();
+    //    }
+            
+    //}
 }

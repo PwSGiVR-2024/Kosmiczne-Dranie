@@ -10,6 +10,8 @@ using UnityEngine.Events;
 // treœæ bêdziê siê jeszcze czêsto zmieniaæ
 public abstract class AiController : MonoBehaviour, IInteractable
 {
+    public GameObject explosionPrefab;
+
     private TargetData target;
     public TargetData Target { get => target; }
 
@@ -289,6 +291,7 @@ public abstract class AiController : MonoBehaviour, IInteractable
             //    if (proj != null)
             //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
             //}
+            ActivateDestroyEffects();
             BeforeDeactivation();
             gameObject.SetActive(false);
             onUnitNeutralized?.Invoke(this);
@@ -313,6 +316,7 @@ public abstract class AiController : MonoBehaviour, IInteractable
             //    if (proj != null)
             //        unitTaskForce.gameManager.AddToExterminationCamp(proj.gameObject);
             //}
+            ActivateDestroyEffects();
             BeforeDeactivation();
             gameObject.SetActive(false);
             onUnitNeutralized?.Invoke(this);
@@ -326,4 +330,14 @@ public abstract class AiController : MonoBehaviour, IInteractable
     //    if ((hostileProjectileMask & (1 << collider.gameObject.layer)) != 0)
     //        Damage(collider.gameObject.GetComponent<Projectile>());
     //}
+
+    private void ActivateDestroyEffects()
+    {
+        if (explosionPrefab)
+        {
+            explosionPrefab.transform.parent = null;
+            explosionPrefab.SetActive(true);
+            GameManager.AddToTemporaryCamp(explosionPrefab);
+        }
+    }
 }
