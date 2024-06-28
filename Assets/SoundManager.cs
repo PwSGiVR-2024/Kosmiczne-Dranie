@@ -15,7 +15,7 @@ public class SoundManager : MonoBehaviour
 
     public void PlaySoundEffect(AudioSource source)
     {
-        if (onCooldown) return;
+        if (onCooldown || source == null) return;
 
         float cachePitch = source.pitch;
         float cacheVolume = source.volume;

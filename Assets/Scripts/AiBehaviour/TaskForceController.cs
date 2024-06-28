@@ -32,10 +32,10 @@ public class TaskForceController : MonoBehaviour
     public Vector3 currentDestination;
 
 
-    HashSet<AiController> frigates = new();
-    HashSet<AiController> destroyers = new();
-    HashSet<AiController> cruisers = new();
-    HashSet<AiController> battleships = new();
+    public HashSet<AiController> frigates = new();
+    public HashSet<AiController> destroyers = new();
+    public HashSet<AiController> cruisers = new();
+    public HashSet<AiController> battleships = new();
 
     // helper attributes
     private bool initialized = false;
@@ -289,7 +289,7 @@ public class TaskForceController : MonoBehaviour
         onSizeChanged.Invoke(unitControllers.Count);
     }
 
-    private void RemoveUnit(AiController unit)
+    public void RemoveUnit(AiController unit)
     {
         unitControllers.Remove(unit);
 

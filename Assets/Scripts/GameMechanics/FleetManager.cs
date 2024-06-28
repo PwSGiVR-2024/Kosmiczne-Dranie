@@ -123,4 +123,68 @@ public abstract class FleetManager : MonoBehaviour
                 taskForce.SetDestination(GameUtils.RandomPlanePositionCircle(destination, forces.Count * 5));
         }
     }
+
+    public void SplitTaskForce(TaskForceController mother, out TaskForceController newTaskForce)
+    {
+        newTaskForce = TaskForceController.Create(mother.gameObject.name + "_split", mother.gameManager, mother.Affiliation);
+        newTaskForce.transform.SetParent(mother.transform.parent);
+
+        int addCountMax = mother.battleships.Count / 2;
+        int addCountCurrent = 0;
+        foreach (var battleship in mother.battleships)
+        {
+            newTaskForce.AddUnit(battleship);
+            addCountCurrent++;
+
+            if (addCountCurrent == addCountMax)
+                break;
+        }
+        newTaskForce.battleshipsRDY = true;
+
+        addCountMax = mother.cruisers.Count / 2;
+        addCountCurrent = 0;
+        foreach (var cruiser in mother.cruisers)
+        {
+            newTaskForce.AddUnit(cruiser);
+            addCountCurrent++;
+
+            if (addCountCurrent == addCountMax)
+                break;
+        }
+        newTaskForce.cruisersRDY = true;
+
+        addCountMax = mother.destroyers.Count / 2;
+        addCountCurrent = 0;
+        foreach (var destroyer in mother.destroyers)
+        {
+            newTaskForce.AddUnit(destroyer);
+            addCountCurrent++;
+
+            if (addCountCurrent == addCountMax)
+                break;
+        }
+        newTaskForce.destroyersRDY = true;
+
+        addCountMax = mother.frigates.Count / 2;
+        addCountCurrent = 0;
+        foreach (var frigate in mother.frigates)
+        {
+            newTaskForce.AddUnit(frigate);
+            addCountCurrent++;
+
+            if (addCountCurrent == addCountMax)
+                break;
+        }
+        newTaskForce.frigatesRDY = true;
+
+        foreach (var unit in newTaskForce.Units)
+        {
+            mother.RemoveUnit(unit);
+        }
+
+        spawner.AddLineRenderer(newTaskForce.gameObject, spawner.taskForceLineRendererMaterial);
+        HUDController.Create(newTaskForce, spawner.taskForceHUD, mother.gameManager);
+
+        spawner.onTaskForceSpawned.Invoke(newTaskForce);
+    }
 }

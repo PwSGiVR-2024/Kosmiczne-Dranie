@@ -35,6 +35,7 @@ public class FleetPanelController : MonoBehaviour
     public ScrollableList taskForceList; // customowy skrypt
 
     public Button buttonMerge;
+    public Button buttonSplit;
 
     public List<TaskForceContainer> allElements = new(); // lista wszystkich elementów scroll listy
     public List<TaskForceContainer> selectedTaskForceContainers = new(); // lista wybranych elementów w scroll liœcie
@@ -63,6 +64,7 @@ public class FleetPanelController : MonoBehaviour
 
         input.OnStateChange.AddListener(ChangeCurrentState); // zmiana stanu na podstawie inputManagera
         buttonMerge.onClick.AddListener(MergeWrapper);
+        buttonSplit.onClick.AddListener(SplitTaskForces);
         spawner.onTaskForceSpawned.AddListener(AddTaskForceToList); // jeœli task force jest spawnowany, to pojawia sie na listach i w ui
 
         buttonSelectFrigate.onSelect.AddListener(() => SelectButton(buttonSelectFrigate));
@@ -328,5 +330,14 @@ public class FleetPanelController : MonoBehaviour
         presetDestroyer = currentPreset.destroyerPrefab;
         presetCruiser = currentPreset.cruiserPrefab;
         presetBattleship = currentPreset.battleshipPrefab;
+    }
+
+    public void SplitTaskForces()
+    {
+        foreach (var taskForce in selectedTaskForces)
+        {
+            fleetManager.SplitTaskForce(taskForce, out TaskForceController newTaskForce);
+            
+        }
     }
 }

@@ -278,7 +278,7 @@ public class Spawner : MonoBehaviour
         return outpost;
     }
 
-    private void AddLineRenderer(GameObject obj, Material rendererMaterial)
+    public void AddLineRenderer(GameObject obj, Material rendererMaterial)
     {
         if (!obj.TryGetComponent(out LineRenderer lineRenderer))
         {
