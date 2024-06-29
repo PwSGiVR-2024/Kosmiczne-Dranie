@@ -19,8 +19,15 @@ public class HUDController : MonoBehaviour
     public Image selectBackground;
 
     public GameObject additionalInfoContainer;
-    public TMP_Text unitsCount;
+
+    public TMP_Text frigCount;
+    public TMP_Text desCount;
+    public TMP_Text cruCount;
+    public TMP_Text batCount;
+
     public TMP_Text healthText;
+    public TMP_Text powerText;
+    public TMP_Text sizeText;
 
     private enum DisplayMode { TaskForce, Outpost }
     private DisplayMode displayMode;
@@ -40,11 +47,21 @@ public class HUDController : MonoBehaviour
         {
             instance.displayMode = DisplayMode.TaskForce;
             instance.owner = taskForce;
-            taskForce.onStrengthChanged.AddListener(instance.UpdateStrengthBar);
-            taskForce.onHealthChanged.AddListener((newHealth) => instance.UpdateHealthBar(newHealth, taskForce.InitialHealth));
+            taskForce.onSizeChanged.AddListener((val) => {
+                instance.UpdateTaskForceTextInfo(taskForce);
+                instance.sizeText.text = taskForce.volume.ToString();
+            });
+            taskForce.onStrengthChanged.AddListener((val) => {
+                instance.UpdateStrengthBar(val);
+                instance.powerText.text = taskForce.CurrentPower.ToString();
+            });
+            taskForce.onHealthChanged.AddListener((newHealth) => {
+                instance.UpdateHealthBar(newHealth, taskForce.InitialHealth);
+                instance.healthText.text = taskForce.CurrentHealth.ToString();
+            });
             taskForce.onTaskForceDestroyed.AddListener((_) => Destroy(instance.gameObject));
-            taskForce.onHealthChanged.AddListener((_) => instance.unitsCount.text = taskForce.Units.Count.ToString());
-            instance.healthText?.gameObject.SetActive(false);
+            //taskForce.onHealthChanged.AddListener((_) => instance.unitsCount.text = taskForce.Units.Count.ToString());
+            //instance.healthText?.gameObject.SetActive(false);
             //instance.onSelect.AddListener(() => instance.ToggleSelect());
             taskForce.onSelect.AddListener(() => instance.ToggleSelect());
         }
@@ -57,9 +74,10 @@ public class HUDController : MonoBehaviour
             outpost.onHealthChanged.AddListener((newHealth) =>
             {
                 instance.UpdateHealthBar(newHealth, outpost.values.health);
-                instance.healthText.text = outpost.values.health.ToString();
+                instance.healthText.text = "Health: " +  outpost.CurrentHealth;
             });
-            instance.unitsCount?.gameObject.SetActive(false);
+            //instance.unitsCount?.gameObject.SetActive(false);
+            instance.healthText.text = "Health: " + outpost.values.health;
         }
 
         else return null;
@@ -161,10 +179,13 @@ public class HUDController : MonoBehaviour
 
     public void OnPointerClick(BaseEventData data)
     {
+        PointerEventData pointerEventData = data as PointerEventData;
+        if (pointerEventData.button == PointerEventData.InputButton.Right)
+            return;
+
         if (owner is TaskForceController tf)
             tf.onSelect.Invoke();
     }
-
 
     public void ToggleSelect()
     {
@@ -185,5 +206,13 @@ public class HUDController : MonoBehaviour
             indicator?.gameObject.SetActive(true);
             selectIndicator?.gameObject.SetActive(false);
         }
+    }
+
+    private void UpdateTaskForceTextInfo(TaskForceController controller)
+    {
+        frigCount.text = controller.frigates.Count.ToString();
+        desCount.text = controller.destroyers.Count.ToString();
+        cruCount.text = controller.cruisers.Count.ToString();
+        batCount.text = controller.battleships.Count.ToString();
     }
 }

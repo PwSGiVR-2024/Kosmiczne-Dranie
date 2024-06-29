@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: battleship
   m_EditorClassIdentifier: 
   prefabName: 
-  shipClass: 2
+  shipClass: 3
   size: 32
   power: 420
   description: 

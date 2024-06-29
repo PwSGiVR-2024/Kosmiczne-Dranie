@@ -4,6 +4,9 @@ using UnityEngine.Events;
 
 public class SiteController : MonoBehaviour
 {
+    public GameManager gameManager;
+    public GameObject HUDPrefab;
+
     public LineRenderer lineRenderer;
     private Collider[] checkerArray = new Collider[1];
 
@@ -25,6 +28,9 @@ public class SiteController : MonoBehaviour
     void Start()
     {
         timeLeft = captureTime;
+
+        SiteHUDController siteHUD = Instantiate(HUDPrefab, gameManager.worldSpaceCanvas.transform, true).GetComponent<SiteHUDController>();
+        siteHUD.Init(this);
     }
 
     void Update()

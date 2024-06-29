@@ -62,6 +62,7 @@ public class FleetPanelController : MonoBehaviour
             battleshipsCount: 0
             );
 
+        input.onPlaneLeftClick.AddListener((hit) => DeselectAllTaskForces());
         input.OnStateChange.AddListener(ChangeCurrentState); // zmiana stanu na podstawie inputManagera
         buttonMerge.onClick.AddListener(MergeWrapper);
         buttonSplit.onClick.AddListener(SplitTaskForces);
@@ -339,5 +340,19 @@ public class FleetPanelController : MonoBehaviour
             fleetManager.SplitTaskForce(taskForce, out TaskForceController newTaskForce);
             
         }
+    }
+
+    public void DeselectAllTaskForces()
+    {
+        DeselectAllTaskForcesRecursive();
+    }
+
+    public void DeselectAllTaskForcesRecursive()
+    {
+        if (selectedTaskForces.Count == 0)
+            return;
+
+        selectedTaskForces[selectedTaskForces.Count - 1].onSelect.Invoke();
+        DeselectAllTaskForcesRecursive();
     }
 }

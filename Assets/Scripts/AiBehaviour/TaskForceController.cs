@@ -25,6 +25,8 @@ public class TaskForceController : MonoBehaviour
         return false;
     }
 
+    public int volume;
+
     //public int frigatesCount = 0;
     //public int destroyersCount = 0;
     //public int cruisersCount = 0;
@@ -230,6 +232,7 @@ public class TaskForceController : MonoBehaviour
 
         if (reinforce == false)
         {
+            volume += unit.Values.size;
             InitialSize++;
             CurrentPower += unit.Values.power;
             InitialPower += unit.Values.power;
@@ -257,6 +260,8 @@ public class TaskForceController : MonoBehaviour
 
             if (CurrentSize > InitialSize)
                 InitialSize++;
+
+            volume += unit.Values.size;
         }
 
         switch (unit.Values.shipClass)
@@ -295,6 +300,7 @@ public class TaskForceController : MonoBehaviour
 
         CurrentPower -= unit.Values.power;
         CurrentHealth -= unit.Values.health;
+        volume -= unit.Values.size;
 
         switch (unit.Values.shipClass)
         {

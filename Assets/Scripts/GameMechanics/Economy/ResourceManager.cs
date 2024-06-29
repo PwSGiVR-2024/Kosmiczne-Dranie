@@ -44,7 +44,7 @@ public abstract class ResourceManager : MonoBehaviour
         {
             foreach (var resource in currentResources)
             {
-                switch (resource.zoneResource)
+                switch (resource.resourceType)
                 {
                     case ResourceHolder.ResourceType.Crystals:
                         Crystals += (int)(resource.value * multiplier);

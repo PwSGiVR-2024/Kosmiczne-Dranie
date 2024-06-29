@@ -10,7 +10,7 @@ public class EnemyResourceManager : ResourceManager
         {
             currentResources.Remove(resource);
 
-            switch (resource.zoneResource)
+            switch (resource.resourceType)
             {
                 case ResourceHolder.ResourceType.Crystals:
                     crystalsValue -= resource.value;
@@ -30,7 +30,7 @@ public class EnemyResourceManager : ResourceManager
         {
             currentResources.Add(resource);
 
-            switch (resource.zoneResource)
+            switch (resource.resourceType)
             {
                 case ResourceHolder.ResourceType.Crystals:
                     crystalsValue += resource.value;

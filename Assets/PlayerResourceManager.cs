@@ -14,7 +14,7 @@ public class PlayerResourceManager : ResourceManager
         {
             currentResources.Remove(resource);
 
-            switch (resource.zoneResource)
+            switch (resource.resourceType)
             {
                 case ResourceHolder.ResourceType.Crystals:
                     crystalsValue -= resource.value;
@@ -34,7 +34,7 @@ public class PlayerResourceManager : ResourceManager
         {
             currentResources.Add(resource);
 
-            switch (resource.zoneResource)
+            switch (resource.resourceType)
             {
                 case ResourceHolder.ResourceType.Crystals:
                     crystalsValue += resource.value;

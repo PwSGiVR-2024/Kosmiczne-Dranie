@@ -1,12 +1,18 @@
+using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
+using UnityEngine.UI;
 
 // klasa odpowiedzialna za interakcje gracza ze œrodowiskiem
 // na razie odpowiada tylko za clicki na plane
 // w przysz³oœci mo¿e odpowiadaæ za wybieranie task forców w œwiecie gry etc...
 public class InputManager : MonoBehaviour
 {
+    public GraphicRaycaster graphicRaycaster;
+    public EventSystem eventSystem;
+    public LayerMask ignoreLayer;
+
     // plane który registruje clicki
     public MeshCollider plane;
 
@@ -20,8 +26,27 @@ public class InputManager : MonoBehaviour
     public UnityEvent<RaycastHit> onPlaneRightClick = new();
     public UnityEvent<RaycastHit> onPlaneRightClickCtrl = new();
 
-    
 
+    private bool IsPointerOverUIElement(LayerMask layerMask)
+    {
+        PointerEventData pointerEventData = new PointerEventData(eventSystem)
+        {
+            position = Input.mousePosition
+        };
+
+        List<RaycastResult> results = new List<RaycastResult>();
+        graphicRaycaster.Raycast(pointerEventData, results);
+
+        foreach (RaycastResult result in results)
+        {
+            if ((layerMask.value & (1 << result.gameObject.layer)) > 0)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
 
@@ -42,14 +67,17 @@ public class InputManager : MonoBehaviour
 
 
         // zwraca false jeœli kursor jest nad elementem ui
-        if (EventSystem.current.IsPointerOverGameObject())
-            return;
+        //if (EventSystem.current.IsPointerOverGameObject())
+        //    return;
 
         switch (currentState)
         {
             case InputControl.Normal:
                 if (Input.GetMouseButtonDown(0))
                 {
+                    if (IsPointerOverUIElement(ignoreLayer))
+                        return;
+
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
@@ -59,6 +87,9 @@ public class InputManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(1))
                 {
+                    if (IsPointerOverUIElement(ignoreLayer))
+                        return;
+
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
@@ -72,6 +103,9 @@ public class InputManager : MonoBehaviour
             case InputControl.Ctrl:
                 if (Input.GetMouseButtonDown(0))
                 {
+                    if (IsPointerOverUIElement(ignoreLayer))
+                        return;
+
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
@@ -81,6 +115,9 @@ public class InputManager : MonoBehaviour
 
                 if (Input.GetMouseButtonDown(1))
                 {
+                    if (IsPointerOverUIElement(ignoreLayer))
+                        return;
+
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
