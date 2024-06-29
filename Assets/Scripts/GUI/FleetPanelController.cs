@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 using static InputManager;
@@ -10,18 +11,18 @@ public class FleetPanelController : MonoBehaviour
     public bool spawnOutpost = false;
 
     public TaskForcePreset currentPreset;
-    public int presetPower;
-    public int presetMetalsPrice;
-    public int presetCrystalsPrice;
-    public int presetMaintenancePrice;
-    public int presetFrigates;
-    public int presetDestroyers;
-    public int presetCruisers;
-    public int presetBattleships;
-    public GameObject presetFrigte;
-    public GameObject presetDestroyer;
-    public GameObject presetCruiser;
-    public GameObject presetBattleship;
+    //public int presetPower;
+    //public int presetMetalsPrice;
+    //public int presetCrystalsPrice;
+    //public int presetMaintenancePrice;
+    //public int presetFrigates;
+    //public int presetDestroyers;
+    //public int presetCruisers;
+    //public int presetBattleships;
+    //public GameObject presetFrigte;
+    //public GameObject presetDestroyer;
+    //public GameObject presetCruiser;
+    //public GameObject presetBattleship;
 
     // enum z InputManagera, bo ten skrypt te¿ oferuje alternatywne sterowanie
     public InputControl currentState = InputControl.Normal;
@@ -47,7 +48,34 @@ public class FleetPanelController : MonoBehaviour
     public SelectUnitButton buttonSelectBattleship;
     public SelectUnitButton buttonSelectOutpost;
 
+    public TMP_Text presetMetals;
+    public TMP_Text presetCrystals;
+    public TMP_Text presetMaintenance;
+    public TMP_Text presetHealth;
+    public TMP_Text presetPower;
+    public TMP_Text presetRange;
+    public TMP_Text presetSize;
+    public TMP_Text presetSpeed;
+
     //public SelectUnitButton currentSelection;
+
+    private void UpdatePresetInfo()
+    {
+        presetMetals.text = currentPreset.metalsPrice.ToString();
+        presetCrystals.text = currentPreset.crysalsPrice.ToString();
+        presetMaintenance.text = currentPreset.maintenancePrice.ToString();
+        presetHealth.text = currentPreset.health.ToString();
+        presetPower.text = currentPreset.power.ToString();
+        presetSize.text = currentPreset.size.ToString();
+
+        if (currentPreset.range > 0)
+            presetRange.text = currentPreset.range.ToString();
+        else presetRange.text = "0";
+
+        if (currentPreset.travelSpeed > 0 && currentPreset.travelSpeed != float.PositiveInfinity)
+            presetSpeed.text = currentPreset.travelSpeed.ToString();
+        else presetSpeed.text = "0";
+    }
 
     void Start()
     {
@@ -59,7 +87,8 @@ public class FleetPanelController : MonoBehaviour
             frigatesCount: 0,
             destroyersCount: 0,
             cruisersCount: 0,
-            battleshipsCount: 0
+            battleshipsCount: 0,
+            onUpdateCallabck: () => UpdatePresetInfo()
             );
 
         input.onPlaneLeftClick.AddListener((hit) => DeselectAllTaskForces());
@@ -87,7 +116,7 @@ public class FleetPanelController : MonoBehaviour
         {
             case ShipClass.Outpost:
                 spawnOutpost = true;
-                return;
+                break;
 
             case ShipClass.Frigate:
                 button.onCountChange.AddListener(() => {
@@ -129,6 +158,8 @@ public class FleetPanelController : MonoBehaviour
                 currentPreset.UpdateValues();
                 break;
         }
+
+
 
         //DeselectAllOtherButtons(button);
         //currentSelection = button;
@@ -315,23 +346,23 @@ public class FleetPanelController : MonoBehaviour
             buttonSelectOutpost.DeselectMain();
     }
 
-    private void Update()
-    {
-        presetPower = currentPreset.power;
-        presetMetalsPrice = currentPreset.metalsPrice;
-        presetCrystalsPrice = currentPreset.crysalsPrice;
-        presetMaintenancePrice = currentPreset.maintenancePrice;
+    //private void Update()
+    //{
+    //    presetPower = currentPreset.power;
+    //    presetMetalsPrice = currentPreset.metalsPrice;
+    //    presetCrystalsPrice = currentPreset.crysalsPrice;
+    //    presetMaintenancePrice = currentPreset.maintenancePrice;
 
-        presetFrigates = currentPreset.frigatesCount;
-        presetDestroyers = currentPreset.destroyersCount;
-        presetCruisers = currentPreset.cruisersCount;
-        presetBattleships = currentPreset.battleshipsCount;
+    //    presetFrigates = currentPreset.frigatesCount;
+    //    presetDestroyers = currentPreset.destroyersCount;
+    //    presetCruisers = currentPreset.cruisersCount;
+    //    presetBattleships = currentPreset.battleshipsCount;
 
-        presetFrigte = currentPreset.frigatePrefab;
-        presetDestroyer = currentPreset.destroyerPrefab;
-        presetCruiser = currentPreset.cruiserPrefab;
-        presetBattleship = currentPreset.battleshipPrefab;
-    }
+    //    presetFrigte = currentPreset.frigatePrefab;
+    //    presetDestroyer = currentPreset.destroyerPrefab;
+    //    presetCruiser = currentPreset.cruiserPrefab;
+    //    presetBattleship = currentPreset.battleshipPrefab;
+    //}
 
     public void SplitTaskForces()
     {

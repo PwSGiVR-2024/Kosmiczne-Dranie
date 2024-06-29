@@ -128,6 +128,7 @@ public abstract class FleetManager : MonoBehaviour
     {
         newTaskForce = TaskForceController.Create(mother.gameObject.name + "_split", mother.gameManager, mother.Affiliation);
         newTaskForce.transform.SetParent(mother.transform.parent);
+        HUDController.Create(newTaskForce, spawner.taskForceHUD, mother.gameManager);
 
         int addCountMax = mother.battleships.Count / 2;
         int addCountCurrent = 0;
@@ -183,7 +184,6 @@ public abstract class FleetManager : MonoBehaviour
         }
 
         spawner.AddLineRenderer(newTaskForce.gameObject, spawner.taskForceLineRendererMaterial);
-        HUDController.Create(newTaskForce, spawner.taskForceHUD, mother.gameManager);
 
         spawner.onTaskForceSpawned.Invoke(newTaskForce);
     }

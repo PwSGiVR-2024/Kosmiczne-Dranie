@@ -1,5 +1,7 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.EventSystems;
 using UnityEngine.UI;
 
 public class SelectUnitButton : MonoBehaviour
@@ -30,17 +32,42 @@ public class SelectUnitButton : MonoBehaviour
     public UnityEvent onDeselect = new();
     public UnityEvent onCountChange = new();
 
+    public GameObject hoverInfo;
+    public TMP_Text metalPrice;
+    public TMP_Text crystalPrice;
+    public TMP_Text maintenance;
+    public TMP_Text size;
+    public TMP_Text power;
+    public TMP_Text speed;
+    public TMP_Text range;
+
     private void Start()
     {
         if (unitPrefab.TryGetComponent(out Outpost outpost))
         {
             isOutpost = true;
+
+            metalPrice.text = "Metals: " + outpost.values.metalPrice;
+            crystalPrice.text = "Crystals: " + outpost.values.crystalPrice;
+            maintenance.text = "Maintenance: " + outpost.values.maintenancePrice;
+            size.text = "Size: " + 1000;
+            power.text = "Power: " + 1200;
+            speed.text = "Speed: " + 0;
+            range.text = "Spot: " + outpost.values.range;
         }
 
         else if (unitPrefab.TryGetComponent(out AiController unit))
         {
             prefabController = unit;
             isOutpost = false;
+
+            metalPrice.text = "Metals: " + unit.Values.metalPrice;
+            crystalPrice.text = "Crystals: " + unit.Values.crystalPrice;
+            maintenance.text = "Maintenance: " + unit.Values.maintenancePrice;
+            size.text = "Size: " + unit.Values.size;
+            power.text = "Power: " + unit.Values.power;
+            speed.text = "Speed: " + unit.Values.unitSpeed;
+            range.text = "Spot: " + unit.Values.spotDistance;
         }
 
         normalMainColor = image.color;
@@ -92,5 +119,15 @@ public class SelectUnitButton : MonoBehaviour
     private void DeselectCountButton(Button button)
     {
         button.image.color = button.colors.normalColor;
+    }
+
+    public void OnPointerEnter(BaseEventData data)
+    {
+        hoverInfo.SetActive(true);
+    }
+
+    public void OnPointerExit(BaseEventData data)
+    {
+        hoverInfo.SetActive(false);
     }
 }

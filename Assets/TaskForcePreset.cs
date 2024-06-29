@@ -1,12 +1,18 @@
+using System;
 using UnityEngine;
 
 public struct TaskForcePreset
 {
+    public Action onUpdate;
+
     public int power;
     public int metalsPrice;
     public int crysalsPrice;
     public int maintenancePrice;
-
+    public int health;
+    public int size;
+    public float travelSpeed;
+    public float range;
     public int frigatesCount;
     public int destroyersCount;
     public int cruisersCount;
@@ -17,15 +23,17 @@ public struct TaskForcePreset
     public GameObject cruiserPrefab;
     public GameObject battleshipPrefab;
 
+
     public TaskForcePreset(
-        GameObject frigatePrefab,
-        GameObject destroyerPrefab,
-        GameObject cruiserPrefab,
-        GameObject battleshipPrefab,
-        int frigatesCount,
-        int destroyersCount,
-        int cruisersCount,
-        int battleshipsCount)
+    GameObject frigatePrefab,
+    GameObject destroyerPrefab,
+    GameObject cruiserPrefab,
+    GameObject battleshipPrefab,
+    int frigatesCount,
+    int destroyersCount,
+    int cruisersCount,
+    int battleshipsCount,
+    Action onUpdateCallabck = null)
     {
         this.frigatesCount = frigatesCount;
         this.destroyersCount = destroyersCount;
@@ -41,6 +49,12 @@ public struct TaskForcePreset
         metalsPrice = 0;
         crysalsPrice = 0;
         maintenancePrice = 0;
+        range = 0;
+        health = 0;
+        size = 0;
+        travelSpeed = 0;
+
+        onUpdate = onUpdateCallabck;
 
         UpdateValues();
     }
@@ -51,6 +65,10 @@ public struct TaskForcePreset
         metalsPrice = 0;
         crysalsPrice = 0;
         maintenancePrice = 0;
+        range = 0;
+        health = 0;
+        size = 0;
+        travelSpeed = float.PositiveInfinity;
 
         AiController member;
 
@@ -61,6 +79,12 @@ public struct TaskForcePreset
             metalsPrice += member.Values.metalPrice * battleshipsCount;
             crysalsPrice += member.Values.crystalPrice * battleshipsCount;
             maintenancePrice += member.Values.maintenancePrice * battleshipsCount;
+            health += member.Values.health * battleshipsCount;
+            size += member.Values.size * battleshipsCount;
+            range += member.Values.spotDistance * battleshipsCount;
+
+            if (member.Values.unitSpeed < travelSpeed)
+                travelSpeed = member.Values.unitSpeed;
         }
         else battleshipsCount = 0;
 
@@ -71,6 +95,12 @@ public struct TaskForcePreset
             metalsPrice += member.Values.metalPrice * cruisersCount;
             crysalsPrice += member.Values.crystalPrice * cruisersCount;
             maintenancePrice += member.Values.maintenancePrice * cruisersCount;
+            health += member.Values.health * cruisersCount;
+            size += member.Values.size * cruisersCount;
+            range += member.Values.spotDistance * cruisersCount;
+
+            if (member.Values.unitSpeed < travelSpeed)
+                travelSpeed = member.Values.unitSpeed;
         }
         else cruisersCount = 0;
 
@@ -81,6 +111,12 @@ public struct TaskForcePreset
             metalsPrice += member.Values.metalPrice * destroyersCount;
             crysalsPrice += member.Values.crystalPrice * destroyersCount;
             maintenancePrice += member.Values.maintenancePrice * destroyersCount;
+            health += member.Values.health * destroyersCount;
+            size += member.Values.size * destroyersCount;
+            range += member.Values.spotDistance * destroyersCount;
+
+            if (member.Values.unitSpeed < travelSpeed)
+                travelSpeed = member.Values.unitSpeed;
         }
         else destroyersCount = 0;
 
@@ -91,8 +127,20 @@ public struct TaskForcePreset
             metalsPrice += member.Values.metalPrice * frigatesCount;
             crysalsPrice += member.Values.crystalPrice * frigatesCount;
             maintenancePrice += member.Values.maintenancePrice * frigatesCount;
+            health += member.Values.health * frigatesCount;
+            size += member.Values.size * frigatesCount;
+            range += member.Values.spotDistance * frigatesCount;
+
+            if (member.Values.unitSpeed < travelSpeed)
+                travelSpeed = member.Values.unitSpeed;
         }
         else frigatesCount = 0;
+
+        // avarage value
+        range /= frigatesCount + destroyersCount + cruisersCount + battleshipsCount;
+
+        if (onUpdate != null)
+            onUpdate.Invoke();
     }
 
     public void MultiplyCounts(int value)
