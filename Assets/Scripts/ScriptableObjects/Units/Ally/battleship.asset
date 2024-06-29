@@ -21,7 +21,7 @@ MonoBehaviour:
   health: 8000
   attackDistance: 450
   unitSpeed: 50
-  acceleration: 15
+  acceleration: 20
   angularSpeed: 60
   crystalPrice: 200
   metalPrice: 4000

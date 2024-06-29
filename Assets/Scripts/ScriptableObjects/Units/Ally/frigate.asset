@@ -20,9 +20,9 @@ MonoBehaviour:
   spotDistance: 300
   health: 200
   attackDistance: 200
-  unitSpeed: 80
-  acceleration: 40
-  angularSpeed: 160
+  unitSpeed: 120
+  acceleration: 70
+  angularSpeed: 200
   crystalPrice: 15
   metalPrice: 200
   maintenancePrice: 10

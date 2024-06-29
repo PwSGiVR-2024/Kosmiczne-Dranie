@@ -40,6 +40,7 @@ public class SelectUnitButton : MonoBehaviour
     public TMP_Text power;
     public TMP_Text speed;
     public TMP_Text range;
+    public TMP_Text health;
 
     private void Start()
     {
@@ -54,6 +55,7 @@ public class SelectUnitButton : MonoBehaviour
             power.text = "Power: " + 1200;
             speed.text = "Speed: " + 0;
             range.text = "Spot: " + outpost.values.range;
+            health.text = "Health: " + outpost.values.health;
         }
 
         else if (unitPrefab.TryGetComponent(out AiController unit))
@@ -68,6 +70,7 @@ public class SelectUnitButton : MonoBehaviour
             power.text = "Power: " + unit.Values.power;
             speed.text = "Speed: " + unit.Values.unitSpeed;
             range.text = "Spot: " + unit.Values.spotDistance;
+            health.text = "Health: " + unit.Values.health;
         }
 
         normalMainColor = image.color;
