@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public abstract class ResourceManager : MonoBehaviour
 {
@@ -17,6 +18,11 @@ public abstract class ResourceManager : MonoBehaviour
     public int totalCredits;
     public int totalMaintenance = 0;
 
+    public int creditsPerInterval = 0;
+    public int metalsPerInterval = 0;
+    public int crystalsPerInterval = 0;
+
+    public UnityEvent onUpdate;
 
     public int Metals { get => totalMetal; set => totalMetal = value; }
     public int Crystals { get => totalCrystal; set => totalCrystal = value; }
@@ -48,20 +54,24 @@ public abstract class ResourceManager : MonoBehaviour
                 {
                     case ResourceHolder.ResourceType.Crystals:
                         Crystals += (int)(resource.value * multiplier);
+                        crystalsPerInterval = (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Metals:
                         Metals += (int)(resource.value * multiplier);
+                        metalsPerInterval = (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Credits:
                         Credits += (int)(resource.value * multiplier);
+                        creditsPerInterval = (int)(resource.value * multiplier);
                         break;
                 }
             }
 
             Credits -= Maintenance;
 
+            onUpdate.Invoke();
             yield return interval;
         }
     }
@@ -79,6 +89,7 @@ public abstract class ResourceManager : MonoBehaviour
         Maintenance += values.maintenancePrice * count;
 
         controller.onUnitNeutralized.AddListener((unit) => RemoveMaintenance(unit.Values.maintenancePrice));
+        onUpdate.Invoke();
     }
 
     public void RemoveResources(GameObject outpostPrefab)
@@ -94,6 +105,7 @@ public abstract class ResourceManager : MonoBehaviour
         Maintenance += values.maintenancePrice;
 
         outpost.onOutpostDestroy.AddListener(() => RemoveMaintenance(outpost.values.maintenancePrice));
+        onUpdate.Invoke();
     }
 
     public void RemoveMaintenance(int value)
@@ -102,6 +114,7 @@ public abstract class ResourceManager : MonoBehaviour
             return;
 
         Maintenance -= value;
+        onUpdate.Invoke();
     }
 
     public void RemoveResources(TaskForcePreset preset)
@@ -112,6 +125,7 @@ public abstract class ResourceManager : MonoBehaviour
         Crystals -= preset.crysalsPrice;
         Metals -= preset.metalsPrice;
         Maintenance += preset.maintenancePrice;
+        onUpdate.Invoke();
     }
 
     public bool CheckIfHavingResources(TaskForcePreset preset)

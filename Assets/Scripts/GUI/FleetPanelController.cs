@@ -10,6 +10,10 @@ public class FleetPanelController : MonoBehaviour
 {
     public bool spawnOutpost = false;
 
+    public Color notEnoughResourcesColor;
+    public Color warningColor;
+    public Color defaultColor;
+
     public TaskForcePreset currentPreset;
     //public int presetPower;
     //public int presetMetalsPrice;
@@ -75,6 +79,18 @@ public class FleetPanelController : MonoBehaviour
         if (currentPreset.travelSpeed > 0 && currentPreset.travelSpeed != float.PositiveInfinity)
             presetSpeed.text = currentPreset.travelSpeed.ToString();
         else presetSpeed.text = "0";
+
+        if (fleetManager.resources.Metals < currentPreset.metalsPrice)
+            presetMetals.color = notEnoughResourcesColor;
+        else presetMetals.color = defaultColor;
+
+        if (fleetManager.resources.Crystals < currentPreset.crysalsPrice)
+            presetCrystals.color = notEnoughResourcesColor;
+        else presetCrystals.color = defaultColor;
+
+        if (fleetManager.resources.creditsPerInterval < currentPreset.maintenancePrice)
+            presetMaintenance.color = warningColor;
+        else presetMaintenance.color = defaultColor;
     }
 
     void Start()
