@@ -861,6 +861,10 @@ MonoBehaviour:
   colorBackgroundAlly: {r: 0, g: 1, b: 0.08235294, a: 0.19607843}
   colorMainEnemy: {r: 0.9254902, g: 0.27058825, b: 0.30980393, a: 1}
   colorBackgroundEnemy: {r: 1, g: 0.101960786, b: 0, a: 0.19607843}
+  lineRenderer: {fileID: 0}
+  ringDefault: {fileID: 2100000, guid: 06ad0ffb9bfef2245a796082822be717, type: 2}
+  ringEnemy: {fileID: 2100000, guid: 7533ddcfd9a8575428ca21f036f283f0, type: 2}
+  ringAlly: {fileID: 2100000, guid: 9e75b88a79309c848bb45676622236ed, type: 2}
   siteController: {fileID: 0}
   icon: {fileID: 5237160825037669399}
   indicator: {fileID: 3254265064635804225}

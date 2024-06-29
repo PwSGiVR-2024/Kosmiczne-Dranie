@@ -46,6 +46,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a69f8ccadd0054fb16936296ea7b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotSoundPrefab: {fileID: 0}
   values: {fileID: 11400000, guid: e2cf9fb293f7b23499d19a4fc5d06c14, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}
@@ -146,6 +147,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a69f8ccadd0054fb16936296ea7b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotSoundPrefab: {fileID: 0}
   values: {fileID: 11400000, guid: e2cf9fb293f7b23499d19a4fc5d06c14, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}
@@ -356,7 +358,7 @@ LineRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 5982837e1b1935643a161f59a3493805, type: 2}
+  - {fileID: 2100000, guid: 9e75b88a79309c848bb45676622236ed, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -568,6 +570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a69f8ccadd0054fb16936296ea7b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotSoundPrefab: {fileID: 0}
   values: {fileID: 11400000, guid: e2cf9fb293f7b23499d19a4fc5d06c14, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}
@@ -666,6 +669,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a69f8ccadd0054fb16936296ea7b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotSoundPrefab: {fileID: 0}
   values: {fileID: 11400000, guid: 2dd9574a3edda674fb512e485346aedf, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}
@@ -716,6 +720,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 44a69f8ccadd0054fb16936296ea7b1d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shotSoundPrefab: {fileID: 0}
   values: {fileID: 11400000, guid: e2cf9fb293f7b23499d19a4fc5d06c14, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}

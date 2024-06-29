@@ -19,6 +19,13 @@ public class SiteHUDController : MonoBehaviour
     public Color colorMainEnemy;
     public Color colorBackgroundEnemy;
 
+
+    public LineRenderer lineRenderer;
+    public Material ringDefault;
+    public Material ringEnemy;
+    public Material ringAlly;
+
+
     public SiteController siteController;
 
     public Image icon;
@@ -63,6 +70,9 @@ public class SiteHUDController : MonoBehaviour
                     break;
             }
         }
+
+        if (siteController.gameObject.TryGetComponent<LineRenderer>(out lineRenderer))
+            lineRenderer.material = ringDefault;
     }
 
     void Update()
@@ -136,6 +146,7 @@ public class SiteHUDController : MonoBehaviour
                 captureBar.color = colorMainAlly;
                 background.color = colorBackgroundAlly;
                 captureBarBackground.color = colorMainAlly;
+                lineRenderer.material = ringAlly;
                 break;
 
             case Affiliation.Red:
@@ -144,6 +155,7 @@ public class SiteHUDController : MonoBehaviour
                 captureBar.color = colorMainEnemy;
                 background.color = colorBackgroundEnemy;
                 captureBarBackground.color = colorMainEnemy;
+                lineRenderer.material = ringEnemy;
                 break;
         }
     }
