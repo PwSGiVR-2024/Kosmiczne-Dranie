@@ -15793,6 +15793,9 @@ MonoBehaviour:
   lineRenderer: {fileID: 1060341616}
   range: 250
   health: 100000
+  onDestroy:
+    m_PersistentCalls:
+      m_Calls: []
   fleetManager: {fileID: 524505708}
   playerHeadquarters: {fileID: 458003957}
   spawner: {fileID: 2098798327}
@@ -17914,7 +17917,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f815f9851a545648ae7a6d404f56337, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.1573
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f815f9851a545648ae7a6d404f56337, type: 3}
       propertyPath: m_LocalPosition.z
