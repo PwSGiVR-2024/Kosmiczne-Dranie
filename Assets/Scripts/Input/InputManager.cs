@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.Events;
@@ -9,6 +10,9 @@ using UnityEngine.UI;
 // w przysz³oœci mo¿e odpowiadaæ za wybieranie task forców w œwiecie gry etc...
 public class InputManager : MonoBehaviour
 {
+    public PlayerResourceManager playerResourceManager;
+    public EnemyResourceManager enemyResourceManager;
+
     public GraphicRaycaster graphicRaycaster;
     public EventSystem eventSystem;
     public LayerMask ignoreLayer;
@@ -52,6 +56,20 @@ public class InputManager : MonoBehaviour
 
     void Update()
     {
+        if (Input.GetKeyDown(KeyCode.Alpha9))
+            playerResourceManager.infiniteResources = true;
+
+        if (Input.GetKeyDown(KeyCode.Alpha0))
+            enemyResourceManager.infiniteResources = true;
+
+        if (Input.GetKeyDown(KeyCode.Alpha8))
+        {
+            enemyResourceManager.infiniteResources = false;
+            playerResourceManager.infiniteResources = false;
+        }
+            
+
+
         if (Input.GetKeyDown(KeyCode.LeftControl))
         {
             currentState = InputControl.Ctrl;

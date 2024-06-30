@@ -4,6 +4,8 @@ using UnityEngine;
 
 public class EnemyHeadquarters : Headquarters
 {
+    public Transform spawnPos;
+
     private Dictionary<string, int> taskForcesCounts = new();
 
     private TaskForcePreset scoutPreset;
@@ -244,7 +246,7 @@ public class EnemyHeadquarters : Headquarters
         {
             spawned = false;
 
-            if (!spawned) taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
+            if (!spawned) taskForce = fleetManager.ProcureTaskForce(latePreset, spawnPos.position, "enemy task force");
             if (taskForce)
             {
                 spawned = true;
@@ -252,7 +254,7 @@ public class EnemyHeadquarters : Headquarters
                 continue;
             }
 
-            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(midPreset, spawnPos.position, "enemy task force");
             if (taskForce)
             {
                 spawned = true;
@@ -260,7 +262,7 @@ public class EnemyHeadquarters : Headquarters
                 continue;
             }
 
-            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(earlyPreset, spawnPos.position, "enemy task force");
             if (taskForce)
             {
                 spawned = true;
@@ -268,7 +270,7 @@ public class EnemyHeadquarters : Headquarters
                 continue;
             }
 
-            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(scoutPreset, spawnPos.position, "enemy task force");
             if (taskForce)
             {
                 spawned = true;

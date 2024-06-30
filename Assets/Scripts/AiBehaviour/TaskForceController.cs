@@ -702,7 +702,7 @@ public class TaskForceController : MonoBehaviour
         }
             
 
-        else if (targets[closestIndex].TryGetComponent(out PlayerHeadquarters hq))
+        else if (targets[closestIndex].TryGetComponent(out Headquarters hq))
         {
             target = hq;
             return true;
