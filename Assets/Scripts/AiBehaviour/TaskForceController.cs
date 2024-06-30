@@ -22,7 +22,7 @@ public class TaskForceController : MonoBehaviour
 
     public bool arrivedAtDestination = false;
 
-    private bool CheckIfReady()
+    public bool CheckIfReady()
     {
         if (frigatesRDY && destroyersRDY && cruisersRDY && battleshipsRDY)
             return true;

@@ -8,6 +8,8 @@ using static InputManager;
 // skrypt odpowiada za panel UI, odpowiadaj¹cy za sterowanie flot¹ (w projekcie ScreenSpaceCanvas -> FleetPanel)
 public class FleetPanelController : MonoBehaviour
 {
+    public PlayerResourceManager playerResources;
+
     public bool spawnOutpost = false;
 
     public Color notEnoughResourcesColor;
@@ -80,15 +82,15 @@ public class FleetPanelController : MonoBehaviour
             presetSpeed.text = currentPreset.travelSpeed.ToString();
         else presetSpeed.text = "0";
 
-        if (fleetManager.resources.Metals < currentPreset.metalsPrice)
+        if (playerResources.Metals < currentPreset.metalsPrice)
             presetMetals.color = notEnoughResourcesColor;
         else presetMetals.color = defaultColor;
 
-        if (fleetManager.resources.Crystals < currentPreset.crysalsPrice)
+        if (playerResources.Crystals < currentPreset.crysalsPrice)
             presetCrystals.color = notEnoughResourcesColor;
         else presetCrystals.color = defaultColor;
 
-        if (fleetManager.resources.creditsPerInterval < currentPreset.maintenancePrice)
+        if (playerResources.creditsValue < currentPreset.maintenancePrice)
             presetMaintenance.color = warningColor;
         else presetMaintenance.color = defaultColor;
     }

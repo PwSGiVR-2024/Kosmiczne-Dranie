@@ -25,5 +25,5 @@ MonoBehaviour:
   angularSpeed: 140
   crystalPrice: 35
   metalPrice: 400
-  maintenancePrice: 40
+  maintenancePrice: 30
   upgradePrice: 0

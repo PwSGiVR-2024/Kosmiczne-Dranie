@@ -18,10 +18,6 @@ public abstract class ResourceManager : MonoBehaviour
     public int totalCredits;
     public int totalMaintenance = 0;
 
-    public int creditsPerInterval = 0;
-    public int metalsPerInterval = 0;
-    public int crystalsPerInterval = 0;
-
     public UnityEvent onUpdate;
 
     public int Metals { get => totalMetal; set => totalMetal = value; }
@@ -54,17 +50,14 @@ public abstract class ResourceManager : MonoBehaviour
                 {
                     case ResourceHolder.ResourceType.Crystals:
                         Crystals += (int)(resource.value * multiplier);
-                        crystalsPerInterval = (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Metals:
                         Metals += (int)(resource.value * multiplier);
-                        metalsPerInterval = (int)(resource.value * multiplier);
                         break;
 
                     case ResourceHolder.ResourceType.Credits:
                         Credits += (int)(resource.value * multiplier);
-                        creditsPerInterval = (int)(resource.value * multiplier);
                         break;
                 }
             }
@@ -153,7 +146,7 @@ public abstract class ResourceManager : MonoBehaviour
         if (prefab.TryGetComponent(out AiController controller))
         {
             UnitValues values = controller.Values;
-            if (values.metalPrice > Crystals || values.crystalPrice > Metals)
+            if (values.metalPrice > Metals || values.crystalPrice > Crystals)
                 return false;
 
             else return true;
@@ -162,7 +155,7 @@ public abstract class ResourceManager : MonoBehaviour
         else if (prefab.TryGetComponent(out Outpost outpst))
         {
             OutpostValues values = outpst.values;
-            if (values.metalPrice > Crystals || values.crystalPrice > Metals)
+            if (values.metalPrice > Metals || values.crystalPrice > Crystals)
                 return false;
 
             else return true;

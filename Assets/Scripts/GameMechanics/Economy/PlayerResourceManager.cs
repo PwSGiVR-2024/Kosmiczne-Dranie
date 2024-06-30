@@ -10,7 +10,7 @@ public class PlayerResourceManager : ResourceManager
 
     public override void OnResourceCapture(ResourceHolder resource, Affiliation capturer)
     {
-        if (currentResources.Contains(resource) && capturer != Affiliation.Red)
+        if (currentResources.Contains(resource) && capturer != Affiliation.Blue)
         {
             currentResources.Remove(resource);
 
