@@ -4277,6 +4277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67b9497910602b74791faa63e75fa0e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 0}
   lineRenderer: {fileID: 458003958}
   range: 250
   health: 100000
@@ -10188,6 +10189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19664f6486aab044a9b10dab36590850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 0}
   lineRenderer: {fileID: 1060341616}
   range: 250
   health: 100000
@@ -16058,8 +16060,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59dd5ddbf276fc48aafbd99d93bbdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
-  player: {fileID: 0}
+  enemy: {fileID: 1060341615}
+  player: {fileID: 458003957}
   soundManager: {fileID: 465012143}
   worldSpaceCanvas: {fileID: 1426129218}
   screenSpaceCanvas: {fileID: 793203628}

@@ -5,6 +5,7 @@ using UnityEngine.Events;
 
 public class Outpost : MonoBehaviour, IInteractable
 {
+    public GameObject explosionPrefab;
     public LineRenderer lineRenderer;
 
     public Collider[] targetNonAlloc = new Collider[12];
@@ -201,7 +202,7 @@ public class Outpost : MonoBehaviour, IInteractable
         //{
         //    onZoneRelease.Invoke(zone);
         //}
-
+        ActivateDestroyEffects();
         onOutpostDestroy.Invoke();
     }
 
@@ -264,4 +265,15 @@ public class Outpost : MonoBehaviour, IInteractable
     //    connections.Remove(outpost);
     //    UpdateConnections();
     //}
+
+    private void ActivateDestroyEffects()
+    {
+        if (explosionPrefab)
+        {
+            Debug.LogWarning("activating");
+            explosionPrefab.transform.parent = null;
+            explosionPrefab.SetActive(true);
+            gameManager.AddToTemporaryCamp(explosionPrefab);
+        }
+    }
 }

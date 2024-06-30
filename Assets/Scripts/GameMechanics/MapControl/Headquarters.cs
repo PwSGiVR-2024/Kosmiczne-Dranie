@@ -3,6 +3,7 @@ using UnityEngine.Events;
 
 public abstract class Headquarters : MonoBehaviour, IInteractable
 {
+    public GameObject explosionPrefab;
     public LineRenderer lineRenderer;
 
     public int range;
@@ -33,5 +34,19 @@ public abstract class Headquarters : MonoBehaviour, IInteractable
     void Update()
     {
         GameUtils.DrawCircle(lineRenderer, range, 5, transform.position);
+    }
+
+    private void ActivateDestroyEffects()
+    {
+        if (explosionPrefab)
+        {
+            explosionPrefab.transform.parent = null;
+            explosionPrefab.SetActive(true);
+        }
+    }
+
+    private void OnDestroy()
+    {
+        ActivateDestroyEffects();
     }
 }
