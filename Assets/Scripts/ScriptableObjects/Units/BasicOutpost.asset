@@ -14,8 +14,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   metalPrice: 10000
   crystalPrice: 500
-  maintenancePrice: 300
+  maintenancePrice: 600
   upgradePrice: 0
   health: 100000
-  range: 500
+  range: 250
   healModifier: 1
