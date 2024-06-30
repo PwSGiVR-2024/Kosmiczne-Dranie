@@ -5,17 +5,20 @@ using UnityEngine;
 
 public class MinimapIndicator : MonoBehaviour
 {
-    // generalnie to jest przyczepione do prefaba
-    // mo¿liwe ¿e to bêdzie musia³o byæ childem jakiegoœ canvas, jeœli tak daj znaæ
+    private bool initialized = false;
+    private SpriteRenderer spriteRenderer;
 
     public bool isStatic = false;
     public MonoBehaviour owner;
     public Transform follow;
 
-    // mo¿na daæ offset ¿eby jak bêdzie aktualizowaæ pozycjê to wy¿ej ni¿ to co followuje
-    public Vector3 offset = new Vector3(0, 250, 0);
+    public Vector3 offset = new Vector3(0, 450, 0);
 
-    // to jest inicjalizowane kiedy task force albo coœ siê spawnuje
+    [Header("Site settings")]
+    public Color defaultColor;
+    public Color allyColor;
+    public Color enemyColor;
+
     public static MinimapIndicator Create(GameObject prefab, MonoBehaviour owner)
     {
         MinimapIndicator indicator = Instantiate(prefab).GetComponent<MinimapIndicator>();
@@ -23,10 +26,29 @@ public class MinimapIndicator : MonoBehaviour
 
         return indicator;
     }
-    
+
+    private void ChangeSiteColor(SiteController site)
+    {
+        Debug.Log("change");
+
+        if (site.currentController == Affiliation.Blue)
+            spriteRenderer.color = allyColor;
+
+        else if (site.currentController == Affiliation.Red)
+            spriteRenderer.color = enemyColor;
+
+        else spriteRenderer.color = defaultColor;
+    }
+
+    private void Start()
+    {
+        if (owner && !initialized) Init(owner);
+    }
+
     public void Init(MonoBehaviour owner)
     {
         this.owner = owner;
+        spriteRenderer = GetComponent<SpriteRenderer>();
 
         if (owner is TaskForceController taskForce)
         {
@@ -45,37 +67,36 @@ public class MinimapIndicator : MonoBehaviour
         else if (owner is SiteController site)
         {
             follow = site.transform;
+            site.onCaptured.AddListener(() => ChangeSiteColor(site));
             isStatic = true;
         }
             
-
         else if (owner is Headquarters head)
         {
             follow = head.transform;
             isStatic = true;
         }
-            
 
+        else if (owner is MapMovement movement)
+        {
+            follow = movement.transform;
+            isStatic = false;
+        }
+
+        initialized = true;
     }
 
     private void Update()
     {
-        // niektóre obiekty takie jak site s¹ statyczne
         if (isStatic)
             return;
 
-        if (follow == null)
-            return;
-
-        // trzeba dodaæ warunek, bo jak rozwali dowódcê to mo¿e w jakiejœ klatce nie mieæ czego followowaæ
         if (follow == null && owner is TaskForceController taskForce && taskForce.Commander != null)
             follow = taskForce.Commander.transform;
 
+        else if (follow == null)
+            return;
 
-
-
-        // tutaj to coœ musi mieæ aktualizowan¹ pozycjê w ka¿dej klatce, na podstawie Transform follow
         transform.position = follow.position + offset;
-
     }
 }

@@ -217,12 +217,16 @@ public class TaskForceController : MonoBehaviour
     {
         onSelect.AddListener(() => isSelectedInUI = !isSelectedInUI);
 
-        destinationRenderer = Instantiate(new GameObject(), gameObject.transform).AddComponent<LineRenderer>();
-        destinationRenderer.startWidth = 2;
-        destinationRenderer.endWidth = 2;
         rangeRenderer = GetComponent<LineRenderer>();
-        destinationRenderer.material = rangeRenderer.material;
         onStateChanged.AddListener(OnStateChanged);
+
+        if (affiliation == Affiliation.Blue)
+        {
+            destinationRenderer = Instantiate(new GameObject(), gameObject.transform).AddComponent<LineRenderer>();
+            destinationRenderer.startWidth = 2;
+            destinationRenderer.endWidth = 2;
+            destinationRenderer.material = rangeRenderer.material;
+        }
 
         if (affiliation == Affiliation.Blue)
             targetMask = LayerMask.GetMask("Enemies", "EnemyOutposts", "EnemyHeadquarters");
@@ -841,8 +845,11 @@ public class TaskForceController : MonoBehaviour
         {
             GameUtils.DrawCircle(rangeRenderer, spotDistance, 5, commander.transform.position);
 
-            destinationRenderer.SetPosition(0, commander.transform.position);
-            destinationRenderer.SetPosition(1, currentDestination);
+            if (destinationRenderer)
+            {
+                destinationRenderer.SetPosition(0, commander.transform.position);
+                destinationRenderer.SetPosition(1, currentDestination);
+            }
 
             //icon.transform.LookAt(Camera.main.transform, Vector3.up);
             //icon.transform.position = commander.transform.position + iconOffset;

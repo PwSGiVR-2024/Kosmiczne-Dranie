@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7891750844934924419}
   - component: {fileID: 6950982144762728655}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Info (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -77,7 +77,7 @@ GameObject:
   - component: {fileID: 1602156941017190641}
   - component: {fileID: 7273100321342089384}
   - component: {fileID: 7086464228856669646}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: HealtBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -152,7 +152,7 @@ GameObject:
   - component: {fileID: 7998708108745239020}
   - component: {fileID: 7742131863708051240}
   - component: {fileID: 8331350532402639932}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -286,7 +286,7 @@ GameObject:
   - component: {fileID: 3129540819486902455}
   - component: {fileID: 7599039133356375285}
   - component: {fileID: 5237160825037669399}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -361,7 +361,7 @@ GameObject:
   - component: {fileID: 8204741383834632717}
   - component: {fileID: 6752828331006111688}
   - component: {fileID: 6040098768262182094}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: frigatesLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -495,7 +495,7 @@ GameObject:
   - component: {fileID: 4497163747496487967}
   - component: {fileID: 1493922500024307728}
   - component: {fileID: 5252042273032255369}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: cruisersLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -629,7 +629,7 @@ GameObject:
   - component: {fileID: 7601253214092178817}
   - component: {fileID: 5153498837283920573}
   - component: {fileID: 6616512768591813384}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: power
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -761,7 +761,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2198888853557770121}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -804,7 +804,7 @@ GameObject:
   - component: {fileID: 1521206401134519901}
   - component: {fileID: 2101748421902895648}
   - component: {fileID: 2909859656603922479}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: battleshipsCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -938,7 +938,7 @@ GameObject:
   - component: {fileID: 1487397656361674455}
   - component: {fileID: 8519365100358569271}
   - component: {fileID: 6938733853194079853}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: destroyersLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1072,7 +1072,7 @@ GameObject:
   - component: {fileID: 7230519245679991743}
   - component: {fileID: 2236353770394977220}
   - component: {fileID: 1676470205294369264}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: StrengthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1147,7 +1147,7 @@ GameObject:
   - component: {fileID: 1567151976220795663}
   - component: {fileID: 5838276914501954542}
   - component: {fileID: 4446409429441000499}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: sizeLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1281,7 +1281,7 @@ GameObject:
   - component: {fileID: 99526703994190040}
   - component: {fileID: 5191756463871980946}
   - component: {fileID: 2357967257447311757}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: battleshipsLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1415,7 +1415,7 @@ GameObject:
   - component: {fileID: 4027876394015766060}
   - component: {fileID: 4071408350733662299}
   - component: {fileID: 8778971751218686347}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: selectBackgr
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1490,7 +1490,7 @@ GameObject:
   - component: {fileID: 3458120179946183750}
   - component: {fileID: 3891156107993420066}
   - component: {fileID: 7789586221814773196}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: frigatesCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1624,7 +1624,7 @@ GameObject:
   - component: {fileID: 6695015779469277399}
   - component: {fileID: 8503212176637374186}
   - component: {fileID: 2380850855481663435}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: HealtBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1699,7 +1699,7 @@ GameObject:
   - component: {fileID: 6984816358080163145}
   - component: {fileID: 4202878603455985169}
   - component: {fileID: 7604663900482963227}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: StrengthBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1774,7 +1774,7 @@ GameObject:
   - component: {fileID: 4626160382041290574}
   - component: {fileID: 8851214258075605348}
   - component: {fileID: 608802769231463587}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: size
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1908,7 +1908,7 @@ GameObject:
   - component: {fileID: 4549652966772809119}
   - component: {fileID: 7059794592980322918}
   - component: {fileID: 448875785213114392}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: healthLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2041,7 +2041,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5082521150565978016}
   - component: {fileID: 99171433905272648}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Info (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2106,7 +2106,7 @@ GameObject:
   m_Component:
   - component: {fileID: 3493920640954668955}
   - component: {fileID: 352478860579704677}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Info (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2175,7 +2175,7 @@ GameObject:
   - component: {fileID: 3054893891278931235}
   - component: {fileID: 2395545030215033421}
   - component: {fileID: 3587477487768504011}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: EnemyTaskForceHUD
   m_TagString: TaskForceHUD
   m_Icon: {fileID: 0}
@@ -2276,9 +2276,6 @@ MonoBehaviour:
   powerText: {fileID: 6616512768591813384}
   sizeText: {fileID: 608802769231463587}
   offset: {x: 0, y: 100, z: 0}
-  onSelect:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &3587477487768504011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2351,7 +2348,7 @@ GameObject:
   - component: {fileID: 2865188187677862817}
   - component: {fileID: 7157154011818543682}
   - component: {fileID: 8305326440533208462}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: powerLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2485,7 +2482,7 @@ GameObject:
   - component: {fileID: 3762840877360456250}
   - component: {fileID: 2580144415197134797}
   - component: {fileID: 5737083538117134516}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2560,7 +2557,7 @@ GameObject:
   - component: {fileID: 6190320813185403085}
   - component: {fileID: 6728486163564933319}
   - component: {fileID: 5902557092125092726}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: defaultBackgr
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2635,7 +2632,7 @@ GameObject:
   - component: {fileID: 2770609922937428892}
   - component: {fileID: 6727128859239836327}
   - component: {fileID: 211829109712551370}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: destroyersCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2768,7 +2765,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5021951461545651525}
   - component: {fileID: 5065792001436253245}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: Info (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2834,7 +2831,7 @@ GameObject:
   - component: {fileID: 7542520963061032104}
   - component: {fileID: 4074861573109213612}
   - component: {fileID: 6188282402099157502}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: cruisersCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2968,7 +2965,7 @@ GameObject:
   - component: {fileID: 2683637256412546764}
   - component: {fileID: 7652187060467150467}
   - component: {fileID: 8149355027943859441}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: bckgr (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3043,7 +3040,7 @@ GameObject:
   - component: {fileID: 624076149507588283}
   - component: {fileID: 6290969460557092690}
   - component: {fileID: 8426611738624730311}
-  m_Layer: 5
+  m_Layer: 17
   m_Name: bckgr (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

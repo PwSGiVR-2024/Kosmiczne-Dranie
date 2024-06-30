@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 1602156941017190641}
   - component: {fileID: 7273100321342089384}
   - component: {fileID: 7086464228856669646}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: HealtBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -86,7 +86,7 @@ GameObject:
   - component: {fileID: 3129540819486902455}
   - component: {fileID: 7599039133356375285}
   - component: {fileID: 5237160825037669399}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Icon
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -161,7 +161,7 @@ GameObject:
   - component: {fileID: 7542159753004246745}
   - component: {fileID: 1079548520218603491}
   - component: {fileID: 6982134207876272890}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: battleshipsLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -295,7 +295,7 @@ GameObject:
   - component: {fileID: 6491091401300860688}
   - component: {fileID: 1758842763471213330}
   - component: {fileID: 5293741383769598556}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: bckgr (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -370,7 +370,7 @@ GameObject:
   - component: {fileID: 2058443098433882002}
   - component: {fileID: 2169344736878652985}
   - component: {fileID: 8178180928318146707}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: cruisersCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -503,7 +503,7 @@ GameObject:
   m_Component:
   - component: {fileID: 5827808841157215659}
   - component: {fileID: 6826359402495289895}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Info (4)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -569,7 +569,7 @@ GameObject:
   - component: {fileID: 7224548182573528283}
   - component: {fileID: 3157357898392432770}
   - component: {fileID: 5208060160399905056}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: bckgr (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -644,7 +644,7 @@ GameObject:
   - component: {fileID: 7230519245679991743}
   - component: {fileID: 2236353770394977220}
   - component: {fileID: 1676470205294369264}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: StrengthBar
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -719,7 +719,7 @@ GameObject:
   - component: {fileID: 6174237765611221460}
   - component: {fileID: 5387905856977618172}
   - component: {fileID: 1081180009206173464}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: destroyersCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -853,7 +853,7 @@ GameObject:
   - component: {fileID: 4478556776316502192}
   - component: {fileID: 1870357601316989828}
   - component: {fileID: 3129777191163523096}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: power
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -987,7 +987,7 @@ GameObject:
   - component: {fileID: 3289587228707404806}
   - component: {fileID: 6996838214002671755}
   - component: {fileID: 8255032635955016233}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: powerLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1121,7 +1121,7 @@ GameObject:
   - component: {fileID: 8400123990639935716}
   - component: {fileID: 5866124269774295877}
   - component: {fileID: 1237796810976229573}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: healthLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1255,7 +1255,7 @@ GameObject:
   - component: {fileID: 6388439028931699189}
   - component: {fileID: 1426085066808600052}
   - component: {fileID: 1798208417110271845}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: sizeLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1389,7 +1389,7 @@ GameObject:
   - component: {fileID: 290194203955106125}
   - component: {fileID: 531025632568846933}
   - component: {fileID: 6953879418157024344}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: health
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1523,7 +1523,7 @@ GameObject:
   - component: {fileID: 5581515697877093465}
   - component: {fileID: 209491839019408698}
   - component: {fileID: 6429784482021812305}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: battleshipsCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1657,7 +1657,7 @@ GameObject:
   - component: {fileID: 6695015779469277399}
   - component: {fileID: 8503212176637374186}
   - component: {fileID: 2380850855481663435}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: HealtBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1730,7 +1730,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 744473367527377161}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Info
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1773,7 +1773,7 @@ GameObject:
   - component: {fileID: 6984816358080163145}
   - component: {fileID: 4202878603455985169}
   - component: {fileID: 7604663900482963227}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: StrengthBarBackground
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1848,7 +1848,7 @@ GameObject:
   - component: {fileID: 93966916679529379}
   - component: {fileID: 1952661913146013339}
   - component: {fileID: 8940159953624923990}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: cruisersLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1984,7 +1984,7 @@ GameObject:
   - component: {fileID: 3054893891278931235}
   - component: {fileID: 2395545030215033421}
   - component: {fileID: 3587477487768504011}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: AllyTaksForceHUD
   m_TagString: TaskForceHUD
   m_Icon: {fileID: 0}
@@ -2086,9 +2086,6 @@ MonoBehaviour:
   powerText: {fileID: 3129777191163523096}
   sizeText: {fileID: 748735670679211122}
   offset: {x: 0, y: 100, z: 0}
-  onSelect:
-    m_PersistentCalls:
-      m_Calls: []
 --- !u!114 &3587477487768504011
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2165,7 +2162,7 @@ GameObject:
   - component: {fileID: 5391690929099419258}
   - component: {fileID: 8955881565554973493}
   - component: {fileID: 3949054620074409372}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: defaultBackgr
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2240,7 +2237,7 @@ GameObject:
   - component: {fileID: 3663744108725663400}
   - component: {fileID: 5133091244851978554}
   - component: {fileID: 748735670679211122}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: size
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2374,7 +2371,7 @@ GameObject:
   - component: {fileID: 1907631535013365335}
   - component: {fileID: 245431861947895771}
   - component: {fileID: 3708899113733127313}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: selectBackgr
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2449,7 +2446,7 @@ GameObject:
   - component: {fileID: 846815233978433325}
   - component: {fileID: 6863005412945219216}
   - component: {fileID: 4217958496450410380}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Indicator
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2524,7 +2521,7 @@ GameObject:
   - component: {fileID: 3417776673872839661}
   - component: {fileID: 8225458432133668177}
   - component: {fileID: 5092919736805592407}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: IndicatorSelect
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2598,7 +2595,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6153163984413413429}
   - component: {fileID: 890462577264240234}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Info (1)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2665,7 +2662,7 @@ GameObject:
   - component: {fileID: 865071456722360755}
   - component: {fileID: 7961160894422621683}
   - component: {fileID: 4684380210147640041}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: destroyersLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2798,7 +2795,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2724499087562918089}
   - component: {fileID: 6930125975304019062}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Info (2)
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2864,7 +2861,7 @@ GameObject:
   - component: {fileID: 8796350127595667826}
   - component: {fileID: 6841262641530963018}
   - component: {fileID: 6245233425587116992}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: frigatesLbl
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2998,7 +2995,7 @@ GameObject:
   - component: {fileID: 6399492752820356037}
   - component: {fileID: 4582605987422630466}
   - component: {fileID: 975801375767613745}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: frigatesCount
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -3131,7 +3128,7 @@ GameObject:
   m_Component:
   - component: {fileID: 2421843941301198609}
   - component: {fileID: 7721939691836647927}
-  m_Layer: 2
+  m_Layer: 17
   m_Name: Info (3)
   m_TagString: Untagged
   m_Icon: {fileID: 0}

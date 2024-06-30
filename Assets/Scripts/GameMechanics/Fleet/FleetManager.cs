@@ -78,6 +78,7 @@ public abstract class FleetManager : MonoBehaviour
         {
             TaskForceController taskForce = spawner.SpawnTaskForce(unitPrefab, position, count, name);
             taskForces.Add(taskForce);
+            taskForce.onTaskForceDestroyed.AddListener((_) => taskForces.Remove(taskForce));
             resources.RemoveResources(unitPrefab, count);
             return taskForce;
         }
