@@ -81,21 +81,29 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    private IEnumerator LoadSceneDelayed(string name)
+    {
+        yield return new WaitForSeconds(5);
+        SceneManager.LoadScene(name);
+    }
+
     // Start is called before the first frame update
     void Start()
     {
         enemy.onDestroy.AddListener(() => {
             if (!gameOver){
                 onGameWin.Invoke();
-                SceneManager.LoadScene("WinningGoodByeScene");
+                StartCoroutine(LoadSceneDelayed("WinningGoodByeScene"));
+                //SceneManager.LoadScene("WinningGoodByeScene");
         }
             gameOver = true;
         });
 
         player.onDestroy.AddListener(() => {
             if (!gameOver){
-                onGameLose.Invoke();    
-                SceneManager.LoadScene("LoosingGoodByeScene");
+                onGameLose.Invoke();
+                StartCoroutine(LoadSceneDelayed("LoosingGoodByeScene"));
+                //SceneManager.LoadScene("LoosingGoodByeScene");
             }
             gameOver = true;
         });
