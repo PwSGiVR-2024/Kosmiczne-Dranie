@@ -12,6 +12,7 @@ public class ButtonSystemController : MonoBehaviour
 
     public void MoveToMainMenu()
     {
+        Debug.Log("aaa");
         SceneManager.LoadScene("WelcomeScene");
     }
 

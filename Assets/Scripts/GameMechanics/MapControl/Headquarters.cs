@@ -1,3 +1,4 @@
+using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -48,5 +49,6 @@ public abstract class Headquarters : MonoBehaviour, IInteractable
     private void OnDestroy()
     {
         ActivateDestroyEffects();
+        onDestroy.Invoke();
     }
 }
