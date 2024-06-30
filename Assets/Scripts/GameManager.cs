@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -84,16 +85,18 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         enemy.onDestroy.AddListener(() => {
-            if (!gameOver)
+            if (!gameOver){
                 onGameWin.Invoke();
-
+                SceneManager.LoadScene("WinningGoodByeScene");
+        }
             gameOver = true;
         });
 
         player.onDestroy.AddListener(() => {
-            if (!gameOver)
-                onGameLose.Invoke();
-
+            if (!gameOver){
+                onGameLose.Invoke();    
+                SceneManager.LoadScene("LoosingGoodByeScene");
+            }
             gameOver = true;
         });
 
