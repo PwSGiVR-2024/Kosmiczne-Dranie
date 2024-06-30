@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.Events;
 
 public abstract class Headquarters : MonoBehaviour, IInteractable
 {
@@ -9,6 +10,8 @@ public abstract class Headquarters : MonoBehaviour, IInteractable
     //public List<Outpost> outpostNetwork = new();
     //public FleetManager fleetManager;
     //public Spawner spawner;
+
+    public UnityEvent onDestroy = new();
 
     public void Damage(int dmg, AiController attacker)
     {
