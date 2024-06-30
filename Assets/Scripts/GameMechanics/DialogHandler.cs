@@ -3,6 +3,8 @@ using UnityEngine;
 
 public class DialogHandler : MonoBehaviour
 {
+    public bool disableDialogs = false;
+
     [SerializeField] private DialogBehaviour dialogBehaviour;
     [SerializeField] private DialogNodeGraph dialogGraph1;
     [SerializeField] private DialogNodeGraph dialogGraph2;
@@ -38,6 +40,7 @@ public class DialogHandler : MonoBehaviour
     }
     void OnSiteCaptured(SiteController site)
     {
+        if (disableDialogs) return;
 
         if (site.currentController == Affiliation.Blue)
         {
