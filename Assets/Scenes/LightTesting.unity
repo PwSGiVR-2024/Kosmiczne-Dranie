@@ -4232,7 +4232,7 @@ MonoBehaviour:
   m_OverrideVoxelSize: 1
   m_VoxelSize: 1
   m_MinRegionArea: 2
-  m_NavMeshData: {fileID: 23800000, guid: e507117df6a4c1049bef4d8bda3cdf41, type: 2}
+  m_NavMeshData: {fileID: 23800000, guid: 2b38ede2bd08e3a4d9338d8c4733e245, type: 2}
   m_BuildHeightMesh: 0
 --- !u!1 &597166123
 GameObject:
@@ -6271,6 +6271,10 @@ PrefabInstance:
     - target: {fileID: 1812592373330131945, guid: 183923d05ed1b884f882313cdd673bfa, type: 3}
       propertyPath: m_Name
       value: DialogHandler
+      objectReference: {fileID: 0}
+    - target: {fileID: 1812592373330131945, guid: 183923d05ed1b884f882313cdd673bfa, type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 5822471389456451810, guid: 183923d05ed1b884f882313cdd673bfa, type: 3}
       propertyPath: dialogBehaviour
@@ -8451,7 +8455,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!224 &1332552797
 RectTransform:
   m_ObjectHideFlags: 0
