@@ -7,7 +7,8 @@ public class TestDialogStarter : MonoBehaviour
     [SerializeField] private DialogNodeGraph dialogGraph;
 
     private void Start()
-   {
-        dialogBehaviour.StartDialog(dialogGraph);
-   }
+    {
+        if (dialogBehaviour && dialogGraph)
+            dialogBehaviour.StartDialog(dialogGraph);
+    }
 }

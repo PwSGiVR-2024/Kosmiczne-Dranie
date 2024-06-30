@@ -2389,6 +2389,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fdf8f8f1271cb394ea5badc0ab6f51f8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  disableDialogs: 1
   dialogBehaviour: {fileID: 2087628386}
   dialogGraph1: {fileID: 11400000, guid: 169a42f4149e48e4fa5cd47222879121, type: 2}
   dialogGraph2: {fileID: 11400000, guid: 169a42f4149e48e4fa5cd47222879121, type: 2}
