@@ -2489,7 +2489,7 @@ PrefabInstance:
     - target: {fileID: 6775883102224304373, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 3da0a45f4594a3d4b84483820b311117, type: 3}
+      objectReference: {fileID: 21300000, guid: a2d488771a09c7e478645840e6feb52e, type: 3}
     - target: {fileID: 6787195588184324454, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Name
       value: UnitSelectOutpost
@@ -6570,6 +6570,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bfef5584f4ddd24c8f307b97382994d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerResources: {fileID: 0}
   spawnOutpost: 0
   notEnoughResourcesColor: {r: 1, g: 0.25471687, b: 0.25471687, a: 1}
   warningColor: {r: 1, g: 0.7875554, b: 0.20188677, a: 1}
@@ -7381,7 +7382,7 @@ PrefabInstance:
     - target: {fileID: 6775883102224304373, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 167ae9063be03d746a19fe85a81f26e7, type: 3}
+      objectReference: {fileID: 21300000, guid: 81f6f4bb9bbb9cb428d2f06270a34a4a, type: 3}
     - target: {fileID: 6787195588184324454, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Name
       value: UnitSelectBattleship
@@ -12111,9 +12112,6 @@ MonoBehaviour:
   totalCrystal: 600
   totalCredits: 9999999
   totalMaintenance: 0
-  creditsPerInterval: 0
-  metalsPerInterval: 0
-  crystalsPerInterval: 0
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
@@ -13012,7 +13010,7 @@ PrefabInstance:
     - target: {fileID: 6775883102224304373, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: d55fdbd233fb5054ba35bcca2f698ef1, type: 3}
+      objectReference: {fileID: 21300000, guid: 70389e2c94fcfb84a9b11651e0e5aa18, type: 3}
     - target: {fileID: 6787195588184324454, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Name
       value: UnitSelectCruiser
@@ -17166,7 +17164,7 @@ PrefabInstance:
     - target: {fileID: 6775883102224304373, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Sprite
       value: 
-      objectReference: {fileID: 21300000, guid: 6a9d12fa77f76e94586e7e483f90245f, type: 3}
+      objectReference: {fileID: 21300000, guid: a2f98390159859a40adc58675aede833, type: 3}
     - target: {fileID: 6787195588184324454, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Name
       value: UnitSelectDestroyer
@@ -18193,9 +18191,6 @@ MonoBehaviour:
   totalCrystal: 600
   totalCredits: 1000
   totalMaintenance: 0
-  creditsPerInterval: 0
-  metalsPerInterval: 0
-  crystalsPerInterval: 0
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
@@ -20650,6 +20645,10 @@ PrefabInstance:
       propertyPath: crystalPrice
       value: 
       objectReference: {fileID: 1385540583}
+    - target: {fileID: 6775883102224304373, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
+      propertyPath: m_Sprite
+      value: 
+      objectReference: {fileID: 21300000, guid: 82df09e9b1a6ad642aeef478ce29f2f7, type: 3}
     - target: {fileID: 6787195588184324454, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: m_Name
       value: UnitSelectFrigate

@@ -19,6 +19,6 @@ public class ButtonSystemController : MonoBehaviour
 
     public void ExitGame()
     {
-        Application.Quit()
+        Application.Quit();
     }
 }
