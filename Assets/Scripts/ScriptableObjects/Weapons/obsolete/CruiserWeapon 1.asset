@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 308af5659dd21c244b672409ef084bf7, type: 3}
-  m_Name: PointDefence
+  m_Name: CruiserWeapon 1
   m_EditorClassIdentifier: 
   prefabName: 
-  projectileDamage: 20
-  projectileSpeed: 140
-  projectileLifeSpan: 1.4
-  attackCooldown: 0.1
-  angleError: 3
+  projectileDamage: 400
+  projectileSpeed: 220
+  projectileLifeSpan: 3
+  attackCooldown: 2
+  angleError: 0.1
   description: 
-  projectile: {fileID: 4219372591201158213, guid: 5f52b94b64b907647a2093f7969f8a25, type: 3}
+  projectile: {fileID: 4219372591201158213, guid: 00d33fc3034d68f4c9b3558c023d26cc, type: 3}

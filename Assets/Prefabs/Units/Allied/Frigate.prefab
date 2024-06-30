@@ -525,7 +525,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   shotSoundPrefab: {fileID: 5082890664337064799}
-  values: {fileID: 11400000, guid: 2dd9574a3edda674fb512e485346aedf, type: 2}
+  values: {fileID: 11400000, guid: f113a5cc43c0415418300d878b7f1851, type: 2}
   debug: 0
   ownerOutpost: {fileID: 0}
   projectilePool: []
@@ -541,16 +541,16 @@ AudioSource:
   OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 92d35fe1c59bbd14eaee9e3d3b54cea7, type: 3}
   m_PlayOnAwake: 0
-  m_Volume: 1
+  m_Volume: 0.625
   m_Pitch: 1
   Loop: 0
   Mute: 0
   Spatialize: 0
   SpatializePostEffects: 0
-  Priority: 128
+  Priority: 111
   DopplerLevel: 0
   MinDistance: 1
-  MaxDistance: 500
+  MaxDistance: 200
   Pan2D: 0
   rolloffMode: 0
   BypassEffects: 0

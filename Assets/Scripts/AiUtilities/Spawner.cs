@@ -18,7 +18,9 @@ public class Spawner : MonoBehaviour
 
     public GameObject taskForceHUD;
     public GameObject outpostHUD;
-    public GameObject minimapIndicator;
+    public GameObject indicatorTF;
+    public GameObject inidcatorOutp;
+
 
     private int unitCount = 0;
     private int outpostCount = 0;
@@ -261,7 +263,7 @@ public class Spawner : MonoBehaviour
             }
         }
 
-        MinimapIndicator.Create(minimapIndicator, taskForce);
+        MinimapIndicator.Create(indicatorTF, taskForce);
 
         return taskForce;
     }
@@ -276,6 +278,7 @@ public class Spawner : MonoBehaviour
         outpost.transform.SetParent(outpostsContainer.transform, true);
         HUDController.Create(outpost, outpostHUD, gameManager);
 
+        MinimapIndicator.Create(inidcatorOutp, outpost);
         onOutpostSpawned.Invoke(outpost);
 
         return outpost;

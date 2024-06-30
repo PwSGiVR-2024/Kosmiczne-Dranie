@@ -2459,7 +2459,7 @@ PrefabInstance:
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: unitPrefab
       value: 
-      objectReference: {fileID: 1884448166627179468, guid: 1fad9a80b8d71404f8b2e2bf15f9e36e, type: 3}
+      objectReference: {fileID: 2660521092405934762, guid: 23da679958edcf349973d844a06c2b58, type: 3}
     - target: {fileID: 5293207287158357773, guid: 19d8bb1d84a33fb4bbcaa07d85051c24, type: 3}
       propertyPath: maintenance
       value: 
@@ -6833,7 +6833,7 @@ GameObject:
   - component: {fileID: 729892347}
   m_Layer: 0
   m_Name: HUDCAM
-  m_TagString: MainCamera
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -16272,7 +16272,8 @@ MonoBehaviour:
   projectilesContainer: {fileID: 450434118}
   taskForceHUD: {fileID: 5545485992319899636, guid: e0a3d05c0926baa4b9a68aa4583b3c4c, type: 3}
   outpostHUD: {fileID: 5545485992319899636, guid: 0742c8d443256854d95972de9f1945c3, type: 3}
-  minimapIndicator: {fileID: 5701245820088525650, guid: d406b233e7bdda043aae2e4e5ead7e21, type: 3}
+  indicatorTF: {fileID: 5701245820088525650, guid: d406b233e7bdda043aae2e4e5ead7e21, type: 3}
+  inidcatorOutp: {fileID: 5701245820088525650, guid: 44d366d28909d3c4d8104e4bc65f80ae, type: 3}
   onUnitSpawned:
     m_PersistentCalls:
       m_Calls: []
@@ -19114,6 +19115,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1a50af2ea4f667a4d8b79e83c3ce0d65, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  dialogBehaviour: {fileID: 0}
+  dialogGraph: {fileID: 0}
 --- !u!4 &2062930749
 Transform:
   m_ObjectHideFlags: 0
@@ -19233,7 +19236,8 @@ MonoBehaviour:
   projectilesContainer: {fileID: 582657839}
   taskForceHUD: {fileID: 5545485992319899636, guid: ff25388fe6610434c94973a01c3d1850, type: 3}
   outpostHUD: {fileID: 0}
-  minimapIndicator: {fileID: 5701245820088525650, guid: acb5d20687d394c498a6a7f0f7f9dafa, type: 3}
+  indicatorTF: {fileID: 5701245820088525650, guid: acb5d20687d394c498a6a7f0f7f9dafa, type: 3}
+  inidcatorOutp: {fileID: 0}
   onUnitSpawned:
     m_PersistentCalls:
       m_Calls: []

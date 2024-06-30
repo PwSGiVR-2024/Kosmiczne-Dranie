@@ -2,23 +2,37 @@ using UnityEngine;
 
 public class CruiserUnitController : AiController
 {
-    [SerializeField] private WeaponController weapon_1;
-    [SerializeField] private WeaponController weapon_2;
-    [SerializeField] private WeaponController weapon_3;
-    [SerializeField] private WeaponController weapon_4;
-    [SerializeField] private WeaponController weapon_5;
-   
+    [SerializeField] private WeaponController kin_1;
+    [SerializeField] private WeaponController kin_2;
+    [SerializeField] private WeaponController kin_3;
+    [SerializeField] private WeaponController kin_4;
+    [SerializeField] private WeaponController las_1;
+    [SerializeField] private WeaponController las_2;
+    [SerializeField] private WeaponController las_3;
+    [SerializeField] private WeaponController las_4;
+    [SerializeField] private WeaponController roc_1;
+    [SerializeField] private WeaponController roc_2;
+    [SerializeField] private WeaponController pointDef_1;
+    [SerializeField] private WeaponController pointDef_2;
+
 
     [SerializeField] private AiController targetCtrl;
     public int healthCtrl;
 
     protected override void AdditionalInit()
     {
-        if (weapon_1) weapon_1.Init(this);
-        if (weapon_2) weapon_2.Init(this);
-        if (weapon_3) weapon_3.Init(this);
-        if (weapon_4) weapon_4.Init(this);
-        if (weapon_5) weapon_5.Init(this);
+        if (kin_1) kin_1.Init(this);
+        if (kin_2) kin_2.Init(this);
+        if (kin_3) kin_3.Init(this);
+        if (kin_4) kin_4.Init(this);
+        if (las_1) las_1.Init(this);
+        if (las_2) las_2.Init(this);
+        if (las_4) las_4.Init(this);
+        if (las_3) las_3.Init(this);
+        if (roc_1) roc_1.Init(this);
+        if (roc_2) roc_2.Init(this);
+        if (pointDef_1) pointDef_1.Init(this);
+        if (pointDef_2) pointDef_2.Init(this);
     }
 
     protected override void BeforeDeactivation()
@@ -30,30 +44,44 @@ public class CruiserUnitController : AiController
     {
         if (Target.distance <= Values.attackDistance)
         {
-            if (weapon_2 && weapon_2.isActiveAndEnabled && weapon_2.CheckIfFacingTarget(Target.position))
-                weapon_2.FireProjectile();
+            if (kin_1 && kin_1.isActiveAndEnabled && kin_1.CheckIfFacingTarget(Target.position))
+                kin_1.FireProjectile();
 
-            if (weapon_3 && weapon_3.isActiveAndEnabled && weapon_3.CheckIfFacingTarget(Target.position))
-                weapon_3.FireProjectile();
+            if (kin_2 && kin_2.isActiveAndEnabled && kin_2.CheckIfFacingTarget(Target.position))
+                kin_2.FireProjectile();
 
-            if (weapon_4 && weapon_4.isActiveAndEnabled && weapon_4.CheckIfFacingTarget(Target.position))
-                weapon_4.FireProjectile();
+            if (kin_3 && kin_3.isActiveAndEnabled && kin_3.CheckIfFacingTarget(Target.position))
+                kin_3.FireProjectile();
+
+            if (kin_4 && kin_4.isActiveAndEnabled && kin_4.CheckIfFacingTarget(Target.position))
+                kin_4.FireProjectile();
+
+            if (las_1 && las_1.isActiveAndEnabled && las_1.CheckIfFacingTarget(Target.position))
+                las_1.FireProjectile();
+
+            if (las_2 && las_2.isActiveAndEnabled && las_2.CheckIfFacingTarget(Target.position))
+                las_2.FireProjectile();
+
+            if (las_3 && las_3.isActiveAndEnabled && las_3.CheckIfFacingTarget(Target.position))
+                las_3.FireProjectile();
+
+            if (las_4 && las_1.isActiveAndEnabled && las_4.CheckIfFacingTarget(Target.position))
+                las_4.FireProjectile();
+
+            if (roc_1 && roc_1.isActiveAndEnabled)
+                roc_1.FireProjectile();
+
+            if (roc_2 && roc_2.isActiveAndEnabled)
+                roc_2.FireProjectile();
         }
 
         if (Target.distance <= Values.attackDistance * 0.5f)
         {
-            if (weapon_1 && weapon_1.isActiveAndEnabled && weapon_1.CheckIfFacingTarget(Target.position))
-            {
-                weapon_1.FireProjectile();
-            }
-        }
+            if (pointDef_1 && pointDef_1.isActiveAndEnabled && pointDef_1.CheckIfFacingTarget(Target.position))
+                pointDef_1.FireProjectile();
 
-        if (Target.distance < Values.attackDistance)
-        {
-            if (weapon_5 && weapon_5.isActiveAndEnabled && weapon_5.CheckIfFacingTarget(Target.position))
-            {
-                weapon_5.FireProjectile();
-            }
+            if (pointDef_2 && pointDef_2.isActiveAndEnabled && pointDef_2.CheckIfFacingTarget(Target.position))
+                pointDef_2.FireProjectile();
         }
     }
 
@@ -72,11 +100,11 @@ public class CruiserUnitController : AiController
     {
         SetCombatState();
 
-        if (weapon_1) weapon_1.RotateWeaponAtPosition(Target.position);
-        if (weapon_2) weapon_2.RotateWeaponAtPosition(Target.position);
-        if (weapon_3) weapon_3.RotateWeaponAtPosition(Target.position);
-        if (weapon_4) weapon_4.RotateWeaponAtPosition(Target.position);
-        if (weapon_5) weapon_5.RotateWeaponAtPosition(Target.position);
+        if (kin_1) kin_1.RotateWeaponAtPosition(Target.position);
+        if (kin_2) kin_2.RotateWeaponAtPosition(Target.position);
+        if (kin_3) kin_3.RotateWeaponAtPosition(Target.position);
+        if (kin_4) kin_4.RotateWeaponAtPosition(Target.position);
+        if (las_1) las_1.RotateWeaponAtPosition(Target.position);
 
         if (Target.distance > Values.attackDistance)
         {

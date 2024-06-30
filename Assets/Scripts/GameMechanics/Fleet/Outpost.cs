@@ -109,7 +109,7 @@ public class Outpost : MonoBehaviour, IInteractable
             weapon_2.FireProjectile(targetNonAlloc[random_2]);
 
         if (weapon_3.CheckIfFacingTarget(targetNonAlloc[random_3].transform.position))
-            weapon_4.FireProjectile(targetNonAlloc[random_3]);
+            weapon_3.FireProjectile(targetNonAlloc[random_3]);
 
         if (weapon_4.CheckIfFacingTarget(targetNonAlloc[random_4].transform.position))
             weapon_4.FireProjectile(targetNonAlloc[random_4]);

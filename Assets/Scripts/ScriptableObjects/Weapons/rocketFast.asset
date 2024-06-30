@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 308af5659dd21c244b672409ef084bf7, type: 3}
-  m_Name: PointDefence
+  m_Name: rocketFast
   m_EditorClassIdentifier: 
   prefabName: 
-  projectileDamage: 20
-  projectileSpeed: 140
-  projectileLifeSpan: 1.4
-  attackCooldown: 0.1
-  angleError: 3
+  projectileDamage: 60
+  projectileSpeed: 160
+  projectileLifeSpan: 4
+  attackCooldown: 0.8
+  angleError: 15
   description: 
-  projectile: {fileID: 4219372591201158213, guid: 5f52b94b64b907647a2093f7969f8a25, type: 3}
+  projectile: {fileID: 4219372591201158213, guid: 43ab088f2a3676f43a9b4aeab676251b, type: 3}

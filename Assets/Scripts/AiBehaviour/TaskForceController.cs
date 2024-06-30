@@ -643,6 +643,8 @@ public class TaskForceController : MonoBehaviour
         }
     }
 
+    public Collider[] targets;
+
     // important assumption:
     // every gameObject from targetMask must have mono script with IInteractable implemented
     private bool TrySpotTarget(out MonoBehaviour target)
@@ -668,7 +670,7 @@ public class TaskForceController : MonoBehaviour
         //    return false;
         //}
 
-        Collider[] targets = Physics.OverlapSphere(commander.transform.position, spotDistance, targetMask);
+        targets = Physics.OverlapSphere(commander.transform.position, spotDistance, targetMask);
 
         if (targets.Length == 0)
         {
@@ -686,22 +688,29 @@ public class TaskForceController : MonoBehaviour
                 closestIndex = i;
         }
 
-        if (targets[closestIndex].TryGetComponent(out MonoBehaviour mono))
+        if (targets[closestIndex].TryGetComponent(out AiController unit))
         {
-            if (mono is AiController controller)
-            {
-                target = controller.UnitTaskForce;
-                onTaskForceSpotted.Invoke(controller.UnitTaskForce);
-            }
+            target = unit.UnitTaskForce;
+            onTaskForceSpotted.Invoke(unit.UnitTaskForce);
+            return true;
+        }
 
-            else
-                target = mono;
+        else if (targets[closestIndex].TryGetComponent(out Outpost outpost))
+        {
+            target = outpost;
+            return true;
+        }
+            
 
+        else if (targets[closestIndex].TryGetComponent(out PlayerHeadquarters hq))
+        {
+            target = hq;
             return true;
         }
         
         else
         {
+            Debug.Log("none");
             target = null;
             return false;
         }

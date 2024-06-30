@@ -108,7 +108,7 @@ public abstract class FleetManager : MonoBehaviour
             TaskForceController taskForce = spawner.SpawnTaskForce(preset, position, name);
             taskForces.Add(taskForce);
             resources.RemoveResources(preset);
-            //taskForce.onTaskForceDestroyed.AddListener((tf) => resources.RemoveMaintenance(preset.maintenancePrice));
+            taskForce.onTaskForceDestroyed.AddListener((tf) => taskForces.Remove(tf));
             StartCoroutine(RegisterUnits(taskForce));
 
             return taskForce;

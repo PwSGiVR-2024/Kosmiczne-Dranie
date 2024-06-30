@@ -10,13 +10,13 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 308af5659dd21c244b672409ef084bf7, type: 3}
-  m_Name: PointDefence
+  m_Name: kinBat
   m_EditorClassIdentifier: 
-  prefabName: 
-  projectileDamage: 20
-  projectileSpeed: 140
-  projectileLifeSpan: 1.4
-  attackCooldown: 0.1
-  angleError: 3
+  prefabName: wep1
+  projectileDamage: 120
+  projectileSpeed: 155
+  projectileLifeSpan: 3.5
+  attackCooldown: 3
+  angleError: 1.2
   description: 
-  projectile: {fileID: 4219372591201158213, guid: 5f52b94b64b907647a2093f7969f8a25, type: 3}
+  projectile: {fileID: 4219372591201158213, guid: 60933fa27f07e4d4591e09510a17ec7d, type: 3}

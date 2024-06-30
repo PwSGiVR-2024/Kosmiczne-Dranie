@@ -17,5 +17,5 @@ MonoBehaviour:
   maintenancePrice: 600
   upgradePrice: 0
   health: 100000
-  range: 250
+  range: 300
   healModifier: 1
