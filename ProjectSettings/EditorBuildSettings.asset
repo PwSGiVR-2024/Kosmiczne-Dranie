@@ -8,4 +8,16 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/DTesting.unity
     guid: 6f440503605040342a44f3d49dadf43d
+  - enabled: 1
+    path: Assets/Scenes/WelcomeScene.unity
+    guid: 3d53a8c665cade34aa3e07845d315f1b
+  - enabled: 1
+    path: Assets/Scenes/LightTesting.unity
+    guid: d185e09a3ee35394097a56d441703b94
+  - enabled: 1
+    path: Assets/Scenes/LosingGoodByeScene.unity
+    guid: ecd1521cc6abdfa489faf307cbefba3a
+  - enabled: 1
+    path: Assets/Scenes/WinningGoodByeScene.unity
+    guid: 995e982d1cb2c9f46bd030d7e093bac1
   m_configObjects: {}
