@@ -4428,6 +4428,9 @@ MonoBehaviour:
   lineRenderer: {fileID: 458003958}
   range: 250
   health: 100000
+  onDestroy:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!120 &458003958
 LineRenderer:
   serializedVersion: 2
@@ -10295,6 +10298,9 @@ MonoBehaviour:
   lineRenderer: {fileID: 1060341616}
   range: 250
   health: 100000
+  onDestroy:
+    m_PersistentCalls:
+      m_Calls: []
   fleetManager: {fileID: 524505708}
   playerHeadquarters: {fileID: 458003957}
   spawner: {fileID: 2098798327}
@@ -15833,6 +15839,9 @@ MonoBehaviour:
   lineRenderer: {fileID: 1060341616}
   range: 250
   health: 100000
+  onDestroy:
+    m_PersistentCalls:
+      m_Calls: []
   fleetManager: {fileID: 524505708}
   playerHeadquarters: {fileID: 458003957}
   spawner: {fileID: 2098798327}
@@ -16452,10 +16461,18 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59dd5ddbf276fc48aafbd99d93bbdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  enemy: {fileID: 0}
+  player: {fileID: 0}
   soundManager: {fileID: 465012143}
   worldSpaceCanvas: {fileID: 1426129218}
   screenSpaceCanvas: {fileID: 793203628}
   logExterminationChamber: 0
+  onGameWin:
+    m_PersistentCalls:
+      m_Calls: []
+  onGameLose:
+    m_PersistentCalls:
+      m_Calls: []
 --- !u!4 &1668784701
 Transform:
   m_ObjectHideFlags: 0
@@ -17937,7 +17954,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f815f9851a545648ae7a6d404f56337, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -2.1573
+      value: 23
       objectReference: {fileID: 0}
     - target: {fileID: -8679921383154817045, guid: 9f815f9851a545648ae7a6d404f56337, type: 3}
       propertyPath: m_LocalPosition.z
