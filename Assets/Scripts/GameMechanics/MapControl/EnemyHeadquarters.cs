@@ -100,8 +100,6 @@ public class EnemyHeadquarters : Headquarters
         
     }
 
-
-
     private void Start()
     {
         scoutPreset.MultiplyCounts(24);
@@ -240,36 +238,44 @@ public class EnemyHeadquarters : Headquarters
     {
         WaitForSeconds cooldown = new WaitForSeconds(spawnCooldown);
         TaskForceController taskForce = null;
+        bool spawned;
 
         while (true)
         {
-            taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
-            if (taskForce) yield return cooldown;
+            spawned = false;
 
-            taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
-            if (taskForce) yield return cooldown;
+            if (!spawned) taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
+            if (taskForce)
+            {
+                spawned = true;
+                yield return cooldown;
+                continue;
+            }
 
-            taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
-            if (taskForce) yield return cooldown;
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
+            if (taskForce)
+            {
+                spawned = true;
+                yield return cooldown;
+                continue;
+            }
 
-            taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
-            if (taskForce) yield return cooldown;
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
+            if (taskForce)
+            {
+                spawned = true;
+                yield return cooldown;
+                continue;
+            }
 
+            else if (!spawned) taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
+            if (taskForce)
+            {
+                spawned = true;
+                yield return new WaitForSeconds(30);  // spam scout preset early game
+                continue;
+            }
 
-            //if (taskForce == null)
-            //    taskForce = fleetManager.ProcureTaskForce(latePreset, transform.position, "enemy task force");
-
-            //else if (taskForce == null)
-            //    taskForce = fleetManager.ProcureTaskForce(midPreset, transform.position, "enemy task force");
-
-            //else if (taskForce == null)
-            //    taskForce = fleetManager.ProcureTaskForce(earlyPreset, transform.position, "enemy task force");
-
-            //else if (taskForce == null)
-            //    taskForce = fleetManager.ProcureTaskForce(scoutPreset, transform.position, "enemy task force");
-
-
-            Debug.Log("mewing");
             yield return null;
         }
     }

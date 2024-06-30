@@ -213,7 +213,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 2
-  value: 4000
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -230,7 +230,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 1
-  value: 150
+  value: 100
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -247,7 +247,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  value: 20
+  value: 10
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -268,7 +268,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 35623844}
   range: 250
   capturing: 0
-  captureTime: 5
+  captureTime: 15
   timeLeft: 5
   contendersMask:
     serializedVersion: 2
@@ -1759,8 +1759,8 @@ MonoBehaviour:
   lineRenderer: {fileID: 233497689}
   range: 250
   capturing: 0
-  captureTime: 5
-  timeLeft: 5
+  captureTime: 15
+  timeLeft: 0
   contendersMask:
     serializedVersion: 2
     m_Bits: 192
@@ -2120,7 +2120,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 2
-  value: 4000
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -2175,7 +2175,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 247655031}
   range: 250
   capturing: 0
-  captureTime: 5
+  captureTime: 15
   timeLeft: 5
   contendersMask:
     serializedVersion: 2
@@ -4277,6 +4277,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 67b9497910602b74791faa63e75fa0e1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 0}
   lineRenderer: {fileID: 458003958}
   range: 250
   health: 100000
@@ -4485,7 +4486,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 2
-  value: 3000
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4502,7 +4503,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 1
-  value: 125
+  value: 100
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4519,7 +4520,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  value: 15
+  value: 10
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -4540,7 +4541,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 469543196}
   range: 250
   capturing: 0
-  captureTime: 5
+  captureTime: 15
   timeLeft: 5
   contendersMask:
     serializedVersion: 2
@@ -6316,6 +6317,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 4bfef5584f4ddd24c8f307b97382994d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  playerResources: {fileID: 1892403053}
   spawnOutpost: 0
   notEnoughResourcesColor: {r: 1, g: 0.25471687, b: 0.25471687, a: 1}
   warningColor: {r: 1, g: 0.7875554, b: 0.20188677, a: 1}
@@ -7779,7 +7781,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 819744626}
   range: 100
   capturing: 0
-  captureTime: 5
+  captureTime: 15
   timeLeft: 5
   contendersMask:
     serializedVersion: 2
@@ -10188,6 +10190,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 19664f6486aab044a9b10dab36590850, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  explosionPrefab: {fileID: 0}
   lineRenderer: {fileID: 1060341616}
   range: 250
   health: 100000
@@ -10197,7 +10200,7 @@ MonoBehaviour:
   fleetManager: {fileID: 524505708}
   playerHeadquarters: {fileID: 458003957}
   spawner: {fileID: 2098798327}
-  spawnCooldown: 30
+  spawnCooldown: 60
   manager: {fileID: 1668784700}
   sites: []
   capturedSites: []
@@ -11959,18 +11962,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d451cda33420574f9c75b25f9ad1399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infiniteResources: 1
-  multiplier: 1
+  infiniteResources: 0
+  multiplier: 2
   gatherInterval: 1
   allResources: []
   currentResources: []
-  totalMetal: 8000
-  totalCrystal: 600
-  totalCredits: 9999999
+  totalMetal: 10000
+  totalCrystal: 800
+  totalCredits: 10000
   totalMaintenance: 0
-  creditsPerInterval: 0
-  metalsPerInterval: 0
-  crystalsPerInterval: 0
   onUpdate:
     m_PersistentCalls:
       m_Calls: []
@@ -15581,7 +15581,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 2
-  value: 5000
+  value: 500
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -15598,7 +15598,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 1
-  value: 250
+  value: 200
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -15615,7 +15615,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   resourceType: 0
-  value: 30
+  value: 20
   onCapture:
     m_PersistentCalls:
       m_Calls: []
@@ -15636,7 +15636,7 @@ MonoBehaviour:
   lineRenderer: {fileID: 1642202888}
   range: 250
   capturing: 0
-  captureTime: 5
+  captureTime: 15
   timeLeft: 5
   contendersMask:
     serializedVersion: 2
@@ -16058,8 +16058,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d59dd5ddbf276fc48aafbd99d93bbdcb, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  enemy: {fileID: 0}
-  player: {fileID: 0}
+  enemy: {fileID: 1060341615}
+  player: {fileID: 458003957}
   soundManager: {fileID: 465012143}
   worldSpaceCanvas: {fileID: 1426129218}
   screenSpaceCanvas: {fileID: 793203628}
@@ -17474,18 +17474,15 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: b7e41c2f41436ef4fb7ec5c63f271e3a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  infiniteResources: 1
+  infiniteResources: 0
   multiplier: 1
   gatherInterval: 1
   allResources: []
   currentResources: []
   totalMetal: 8000
   totalCrystal: 600
-  totalCredits: 1000
+  totalCredits: 10000
   totalMaintenance: 0
-  creditsPerInterval: 0
-  metalsPerInterval: 0
-  crystalsPerInterval: 0
   onUpdate:
     m_PersistentCalls:
       m_Calls: []

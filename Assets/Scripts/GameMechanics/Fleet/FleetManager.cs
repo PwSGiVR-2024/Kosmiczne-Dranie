@@ -1,3 +1,4 @@
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -78,6 +79,7 @@ public abstract class FleetManager : MonoBehaviour
         {
             TaskForceController taskForce = spawner.SpawnTaskForce(unitPrefab, position, count, name);
             taskForces.Add(taskForce);
+            taskForce.onTaskForceDestroyed.AddListener((_) => taskForces.Remove(taskForce));
             resources.RemoveResources(unitPrefab, count);
             return taskForce;
         }
@@ -87,12 +89,28 @@ public abstract class FleetManager : MonoBehaviour
 
     public TaskForceController ProcureTaskForce(TaskForcePreset preset, Vector3 position, string name)
     {
+        IEnumerator RegisterUnits(TaskForceController taskForce)
+        {
+            while (!taskForce.CheckIfReady())
+            {
+                yield return null;
+            }
+
+            foreach (var unit in taskForce.Units)
+            {
+                unit.onUnitNeutralized.AddListener((_) => resources.RemoveMaintenance(unit.Values.maintenancePrice));
+            }
+        }
+
+
         if (resources.CheckIfHavingResources(preset))
         {
             TaskForceController taskForce = spawner.SpawnTaskForce(preset, position, name);
             taskForces.Add(taskForce);
             resources.RemoveResources(preset);
-            taskForce.onTaskForceDestroyed.AddListener((tf) => resources.RemoveMaintenance(preset.maintenancePrice));
+            //taskForce.onTaskForceDestroyed.AddListener((tf) => resources.RemoveMaintenance(preset.maintenancePrice));
+            StartCoroutine(RegisterUnits(taskForce));
+
             return taskForce;
         }
 
