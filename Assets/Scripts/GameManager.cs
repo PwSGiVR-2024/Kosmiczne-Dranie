@@ -1,9 +1,14 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class GameManager : MonoBehaviour
 {
+    public EnemyHeadquarters enemy;
+    public PlayerHeadquarters player;
+
     public SoundManager soundManager;
 
     public Canvas worldSpaceCanvas;
@@ -13,6 +18,10 @@ public class GameManager : MonoBehaviour
 
     private Stack<GameObject> exterminationCamp = new();
     private Stack<GameObject> temporaryCamp = new();
+
+    private bool gameOver = false;
+    public UnityEvent onGameWin = new();
+    public UnityEvent onGameLose = new();
 
     private IEnumerator ExterminationChamber()
     {
@@ -74,6 +83,20 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        enemy.onDestroy.AddListener(() => {
+            if (!gameOver)
+                onGameWin.Invoke();
+
+            gameOver = true;
+        });
+
+        player.onDestroy.AddListener(() => {
+            if (!gameOver)
+                onGameLose.Invoke();
+
+            gameOver = true;
+        });
+
         StartCoroutine(ExterminationChamber());
     }
 
