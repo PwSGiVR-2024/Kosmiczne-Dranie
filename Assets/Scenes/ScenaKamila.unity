@@ -38,7 +38,7 @@ RenderSettings:
   m_ReflectionIntensity: 1
   m_CustomReflection: {fileID: 0}
   m_Sun: {fileID: 705507994}
-  m_IndirectSpecularColor: {r: 0.0040844, g: 0.01938004, b: 0.03076338, a: 1}
+  m_IndirectSpecularColor: {r: 0.0040843785, g: 0.019380037, b: 0.030763369, a: 1}
   m_UseRadianceAmbientProbe: 0
 --- !u!157 &3
 LightmapSettings:
@@ -2953,6 +2953,63 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 325792917}
   m_CullTransparentMesh: 1
+--- !u!1001 &328664746
+PrefabInstance:
+  m_ObjectHideFlags: 0
+  serializedVersion: 2
+  m_Modification:
+    serializedVersion: 3
+    m_TransformParent: {fileID: 0}
+    m_Modifications:
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalPosition.x
+      value: 1595.1018
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalPosition.y
+      value: 4.515549
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalPosition.z
+      value: 773.4418
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalRotation.w
+      value: 0.7071067
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalRotation.x
+      value: 0.7071068
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalRotation.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalRotation.z
+      value: -0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -8679921383154817045, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_LocalEulerAnglesHint.z
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
+      propertyPath: m_Name
+      value: Turret
+      objectReference: {fileID: 0}
+    m_RemovedComponents: []
+    m_RemovedGameObjects: []
+    m_AddedGameObjects: []
+    m_AddedComponents: []
+  m_SourcePrefab: {fileID: 100100000, guid: 38b80f370ea47564ba00b49d0d6ebb5b, type: 3}
 --- !u!1001 &355194278
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20630,3 +20687,4 @@ SceneRoots:
   - {fileID: 2022242627}
   - {fileID: 1913721300}
   - {fileID: 875878542}
+  - {fileID: 328664746}
