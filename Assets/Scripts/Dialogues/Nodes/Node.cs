@@ -32,6 +32,7 @@ namespace dsystem
 
         public virtual bool AddToChildConnectedNode(Node nodeToAdd)
         { return true; }
+#if UNITY_EDITOR
         /// Przetwarzanie zdarzenia myszy w wêŸle
         public void ProcessNodeEvents(Event currentEvent)
         {
@@ -123,5 +124,6 @@ namespace dsystem
             rect.position += delta;
             EditorUtility.SetDirty(this);
         }
+#endif
     }
 }

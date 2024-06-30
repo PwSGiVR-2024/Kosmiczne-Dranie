@@ -35,8 +35,6 @@ public class HUDController : MonoBehaviour
 
     private bool selected = false;
 
-    public UnityEvent onSelect = new();
-
     public static HUDController Create(MonoBehaviour owner, GameObject prefab, GameManager gameManager)
     {
         
@@ -63,7 +61,8 @@ public class HUDController : MonoBehaviour
             //taskForce.onHealthChanged.AddListener((_) => instance.unitsCount.text = taskForce.Units.Count.ToString());
             //instance.healthText?.gameObject.SetActive(false);
             //instance.onSelect.AddListener(() => instance.ToggleSelect());
-            taskForce.onSelect.AddListener(() => instance.ToggleSelect());
+            if (taskForce.Affiliation == Affiliation.Blue)
+                taskForce.onSelect.AddListener(() => instance.ToggleSelect());
         }
 
         else if (owner is Outpost outpost)
@@ -184,7 +183,11 @@ public class HUDController : MonoBehaviour
             return;
 
         if (owner is TaskForceController tf)
+        {
+            Debug.Log("pointer click");
             tf.onSelect.Invoke();
+        }
+            
     }
 
     public void ToggleSelect()

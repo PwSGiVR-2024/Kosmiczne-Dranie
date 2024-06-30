@@ -16,6 +16,8 @@ public class SelectionBox : MonoBehaviour
     public KeyCode modifierKey = KeyCode.LeftControl;  //trzeba r�wnie� zmieni� w MapMovement.cs
     private ScrollableList ScrollableListInstance;
 
+    public GameObject HUDContainer;
+
     void Start()
     {
         ScrollableListInstance = FindAnyObjectByType<ScrollableList>();
@@ -88,12 +90,13 @@ public class SelectionBox : MonoBehaviour
 
         selectedObjects.Clear(); // Czyścimy listę zaznaczonych obiektów
 
-        HUDController[] taskForceHUDs = FindObjectsOfType<HUDController>();
+        // to lepsze
+        HUDController[] taskForceHUDs = HUDContainer.GetComponentsInChildren<HUDController>();
 
         foreach (var hud in taskForceHUDs)
         {
             Vector3 screenPos = mainCamera.WorldToScreenPoint(hud.transform.position);
-            if (selectionRect.Contains(screenPos))
+            if (selectionRect.Contains(screenPos) && hud.owner is TaskForceController taskForce && taskForce.Affiliation == Affiliation.Blue)
             {
                 // Obiekt jest w zaznaczonym obszarze
                 selectedObjects.Add(hud);
@@ -102,7 +105,7 @@ public class SelectionBox : MonoBehaviour
         }
         foreach(var cos in selectedObjects)
         {
-            if (cos.owner is TaskForceController tf)
+            if (cos.owner is TaskForceController tf && !tf.isSelectedInUI)
             {
                 tf.onSelect.Invoke();
             }

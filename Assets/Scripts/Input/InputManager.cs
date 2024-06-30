@@ -81,7 +81,7 @@ public class InputManager : MonoBehaviour
                     Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
                     RaycastHit hit;
 
-                    if (plane.Raycast(ray, out hit, Mathf.Infinity))
+                    if (plane.Raycast(ray, out hit, Mathf.Infinity) && !EventSystem.current.IsPointerOverGameObject())
                         onPlaneLeftClick?.Invoke(hit);
                 }
 

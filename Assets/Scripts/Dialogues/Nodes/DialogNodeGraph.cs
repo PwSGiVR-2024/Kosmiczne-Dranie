@@ -16,6 +16,7 @@ namespace dsystem
             this.nodeToDrawLineFrom = nodeToDrawLineFrom;
             this.linePosition = linePosition;
         }
+#if UNITY_EDITOR
         /// Przeci¹ganie wszystkich zaznaczonych wêz³ów
         public void DragAllSelectedNodes(Vector2 delta)
         {
@@ -27,6 +28,7 @@ namespace dsystem
                 }
             }
         }
+#endif
         /// Zwracanie liczby zaznaczonych wêz³ów
         public int GetAmountOfSelectedNodes()
         {

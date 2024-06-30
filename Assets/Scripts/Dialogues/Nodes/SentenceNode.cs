@@ -1,4 +1,7 @@
+#if UNITY_EDITOR
 using UnityEditor;
+#endif
+
 using UnityEngine;
 
 namespace dsystem
@@ -53,6 +56,7 @@ namespace dsystem
         {
             return isExternalFunc;
         }
+#if UNITY_EDITOR
         /// Metoda rysowania wêz³a zdania
         public override void Draw(GUIStyle nodeStyle, GUIStyle lableStyle)
         {
@@ -120,6 +124,7 @@ namespace dsystem
                 rect.height = standartHeight;
             }
         }
+#endif
         /// Sprawdzanie rozmiaru wêz³a
         public void CheckNodeSize(float width, float height)
         {

@@ -10,12 +10,17 @@ using UnityEngine.Jobs;
 
 public class TaskForceController : MonoBehaviour
 {
-    private LineRenderer lineRenderer;
+    public bool isSelectedInUI = false;
+
+    public LineRenderer rangeRenderer;
+    public LineRenderer destinationRenderer;
 
     public bool frigatesRDY = false;
     public bool destroyersRDY = false;
     public bool cruisersRDY = false;
     public bool battleshipsRDY = false;
+
+    public bool arrivedAtDestination = false;
 
     private bool CheckIfReady()
     {
@@ -45,7 +50,7 @@ public class TaskForceController : MonoBehaviour
 
     private float secondsAfterStop = 0;
     private bool counterRunning = false;
-    private readonly float waitingForSeconds = 1.0f;
+    private readonly float waitingForSeconds = 3.0f;
 
     private JobHandle targetProviderJobHandle;
     [ReadOnly]
@@ -210,7 +215,13 @@ public class TaskForceController : MonoBehaviour
 
     private void Start()
     {
-        lineRenderer = GetComponent<LineRenderer>();
+        onSelect.AddListener(() => isSelectedInUI = !isSelectedInUI);
+
+        destinationRenderer = Instantiate(new GameObject(), gameObject.transform).AddComponent<LineRenderer>();
+        destinationRenderer.startWidth = 2;
+        destinationRenderer.endWidth = 2;
+        rangeRenderer = GetComponent<LineRenderer>();
+        destinationRenderer.material = rangeRenderer.material;
         onStateChanged.AddListener(OnStateChanged);
 
         if (affiliation == Affiliation.Blue)
@@ -218,8 +229,6 @@ public class TaskForceController : MonoBehaviour
 
         else if (affiliation == Affiliation.Red)
             targetMask = LayerMask.GetMask("Allies", "AllyOutposts", "PlayerHeadquarters");
-
-
     }
 
     public void AddUnit(AiController unit, bool reinforce=false)
@@ -286,7 +295,10 @@ public class TaskForceController : MonoBehaviour
         UpdateStrength();
 
         if (unitControllers.Count == 1)
+        {
             commander = unit;
+            currentDestination = commander.transform.position;
+        }
 
         unit.onUnitNeutralized.AddListener(RemoveUnit);
         unit.onUnitEngaged.AddListener((attacker) => Engage(attacker));
@@ -480,6 +492,9 @@ public class TaskForceController : MonoBehaviour
             case State.Combat:
                 if (targetCalculations == TargetCalculations.Update)
                     TryGetTargetProviderJob(ref targetProviderJobHandle);
+
+                if (currentTarget == null)
+                    SetDestination(currentDestination);
                 break;
 
             case State.Idle:
@@ -532,23 +547,30 @@ public class TaskForceController : MonoBehaviour
 
         IEnumerator Counter()
         {
+            if (debug)
+            Debug.Log("started coundting");
             counterRunning = true;
             secondsAfterStop = 0;
             WaitForSeconds interval = new WaitForSeconds(0.1f);
 
-            while (commander.Agent.velocity.magnitude == 0)
+            while (commander.Agent.velocity.magnitude == 0 && currentState == State.Moving)
             {
                 yield return interval;
                 secondsAfterStop += 0.1f;
 
                 if (waitingForSeconds <= secondsAfterStop)
                 {
+                    arrivedAtDestination = true;
                     CurrentState = State.Idle;
                     counterRunning = false;
+                    if (debug)
+                    Debug.Log("arrived");
                     yield break;
                 }
             }
             counterRunning = false;
+            if (debug)
+            Debug.Log("counter break");
             yield break;
         }
 
@@ -712,14 +734,15 @@ public class TaskForceController : MonoBehaviour
             commander.SetRetreatState(escapePoint);
     }
 
-    public void SetDestination(Vector3 destination)
+    public void SetDestination(Vector3 destination, bool force=false)
     {
-        if (destination == currentDestination) return;
-         
+        if (currentState == State.Moving && destination == currentDestination && !force) return;
+        if (currentDestination == destination && arrivedAtDestination && !force) return;
         if (!CheckIfReady()) return;
 
         CurrentState = State.Moving;
         currentDestination = destination;
+        arrivedAtDestination = false;
 
         Vector3 frigatesDestination = GameUtils.RandomPlanePositionCircle(destination, frigates.Count, frigates.Count);
         Vector3 destroyersDestination = GameUtils.RandomPlanePositionCircle(destination, destroyers.Count, destroyers.Count);
@@ -745,6 +768,8 @@ public class TaskForceController : MonoBehaviour
         {
             controller.SetMovingState(GameUtils.RandomPlanePositionCircle(battleshipsDestination, Mathf.Sqrt(battleships.Count) * controller.Values.size));
         }
+
+        commander.SetMovingState(destination);
     }
 
     public void SetIdleState()
@@ -814,7 +839,10 @@ public class TaskForceController : MonoBehaviour
 
         if (commander)
         {
-            GameUtils.DrawCircle(lineRenderer, spotDistance, 5, commander.transform.position);
+            GameUtils.DrawCircle(rangeRenderer, spotDistance, 5, commander.transform.position);
+
+            destinationRenderer.SetPosition(0, commander.transform.position);
+            destinationRenderer.SetPosition(1, currentDestination);
 
             //icon.transform.LookAt(Camera.main.transform, Vector3.up);
             //icon.transform.position = commander.transform.position + iconOffset;

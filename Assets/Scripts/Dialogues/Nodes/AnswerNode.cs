@@ -31,6 +31,7 @@ namespace dsystem
 
             childSentenceNodes = new List<SentenceNode>(amountOfAnswers);
         }
+#if UNITY_EDITOR
         /// Metoda rysowania wêz³a odpowiedzi
         public override void Draw(GUIStyle nodeStyle, GUIStyle lableStyle)
         {
@@ -52,6 +53,7 @@ namespace dsystem
 
             GUILayout.EndArea();
         }
+#endif
         /// Okreœla liczbê odpowiedzi w zale¿noœci od liczby elementów na liœcie odpowiedzi
         public void CalculateAmountOfAnswers()
         {
@@ -66,6 +68,7 @@ namespace dsystem
                 amountOfAnswers = answers.Count;
             }
         }
+#if UNITY_EDITOR
         /// Narysuj liniê odpowiedzi
         private void DrawAnswerLine(int answerNumber, string iconPathOrName)
         {
@@ -82,6 +85,7 @@ namespace dsystem
 
             EditorGUILayout.EndHorizontal();
         }
+#endif
 
         private void DrawAnswerNodeButtons()
         {

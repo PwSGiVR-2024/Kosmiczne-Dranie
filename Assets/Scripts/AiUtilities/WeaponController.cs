@@ -1,6 +1,5 @@
 using System.Collections;
 using UnityEngine;
-using static UnityEditor.Rendering.CameraUI;
 
 public class WeaponController: MonoBehaviour
 {

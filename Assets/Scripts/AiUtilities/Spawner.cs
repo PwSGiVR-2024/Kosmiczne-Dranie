@@ -287,7 +287,7 @@ public class Spawner : MonoBehaviour
         {
             lineRenderer = obj.AddComponent<LineRenderer>();
             lineRenderer.material = rendererMaterial;
-        }
-            
+        }  
+
     }
 }
